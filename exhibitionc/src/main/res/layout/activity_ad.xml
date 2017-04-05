@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/adv_image"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerInParent="true"
+        android:contentDescription="@null"
+        android:scaleType="fitCenter"/>
+
+
+    <ViewFlipper
+        android:id="@+id/adv_flipper"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone"/>
+
+    <!-- 跳出 -->
+    <TextView
+        android:id="@+id/adv_imgo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/black_10radius_corner_bg"
+        android:paddingBottom="5dp"
+        android:paddingLeft="13dp"
+        android:paddingRight="13dp"
+        android:paddingTop="5dp"
+        android:text="@string/adv_im_go"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_12"/>
+
+</RelativeLayout>

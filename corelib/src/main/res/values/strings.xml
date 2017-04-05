@@ -65,4 +65,41 @@
 
     <string name="share_success">分享成功</string>
     <string name="share_failed">分享失败</string>
+
+
+    <string name="back">返回</string>
+    <string name="follow_all">全部关注</string>
+    <string name="card_num">%s条笔记</string>
+    <string name="follow_num">%s人关注</string>
+    <string name="card">笔记</string>
+    <string name="follow">关注</string>
+    <string name="followed">已关注</string>
+    <string name="fans">粉丝</string>
+    <string name="follow_success">关注成功</string>
+    <string name="follow_failed">关注失败</string>
+    <string name="unfollow_success">取消关注成功</string>
+    <string name="unfollow_failed">取消关注失败</string>
+    <!-- 我的首页 -->
+    <string name="my_homepage">我的首页</string>
+    <string name="msg_ok">好的</string>
+    <string name="weixin_info">已经将公众号账号复制到剪贴板，请到微信中粘贴并搜索关注。</string>
+
+    <string name="adv_im_go">跳出</string>
+    <string name="dial_error">您的手机缺少所需的功能模块，无法继续操作。</string>
+
+    <string name="all_zhanlan">全部展览</string>
+    <string name="all_zhanlan_list">全部展览列表</string>
+    <string name="hot_zhanlan">热门展览</string>
+    <string name="my_zhanlan">我的展览</string>
+    <string name="book_iart">订阅iArt</string>
+    <string name="about_us">关于我们</string>
+
+    <string name="time">时间</string>
+    <string name="area">地区</string>
+    <string name="zhuanjia">专家</string>
+
+    <string name="zhanguan">展馆</string>
+    <string name="add_title">添加新的观展行程</string>
+    <string name="add_date">观展日期</string>
+
 </resources>

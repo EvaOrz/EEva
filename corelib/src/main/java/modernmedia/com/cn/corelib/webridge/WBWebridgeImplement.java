@@ -1,20 +1,10 @@
 package modernmedia.com.cn.corelib.webridge;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.graphics.Picture;
-import android.text.TextUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import modernmedia.com.cn.corelib.CommonApplication;
-import modernmedia.com.cn.corelib.R;
 import modernmedia.com.cn.corelib.webridge.WBWebridge.AsynExecuteCommandListener;
 
 
@@ -85,24 +75,24 @@ public class WBWebridgeImplement implements WBWebridgeListener {
         if (listener != null) {
 
             JSONObject result = new JSONObject();
-            try {
-                PackageManager packageManager = mContext.getPackageManager();
-                PackageInfo info = packageManager.getPackageInfo(mContext.getPackageName(), PackageManager.GET_META_DATA);
-                result.put("appID", ConstData.getInitialAppId());
-                result.put("deviceUUID", CommonApplication.getMyUUID());
-                result.put("appMode", ConstData.IS_DEBUG);
-                result.put("appApiVersion", ConstData.API_VERSION);
-                result.put("appDisplayName", info.applicationInfo.loadLabel(packageManager));
-                result.put("appBundleName", "");
-                result.put("appVersion", info.versionName);
-                result.put("appBuild", info.versionCode);
+//            try {
+//                PackageManager packageManager = mContext.getPackageManager();
+//                PackageInfo info = packageManager.getPackageInfo(mContext.getPackageName(), PackageManager.GET_META_DATA);
+//                result.put("appID", ConstData.getInitialAppId());
+//                result.put("deviceUUID", CommonApplication.getMyUUID());
+//                result.put("appMode", ConstData.IS_DEBUG);
+//                result.put("appApiVersion", ConstData.API_VERSION);
+//                result.put("appDisplayName", info.applicationInfo.loadLabel(packageManager));
+//                result.put("appBundleName", "");
+//                result.put("appVersion", info.versionName);
+//                result.put("appBuild", info.versionCode);
 
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
-            }
+//            } catch (JSONException e) {
+            //                e.printStackTrace();
+            //            } catch (PackageManager.NameNotFoundException e) {
+            //                e.printStackTrace();
+            //            }
             listener.onCallBack(result.toString());
         }
     }
@@ -110,7 +100,7 @@ public class WBWebridgeImplement implements WBWebridgeListener {
     public void uploadPics(JSONObject json, AsynExecuteCommandListener listener) {
         if (listener != null) {
             JSONObject result = new JSONObject();
-            mContext.startActivity(new Intent(mContext, UploadPicsActivity.class));
+//            mContext.startActivity(new Intent(mContext, UploadPicsActivity.class));
             listener.onCallBack(result.toString());
         }
     }

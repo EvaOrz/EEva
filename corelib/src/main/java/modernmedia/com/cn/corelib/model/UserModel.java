@@ -1,53 +1,14 @@
 package modernmedia.com.cn.corelib.model;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * 用户model
  * Created by Eva. on 16/9/16.
- * <p/>
- * * <p/>
- * <p/>
- * <p/>
- * optional int32 uid = 1;
- * optional string token = 2;
- * optional string phone = 3;
- * optional string realname = 4;
- * optional string email = 5;
- * optional string openid = 6;
- * optional string nickname = 7;
- * optional string avatar = 8;
- * optional string password = 9;
- * optional string newpassword = 10;
- * optional string deviceid = 11;
- * optional string devicetoken = 12;
- * optional int32 appid = 13;
- * optional string devicetype = 14;
- * optional string code = 15;
- * optional string opentype = 16;
- * optional string opentoken = 17;
- * optional int32 gender = 18;
- * optional string birthday = 19;
- * optional string education = 20;
- * optional string province = 21;
- * optional string city = 22;
- * optional string area = 23;
- * optional string company = 24;
- * optional string jobtitle = 25;
- * optional Error error = 26;
- * optional string address = 27;
- * optional Contact contact = 28;
- * optional UserExt userext = 29;
  */
 public class UserModel extends Entry {
+    private static final long serialVersionUID = 1L;
     private String uid = "";
     // 用户名(邮箱或邮箱)
     private String userName = "";
-    private String realName = "";
     private String phone = "";
     private String email = "";
     // 密码(注册和修改资料时传)
@@ -56,57 +17,258 @@ public class UserModel extends Entry {
     private String nickName = "";
     // 头像
     private String avatar = "";
+    // 错误信息
+    private ErrorMsg error = new ErrorMsg();
     // 新浪uid(新浪用户登陆时用)
     private String sinaId = "";
-    private String weixinId = "";
-    private String qqId = "";
     // 用户token
     private String token = "";
     // 设备id
     private String deviceId = "";
-    private String hosttype;
     // 设备token
     private String deviceToken = "";
     // 新密码(修改密码时用)
     private String newPassword = "";
-    private String company;
-    private String position;
-    private String province;
-    private String city;
-    private int sex;//1：男 2：女
-    private String birthday;
-    private int pushShowDetail = 0;// 推送显示详情
-    private int pushBySound = 0;// 推送声音开关
-    private int pushByVibrate = 0;//推送震动开关
-    private String QrCode;// 二维码
-    private Contact contact = new Contact();// 第三方账号信息
-    private boolean isFreind = false;// 是否是好友关系
+    // 应用appid
+    private String appid = "";
+    // 应用版本
+    private String version = "";
+    // 个人签名(一句话简介)
+    private String desc = "";
+    // 该用户的登录状态(默认未登录)
+    private boolean isLogined = false;
+    // qq openid(qq用户登陆时用)
+    private String qqId = "";
+    // weixin openid(weixin用户登录时用)
+    private String weixinId = "";
+    // 3.6 过度版整合使用weixin unionid
+    private String unionId = "";
+    //3.6 过度版整合使用
+    private String openId = "";
+    // 绑定电话状态
+    private boolean isBandPhone = false;
+    // 绑定微信状态
+    private boolean isBandWeixin = false;
+    // 绑定邮箱状态
+    private boolean isBandEmail = false;
+    // 绑定微博状态
+    private boolean isBandWeibo = false;
+    // 绑定qq状态
+    private boolean isBandQQ = false;
+    // 邮箱验证状态
+    private boolean isValEmail = false;
+    // 接受商周简报状态
+    private int isPushEmail;// 0:不接受 1：接受
+    //用户第三方消息，微博，微信
+    private String openLoginJson = "";
 
-    public boolean isFreind() {
-        return isFreind;
+    private String realname = "";            //姓名
+    private int sex;                        //性别 0女1男2保密
+    private String birth = "";           //生日
+    private String vip = "";              //vip的id
+    private long start_time = 0;      //首次开通VIP时间
+    private long vip_end_time = 0;         //有效期
+    private String industry = "";        //行业
+    private String position = "";        //职位
+    private String income = "";          //年收入
+    private String province = "";            //省
+    private String city = "";                //市
+    private String address = "";            //详细地址
+    private int level;               //vip权限0是小白，1是付费会员，2VIP
+    private String send = "";                //是否发实卡  0没发，1要发，2已发
+    private int completevip;         //是否完成VIP资料补全  0为补全 1补全
+    private int user_status;         //判断用户状态1是付费会员，2VIP有效，3付费过期，4VIP过期
+
+    public int getUser_status() {
+        return user_status;
     }
 
-    public void setFreind(boolean freind) {
-        isFreind = freind;
+    public void setUser_status(int user_status) {
+        this.user_status = user_status;
     }
 
-    public Contact getContact() {
-        return contact;
+    public int getCompletevip() {
+        return completevip;
     }
 
-    public void setContact(Contact contact) {
-        this.contact = contact;
+    public void setCompletevip(int completevip) {
+        this.completevip = completevip;
     }
 
-    // 错误信息
-    private ErrorMsg error = new ErrorMsg();
-
-    public ErrorMsg getError() {
-        return error;
+    public String getBirth() {
+        return birth;
     }
 
-    public void setError(ErrorMsg error) {
-        this.error = error;
+    public void setBirth(String birth) {
+        this.birth = birth;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getVip() {
+        return vip;
+    }
+
+    public void setVip(String vip) {
+        this.vip = vip;
+    }
+
+    public long getStart_time() {
+        return start_time;
+    }
+
+    public void setStart_time(long start_time) {
+        this.start_time = start_time;
+    }
+
+    public long getVip_end_time() {
+        return vip_end_time;
+    }
+
+    public void setVip_end_time(long end_time) {
+        this.vip_end_time = end_time;
+    }
+
+    public String getIndustry() {
+        return industry;
+    }
+
+    public void setIndustry(String industry) {
+        this.industry = industry;
+    }
+
+    public String getIncome() {
+        return income;
+    }
+
+    public void setIncome(String income) {
+        this.income = income;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public String getSend() {
+        return send;
+    }
+
+    public void setSend(String send) {
+        this.send = send;
+    }
+
+    public String getRealname() {
+        return realname;
+    }
+
+    public void setRealname(String realname) {
+        this.realname = realname;
+    }
+
+    public int getSex() {
+        return sex;
+    }
+
+    public void setSex(int sex) {
+        this.sex = sex;
+    }
+
+    public String getOpenLoginJson() {
+        return openLoginJson;
+    }
+
+    public void setOpenLoginJson(String openLoginJson) {
+        this.openLoginJson = openLoginJson;
+    }
+
+    public int isPushEmail() {
+        return isPushEmail;
+    }
+
+    public void setPushEmail(int pushEmail) {
+        isPushEmail = pushEmail;
+    }
+
+    public boolean isValEmail() {
+        return isValEmail;
+    }
+
+    public void setValEmail(boolean isValEmail) {
+        this.isValEmail = isValEmail;
+    }
+
+    public boolean isBandPhone() {
+        return isBandPhone;
+    }
+
+    public void setBandPhone(boolean isBandPhone) {
+        this.isBandPhone = isBandPhone;
+    }
+
+    public boolean isBandWeixin() {
+        return isBandWeixin;
+    }
+
+    public void setBandWeixin(boolean isBandWeixin) {
+        this.isBandWeixin = isBandWeixin;
+    }
+
+    public boolean isBandEmail() {
+        return isBandEmail;
+    }
+
+    public void setBandEmail(boolean isBandEmail) {
+        this.isBandEmail = isBandEmail;
+    }
+
+    public boolean isBandWeibo() {
+        return isBandWeibo;
+    }
+
+    public void setBandWeibo(boolean isBandWeibo) {
+        this.isBandWeibo = isBandWeibo;
+    }
+
+    public boolean isBandQQ() {
+        return isBandQQ;
+    }
+
+    public void setBandQQ(boolean isBandQQ) {
+        this.isBandQQ = isBandQQ;
     }
 
     public String getUid() {
@@ -123,22 +285,6 @@ public class UserModel extends Entry {
 
     public void setUserName(String userName) {
         this.userName = userName;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getPassword() {
@@ -165,12 +311,28 @@ public class UserModel extends Entry {
         this.avatar = avatar;
     }
 
+    public ErrorMsg getError() {
+        return error;
+    }
+
+    public void setError(ErrorMsg error) {
+        this.error = error;
+    }
+
     public String getSinaId() {
         return sinaId;
     }
 
     public void setSinaId(String sinaId) {
         this.sinaId = sinaId;
+    }
+
+    public String getQqId() {
+        return qqId;
+    }
+
+    public void setQqId(String qqId) {
+        this.qqId = qqId;
     }
 
     public String getWeixinId() {
@@ -181,36 +343,20 @@ public class UserModel extends Entry {
         this.weixinId = weixinId;
     }
 
-    public String getQqId() {
-        return qqId;
+    public String getUnionId() {
+        return unionId;
     }
 
-    public int getPushByVibrate() {
-        return pushByVibrate;
+    public void setUnionId(String unionId) {
+        this.unionId = unionId;
     }
 
-    public void setPushByVibrate(int pushByVibrate) {
-        this.pushByVibrate = pushByVibrate;
+    public String getOpenId() {
+        return openId;
     }
 
-    public int getPushShowDetail() {
-        return pushShowDetail;
-    }
-
-    public void setPushShowDetail(int pushShowDetail) {
-        this.pushShowDetail = pushShowDetail;
-    }
-
-    public int getPushBySound() {
-        return pushBySound;
-    }
-
-    public void setPushBySound(int pushBySound) {
-        this.pushBySound = pushBySound;
-    }
-
-    public void setQqId(String qqId) {
-        this.qqId = qqId;
+    public void setOpenId(String openId) {
+        this.openId = openId;
     }
 
     public String getToken() {
@@ -245,197 +391,52 @@ public class UserModel extends Entry {
         this.newPassword = newPassword;
     }
 
-    public String getCompany() {
-        return company;
+    public String getAppid() {
+        return appid;
     }
 
-    public void setCompany(String company) {
-        this.company = company;
+    public void setAppid(String appid) {
+        this.appid = appid;
     }
 
-    public String getPosition() {
-        return position;
+    public String getVersion() {
+        return version;
     }
 
-    public void setPosition(String position) {
-        this.position = position;
+    public void setVersion(String version) {
+        this.version = version;
     }
 
-    public String getProvince() {
-        return province;
+    public String getDesc() {
+        return desc;
     }
 
-    public void setProvince(String province) {
-        this.province = province;
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 
-    public String getCity() {
-        return city;
+    public boolean isLogined() {
+        return isLogined;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setLogined(boolean isLogined) {
+        this.isLogined = isLogined;
     }
 
-    public int getSex() {
-        return sex;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setSex(int sex) {
-        this.sex = sex;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    public String getBirthday() {
-        return birthday;
+    public String getEmail() {
+        return email;
     }
 
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
+    public void setEmail(String email) {
+        this.email = email;
     }
-
-    public String getRealName() {
-        return realName;
-    }
-
-    public void setRealName(String realName) {
-        this.realName = realName;
-    }
-
-    public String getQrCode() {
-        return QrCode;
-    }
-
-    public void setQrCode(String qrCode) {
-        QrCode = qrCode;
-    }
-
-
-    public UserModel() {
-
-    }
-
-    /**
-     * 解析person列表
-     *
-     * @param array
-     * @return
-     */
-    public static List<UserModel> parseList(JSONArray array) {
-        List<UserModel> personModelList = new ArrayList<UserModel>();
-        JSONObject object;
-        for (int i = 0; i < array.length(); i++) {
-            object = array.optJSONObject(i);
-            if (isNull(object)) continue;
-            UserModel personModel = new UserModel();
-            personModel.parse(object);
-            personModelList.add(personModel);
-        }
-        return personModelList;
-    }
-
-    public void parse(JSONObject jsonObject) {
-        if (jsonObject == null) return;
-        setUid(jsonObject.optInt("uid") + "");
-        // getFriends 接口uid解析
-        if (jsonObject.optInt("fuid") != 0) setUid(jsonObject.optInt("fuid") + "");
-
-        setPassword(jsonObject.optString("password"));
-        setNewPassword(jsonObject.optString("newpassword"));
-        setToken(jsonObject.optString("token"));
-        setPhone(jsonObject.optString("phone"));
-        setAvatar(jsonObject.optString("avatar"));
-        setRealName(jsonObject.optString("realname"));
-        setNickName(jsonObject.optString("nickname"));
-        setEmail(jsonObject.optString("email"));
-        setCompany(jsonObject.optString("company"));
-        setSex(jsonObject.optInt("sex"));
-        setContact(Contact.parse(jsonObject.optJSONObject("contact")));
-        setPosition(jsonObject.optString("jobtitle"));
-        setBirthday(jsonObject.optString("birthday"));
-        setProvince(jsonObject.optString("province"));
-        setCity(jsonObject.optString("city"));
-        setHosttype(jsonObject.optString("hosttype"));
-        setQrCode(jsonObject.optString("QrCode"));
-        ErrorMsg e = new ErrorMsg();
-        e.parse(jsonObject.optJSONObject("error"));
-        setError(e);
-
-        JSONObject userext = jsonObject.optJSONObject("userext");
-        if (userext != null) {
-            setPushBySound(userext.optInt("pushBySound"));
-            setPushByVibrate(userext.optInt("pushByVibrate"));
-            setPushShowDetail(userext.optInt("pushShowDetail"));
-        }
-    }
-
-
-    public static class Contact extends Entry {
-        private String qq = "";
-        private String weibo = "";
-        private String wechat = "";
-
-        public static Contact parse(JSONObject j) {
-            Contact c = new Contact();
-            if (j != null) {
-                c.setQq(j.optString("qq"));
-                c.setWeibo(j.optString("weibo"));
-                c.setWechat(j.optString("wechat"));
-            }
-            return c;
-        }
-
-        public String getQq() {
-            return qq;
-        }
-
-        public void setQq(String qq) {
-            this.qq = qq;
-        }
-
-        public String getWeibo() {
-            return weibo;
-        }
-
-        public void setWeibo(String weibo) {
-            this.weibo = weibo;
-        }
-
-        public String getWechat() {
-            return wechat;
-        }
-
-        public void setWechat(String wechat) {
-            this.wechat = wechat;
-        }
-    }
-
-    public String getHosttype() {
-        return hosttype;
-    }
-
-    public void setHosttype(String hosttype) {
-        this.hosttype = hosttype;
-    }
-
-    /**
-     * list model
-     */
-    public static class UserListModel extends Entry {
-
-        public UserListModel() {
-
-        }
-
-        private List<UserModel> userModels;
-
-        public List<UserModel> getUserModels() {
-            return userModels;
-        }
-
-        public void setUserModels(List<UserModel> userModels) {
-            this.userModels = userModels;
-        }
-    }
-
 
 }

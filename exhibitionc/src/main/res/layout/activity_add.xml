@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/body_bg"
+              android:fitsSystemWindows="true"
+              android:orientation="vertical"
+              android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@mipmap/add_title"
+            android:gravity="center"
+            android:text="@string/add_title"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_16"/>
+
+        <TextView
+            android:id="@+id/add_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="15dp"
+            android:text="丝绸之路与俄罗斯文化的发展"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_20"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/white_10radius_corner_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@mipmap/add_rili"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/add_date"
+                android:textColor="@color/gray_dark"
+                android:textSize="@dimen/text_size_16"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/white_10radius_corner_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@mipmap/add_tiicon"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/add_date"
+                android:textColor="@color/gray_dark"
+                android:textSize="@dimen/text_size_16"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/white_10radius_corner_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@mipmap/add_sicon"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/add_date"
+                android:textColor="@color/gray_dark"
+                android:textSize="@dimen/text_size_16"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/white_10radius_corner_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@mipmap/add_tongicon"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/add_date"
+                android:textColor="@color/gray_dark"
+                android:textSize="@dimen/text_size_16"/>
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="20dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/add_bg_lingshi"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:paddingTop="10dp">
+
+            <ImageView
+                android:id="@+id/add_back"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@mipmap/back_white"/>
+
+            <ImageView
+                android:id="@+id/add_ok"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:src="@mipmap/add_ok"/>
+
+
+        </RelativeLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

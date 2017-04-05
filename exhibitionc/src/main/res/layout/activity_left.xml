@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/column_activity_bg"
+              android:fitsSystemWindows="true"
+              android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="15dp">
+
+        <ImageView
+            android:id="@+id/left_sousuo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/left_sousuo"/>
+
+        <LinearLayout
+            android:id="@+id/all_zhanlan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/all_zhanlan"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_16"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="共有235个正在进行展览"
+                android:textColor="@color/gray_line"
+                android:textSize="@dimen/text_size_12"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_height"
+                android:layout_marginTop="15dp"
+                android:background="@color/gray_line"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/hot_zhanlan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/hot_zhanlan"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_16"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="共有235个正在进行展览"
+                android:textColor="@color/gray_line"
+                android:textSize="@dimen/text_size_12"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_height"
+                android:layout_marginTop="15dp"
+                android:background="@color/gray_line"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/my_zhanlan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/my_zhanlan"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_16"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="共有235个正在进行展览"
+                android:textColor="@color/gray_line"
+                android:textSize="@dimen/text_size_12"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_height"
+                android:layout_marginTop="15dp"
+                android:background="@color/gray_line"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/book_iart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/book_iart"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_16"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="共有235个正在进行展览"
+                android:textColor="@color/gray_line"
+                android:textSize="@dimen/text_size_12"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_height"
+                android:layout_marginTop="15dp"
+                android:background="@color/gray_line"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/about_us"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/about_us"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_16"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="@string/about_us"
+                android:textColor="@color/gray_line"
+                android:textSize="@dimen/text_size_12"
+                android:visibility="invisible"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_height"
+                android:layout_marginTop="15dp"
+                android:background="@color/gray_line"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp">
+
+            <ImageView
+                android:id="@+id/left_back"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@mipmap/left_back"/>
+
+            <ImageView
+                android:id="@+id/left_setting"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:src="@mipmap/left_setting"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

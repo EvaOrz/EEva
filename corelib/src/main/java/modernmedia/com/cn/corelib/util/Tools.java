@@ -14,6 +14,8 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
@@ -36,6 +38,13 @@ import java.util.regex.Pattern;
 
 import modernmedia.com.cn.corelib.BaseActivity;
 import modernmedia.com.cn.corelib.db.DataHelper;
+
+import static android.widget.ImageView.ScaleType.CENTER_CROP;
+import static android.widget.ImageView.ScaleType.CENTER_INSIDE;
+import static android.widget.ImageView.ScaleType.FIT_CENTER;
+import static android.widget.ImageView.ScaleType.FIT_END;
+import static android.widget.ImageView.ScaleType.FIT_START;
+import static android.widget.ImageView.ScaleType.MATRIX;
 
 /**
  * 工具类
@@ -376,7 +385,7 @@ public class Tools {
     public static Map<String, String> getRequastHeader(Context context) {
         HashMap<String, String> headerMap = new HashMap<String, String>();
         headerMap.put("X-Slate-UserId", DataHelper.getUid(context));
-        headerMap.put("X-Slate-DeviceId", Tools.getMyUUID(context));
+        headerMap.put("X-Slate-DeviceId", DataHelper.getUUID(context));
         //        headerMap.put("X-Slate-AppId", ConstData.getInitialAppId() + "");
         headerMap.put("X-SLATE-JAILBROKEN", Tools.isRooted() ? "11" : "10");//是否root（如果可以获取就获取）
 
@@ -387,5 +396,47 @@ public class Tools {
 
     public static String parseString(Context context, int resId, Object... args) {
         return String.format(context.getString(resId), args);
+    }
+
+    /**
+     * 检测网络状态
+     *
+     * @param context
+     * @return
+     */
+    public static boolean checkNetWork(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        /* 网络连接状态 */
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    /**
+     * 设置图片的scale type,默认为fix_xy
+     *
+     * @param iv
+     * @param scale_type
+     */
+    public static void setScaleType(ImageView iv, String scale_type) {
+        if (!TextUtils.isEmpty(scale_type)) {
+            if (scale_type.equals(CENTER_CROP)) {
+                iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            } else if (scale_type.equals(FIT_CENTER)) {
+                iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            } else if (scale_type.equals(CENTER_INSIDE)) {
+                iv.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            } else if (scale_type.equals(FIT_END)) {
+                iv.setScaleType(ImageView.ScaleType.FIT_END);
+            } else if (scale_type.equals(FIT_START)) {
+                iv.setScaleType(ImageView.ScaleType.FIT_START);
+            } else if (scale_type.equals(MATRIX)) {
+                iv.setScaleType(ImageView.ScaleType.MATRIX);
+            } else {
+                iv.setScaleType(ImageView.ScaleType.FIT_XY);
+            }
+        } else {
+            iv.setScaleType(ImageView.ScaleType.FIT_XY);
+        }
     }
 }

@@ -13,6 +13,7 @@ import java.net.URLEncoder;
 import modernmedia.com.cn.corelib.http.HttpRequestController.RequestThread;
 import modernmedia.com.cn.corelib.listener.DataCallBack;
 import modernmedia.com.cn.corelib.listener.FetchDataListener;
+import modernmedia.com.cn.corelib.model.UserModel;
 import modernmedia.com.cn.corelib.util.TimeCollectUtil;
 import modernmedia.com.cn.corelib.util.Tools;
 
@@ -411,5 +412,59 @@ public abstract class BaseApi {
             }
             obj.put(key, encode);
         }
+    }
+
+
+    /**
+     * 解析USER模块相关请求结果
+     *
+     * @param object 待解析的JSON对象
+     * @return User对象
+     */
+    protected UserModel parseUser(JSONObject object) {
+        if (object == null) return null;
+        UserModel user = new UserModel();
+        Log.e("Userbasemodel", getUrl() + object.toString());
+        user.setUid(object.optString("uid", ""));
+        user.setUserName(object.optString("username", ""));
+        user.setPassword(object.optString("password", ""));
+        user.setPhone(object.optString("phone", ""));
+        user.setEmail(object.optString("email", ""));
+        user.setNickName(object.optString("nickname", ""));
+        user.setAvatar(object.optString("avatar", ""));
+        user.setSinaId(object.optString("sinaid", ""));
+        user.setOpenId(object.optString("openid", ""));//4.0过度整合用
+        user.setToken(object.optString("token", ""));
+        user.setDeviceId(object.optString("deviceid", ""));
+        user.setDeviceToken(object.optString("devicetoken", ""));
+        user.setNewPassword(object.optString("newpassword", ""));
+        user.setAppid(object.optString("appid", ""));
+        user.setVersion(object.optString("version", ""));
+        user.setDesc(object.optString("desc", ""));
+        user.setPushEmail(object.optInt("pushmail"));
+        user.setRealname(object.optString("realname"));
+        user.setSex(object.optInt("sex"));
+        user.setBirth(object.optString("birthday"));
+        user.setIndustry(object.optString("industry"));
+        user.setPosition(object.optString("position"));
+        user.setIncome(object.optString("income"));
+        user.setStart_time(object.optLong("start_time"));
+        user.setVip_end_time(object.optLong("end_time"));
+        user.setVip(object.optString("vip"));
+        user.setLevel(object.optInt("level"));
+        user.setCompletevip(object.optInt("completevip"));
+        user.setSend(object.optString("send"));
+        user.setProvince(object.optString("province"));
+        user.setCity(object.optString("city"));
+        user.setAddress(object.optString("address"));
+        user.setUser_status(object.optInt("user_status"));
+        user.setWeixinId(object.optString("weixinid", "")); //整合微信
+        user.setQqId(object.optString("qqid", ""));         //整合QQ
+        JSONObject errorObject = object.optJSONObject("error");
+        if (!isNull(errorObject)) {
+            user.getError().setNo(errorObject.optInt("no", -1));
+            user.getError().setDesc(errorObject.optString("desc", ""));
+        }
+        return user;
     }
 }
