@@ -23,7 +23,7 @@ public class CommonApplication extends Application {
     /**
      * 文件夹名
      */
-    public static String CACHE_FILE_NAME = "";
+    public static String CACHE_FILE_NAME = "calendar";
 
     // weixin id / secret
     public static String WEIXIN_APP_ID = "";

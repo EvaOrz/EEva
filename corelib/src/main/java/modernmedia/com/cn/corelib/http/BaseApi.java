@@ -2,6 +2,7 @@ package modernmedia.com.cn.corelib.http;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -27,18 +28,17 @@ public abstract class BaseApi {
     private HttpRequestController mController = HttpRequestController.getInstance();
     private Context mContext;
     private boolean success = false;// 是否解析成功
-    private boolean isUploadAvatar = false;// 是否是上传头像
     private DataCallBack callBack;
     protected FetchApiType mFetchApiType = FetchApiType.USE_HTTP_FIRST;
+
+    private boolean isNeedEncode = false;
+    public static final String KEY = "R3%3jg*3";
 
     /**
      * 缓存文件是否为数据库
      */
     protected boolean cacheIsDb = false;
 
-    public void setIsUpload(boolean isUploadAvatar) {
-        this.isUploadAvatar = isUploadAvatar;
-    }
 
     public static enum FetchApiType {
         /**
@@ -74,6 +74,10 @@ public abstract class BaseApi {
      * 由子类提供
      */
     protected abstract String getUrl();
+
+    public void setIsNeedEncode(boolean isNeedEncode) {
+        this.isNeedEncode = isNeedEncode;
+    }
 
     /**
      * 由子类提供
@@ -206,28 +210,24 @@ public abstract class BaseApi {
                 // showToast(R.string.net_error);
             } else {
                 try {
-                    if (isUploadAvatar) {
-                        JSONObject avatar = new JSONObject();
-                        avatar.put("avatar", data);
-                        handler(avatar);
+
+                    if (data.equals("[]")) {
+                        data = "{}";
+                    }
+                    JSONObject obj;
+                    if (isNeedEncode) {
+                        String msg = new String(Base64.decode(data.getBytes(), Base64.DEFAULT));
+                        obj = new JSONObject(msg);
+                    } else obj = new JSONObject(data);
+                    if (isNull(obj)) {
+                        Log.e("********", "网络出错222" + getUrl());
+                        // showToast(R.string.net_error);
+                    } else {
+                        handler(obj);
                         saveData(data);
                         success = true;
-                    } else {
-                        if (data.equals("[]")) {
-                            data = "{}";
-                        }
-
-                        JSONObject obj = new JSONObject(data);
-                        if (isNull(obj)) {
-                            Log.e("********", "网络出错222" + getUrl());
-                            // showToast(R.string.net_error);
-                        } else {
-                            handler(obj);
-                            saveData(data);
-                            success = true;
-                        }
-
                     }
+
                 } catch (JSONException e) {
                     Log.e(getUrl(), ":can not transform to jsonobject");
                     e.printStackTrace();
@@ -241,6 +241,7 @@ public abstract class BaseApi {
         }
         if (callBack != null) callBack.callback(success, fromHttp);
     }
+
 
     /**
      * 从缓存中获取数据(优先使用或者只能使用缓存)

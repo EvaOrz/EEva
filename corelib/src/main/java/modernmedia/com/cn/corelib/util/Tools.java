@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -37,6 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import modernmedia.com.cn.corelib.BaseActivity;
+import modernmedia.com.cn.corelib.R;
 import modernmedia.com.cn.corelib.db.DataHelper;
 
 import static android.widget.ImageView.ScaleType.CENTER_CROP;
@@ -126,42 +128,6 @@ public class Tools {
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
         String start = format.format(new Date(t));
         return start;
-    }
-
-    public static boolean checkIsEmail(Context context, String data) {
-        if (TextUtils.isEmpty(data)) {
-            return false;
-        }
-        boolean ifEmail = true;
-        data = data.trim();
-        // 检查账号是否是邮箱格式
-        String str = "^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]" + "{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$";
-        Pattern pattern = Pattern.compile(str);
-        Matcher matcher = pattern.matcher(data);
-        if (!matcher.matches()) {
-            ifEmail = false;
-        }
-        return ifEmail;
-    }
-
-    /**
-     * 检查输入的数据是否合法,当前检查数据是否是手机号码
-     *
-     * @param data 账号
-     * @return true:账号格式有效; false:给出相应的错误提示
-     */
-    public static boolean checkIsPhone(Context context, String data) {
-        if (TextUtils.isEmpty(data)) {
-            return false;
-        }
-        String str1 = "^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$";
-        Pattern p = Pattern.compile(str1);
-        Matcher m = p.matcher(data);
-        if (!m.matches()) {
-            return false;
-        }
-        return true;
-
     }
 
 
@@ -317,7 +283,7 @@ public class Tools {
         String androidId = "" + android.provider.Settings.Secure.getString(context.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
 
         UUID deviceUuid = new UUID(androidId.hashCode(), ((long) imie.hashCode() << 32) | tmSerial.hashCode());
-        return modernmedia.com.cn.corelib.widget.MD5.MD5Encode(deviceUuid.toString());
+        return MD5.MD5Encode(deviceUuid.toString());
     }
 
     /**
@@ -438,5 +404,100 @@ public class Tools {
         } else {
             iv.setScaleType(ImageView.ScaleType.FIT_XY);
         }
+    }
+
+    /**
+     * 检查输入的数据是否合法,当前检查数据是否是邮箱形式（手机号码）及是否为null或者空
+     *
+     * @param data 账号
+     * @return true:账号格式有效; false:给出相应的错误提示
+     */
+    public static boolean checkIsEmailOrPhone(Context context, String data) {
+        if (TextUtils.isEmpty(data)) {
+            String text = context.getString(R.string.msg_login_email_null);
+            Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        boolean ifEmail = true, ifPhone = true;
+        data = data.trim();
+        // 检查账号是否是邮箱格式
+        String str = "^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]" + "{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$";
+        Pattern pattern = Pattern.compile(str);
+        Matcher matcher = pattern.matcher(data);
+        if (!matcher.matches()) {
+            ifEmail = false;
+        }
+        // 检查账号是否是电话号码格式
+        ifPhone = checkIsPhone(context, data);
+
+        if (!(ifEmail || ifPhone)) {
+            String text = context.getString(R.string.msg_login_email_error);
+            Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+        }
+
+        return ifEmail || ifPhone;
+    }
+
+
+    public static boolean checkIsEmail(Context context, String data) {
+        if (TextUtils.isEmpty(data)) {
+            String text = context.getString(R.string.msg_login_email_null);
+            Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        boolean ifEmail = true;
+        data = data.trim();
+        // 检查账号是否是邮箱格式
+        String str = "^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]" + "{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$";
+        Pattern pattern = Pattern.compile(str);
+        Matcher matcher = pattern.matcher(data);
+        if (!matcher.matches()) {
+            ifEmail = false;
+        }
+        return ifEmail;
+    }
+
+    /**
+     * 检查输入的数据是否合法,当前检查数据是否是手机号码
+     *
+     * @param data 账号
+     * @return true:账号格式有效; false:给出相应的错误提示
+     */
+    public static boolean checkIsPhone(Context context, String data) {
+        //        String str1 = "^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$";
+        //        Pattern p = Pattern.compile(str1);
+        //        Matcher m = p.matcher(data);
+        //        if (!m.matches()) {
+        //            return false;
+        //        }
+        if (data.length() == 11 && !data.contains("@") && !(Pattern.compile("[a-zA-z]").matcher(data).find()))
+            return true;
+        else return false;
+
+    }
+
+    /**
+     * 检查输入的密码是否合法,当前只检查是否为null或者空
+     *
+     * @param password 密码
+     * @return true:密码格式有效; false:给出相应的错误提示
+     */
+    public static boolean checkPasswordFormat(Context context, String password) {
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(context, R.string.msg_login_pwd_null, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 获取设备ID
+     *
+     * @param context
+     * @return
+     */
+    public static String getDeviceId(Context context) {
+        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        return telephonyManager.getDeviceId();
     }
 }

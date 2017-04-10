@@ -15,4 +15,5 @@
     <color name="red">#cd3333</color>
 
     <color name="gray_dark">#ff4b4b4b</color>
+    <color name="title_bar">#FFFAFAFA</color>
 </resources>

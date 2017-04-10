@@ -1,6 +1,7 @@
 package modernmedia.com.cn.corelib;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -10,24 +11,23 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 /**
  * Created by Eva. on 17/3/17.
  */
 
-public class BaseActivity extends Activity implements View.OnClickListener{
+public class BaseActivity extends Activity implements View.OnClickListener {
     /**
      * 网页跳转uri
      */
     protected String fromHtmlUri = "";
 
-    private RelativeLayout process_layout;
-    private ProgressBar loading;
-    private ImageView error;
+    private Dialog dialog;
+
+    //    private RelativeLayout process_layout;
+    //    private ProgressBar loading;
+    //    private ImageView error;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,13 +70,42 @@ public class BaseActivity extends Activity implements View.OnClickListener{
      * 显示loading图标
      */
     public void showLoading() {
-        if (process_layout == null) {
-            System.out.println("未初始化process!!");
-            return;
+        //        if (process_layout == null) {
+        //            System.out.println("未初始化process!!");
+        //            return;
+        //        }
+        //        process_layout.setVisibility(View.VISIBLE);
+        //        loading.setVisibility(View.VISIBLE);
+        //        error.setVisibility(View.GONE);
+    }
+
+    /**
+     * 悬浮的dialog
+     *
+     * @param flag
+     */
+    public void showLoadingDialog(boolean flag) {
+        if (flag) {
+            if (dialog == null) {
+                dialog = new Dialog(this, R.style.NobackDialog);
+                dialog.setContentView(R.layout.processbar);
+                dialog.setCancelable(true);
+            }
+            try {
+                dialog.show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.cancel();
+                    dialog = null;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        process_layout.setVisibility(View.VISIBLE);
-        loading.setVisibility(View.VISIBLE);
-        error.setVisibility(View.GONE);
     }
 
     public void showToast(String txt) {
@@ -93,30 +122,32 @@ public class BaseActivity extends Activity implements View.OnClickListener{
      * 显示错误提示
      */
     public void showError() {
-        if (process_layout == null) {
-            System.out.println("未初始化process!!");
-            return;
-        }
-        process_layout.setVisibility(View.VISIBLE);
-        loading.setVisibility(View.GONE);
-        error.setVisibility(View.VISIBLE);
+        //        if (process_layout == null) {
+        //            System.out.println("未初始化process!!");
+        //            return;
+        //        }
+        //        process_layout.setVisibility(View.VISIBLE);
+        //        loading.setVisibility(View.GONE);
+        //        error.setVisibility(View.VISIBLE);
     }
+    //
 
     /**
      * 隐藏process_layout
      */
     public void disProcess() {
-        if (process_layout == null) {
-            System.out.println("未初始化process!!");
-            return;
-        }
-        process_layout.setVisibility(View.GONE);
-        loading.setVisibility(View.GONE);
-        error.setVisibility(View.GONE);
+        //        if (process_layout == null) {
+        //            System.out.println("未初始化process!!");
+        //            return;
+        //        }
+        //        process_layout.setVisibility(View.GONE);
+        //        loading.setVisibility(View.GONE);
+        //        error.setVisibility(View.GONE);
     }
 
     /**
      * 用于给子类继承点击事件
+     *
      * @param view
      */
     @Override

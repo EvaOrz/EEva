@@ -46,7 +46,7 @@ public class WBUri {
         }
 
         if (scheme.equals("slate")) {
-            //            UriParse.clickSlate(mContext, uriStr, new Entry[]{new ArticleItem()}, null, new Class<?>[0]);
+            //                        UriParse.clickSlate(mContext, uriStr, new Entry[]{new ArticleItem()}, null, new Class<?>[0]);
             return false;
         }
         Log.e("未能识别的uri  --1 ", uriStr);

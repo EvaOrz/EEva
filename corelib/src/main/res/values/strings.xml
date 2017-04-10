@@ -102,4 +102,71 @@
     <string name="add_title">添加新的观展行程</string>
     <string name="add_date">观展日期</string>
 
+
+    <!--个人中心-->
+    <string name="usercenter">个人中心</string>
+    <string name="real_name">真实姓名</string>
+    <string name="sign">个性签名</string>
+    <string name="birthday">生日</string>
+    <string name="telephone">手机号码</string>
+    <string name="address">地址</string>
+    <string name="email_ch">邮箱</string>
+    <string name="banded">已绑定账号</string>
+    <string name="edit_pwd">修改密码</string>
+    <string name="logout">退出登录</string>
+    <string name="nickname">昵称</string>
+
+
+    <!---->
+    <string name="search">搜索</string>
+    <string name="search_hint">搜索您感兴趣的内容</string>
+
+    <string name="modern_login">Modern Passport登录</string>
+    <string name="modern_register">注册Modern Passport</string>
+    <string name="phone_login">短信验证码登录</string>
+    <string name="open_login">社交账号登录</string>
+    <string name="pwd_login">账号密码登录</string>
+    <string name="phone_login_mesage">未注册过的手机号将会自动创建为新账户</string>
+    <string name="input_phone">输入手机号</string>
+    <string name="input_verify_code">输入验证码</string>
+
+    <string name="register_to_login">已有账号？ 登录</string>
+    <string name="register_pwd_hint">设置密码（至少4位）</string>
+    <string name="register_announcation1">注册即是同意商业周刊的 用户协议</string>
+    <string name="register_announcation2"> 和 隐私声明</string>
+    <string name="code_register_announcation">验证码已发送至您的手机，请注意查收</string>
+    <string name="password_digits">_0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+    <string name="reset_pwd">重置密码</string>
+    <string name="reset_new_pwd">设置新密码</string>
+    <string name="msg_login_pwd_null">请输入密码</string>
+
+
+    <string name="msg_login_email_error">无效的邮箱地址或手机号码</string>
+    <string name="msg_login_email_null">请输入邮箱或手机号码</string>
+    <string name="msg_register_success">注册成功</string>
+    <string name="msg_register_failed">注册失败</string>
+    <string name="msg_login_success">登录成功</string>
+    <string name="msg_login_fail">登录失败</string>
+    <string name="msg_find_pwd_failed">找回密码失败</string>
+    <string name="msg_find_pwd_success">重置密码的邮件已经发送到 %s，如果 5 分钟后仍没有收到邮件，请联系 feedback@modernmedia.com.cn。</string>
+    <string name="msg_modify_success">修改成功</string>
+    <string name="msg_modify_failed">修改失败</string>
+
+    <string name="Weibo_Message_NULL">分享数据不能为空</string>
+    <string name="Weibo_Message_LONG">已超出140个字</string>
+    <string name="Weibo_Share_Success">微博分享成功</string>
+    <string name="Weibo_Share_Error">微博分享失败</string>
+    <string name="Weibo_Share_Repeat">已经分享过了</string>
+
+    <string name="save_picture_fail">图片保存失败,请检查网络</string>
+    <string name="msg_avatar_upload_success">头像上传成功</string>
+    <string name="msg_avatar_upload_failed">头像上传失败</string>
+    <string name="msg_avatar_get_failed">头像取得失败</string>
+
+    <string name="my_ing">正在进行</string>
+    <string name="my_ed">已经完成</string>
+    <string name="no_login">未登录</string>
+
+    <string name="list_hint">暂无规划中的展览行程/n 点击添加</string>
+    <string name="click_add"></string>
 </resources>

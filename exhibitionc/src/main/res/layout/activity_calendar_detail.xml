@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/detail_bg"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@drawable/main_bg_lingshi"
               android:fitsSystemWindows="true"
               android:orientation="vertical"
-              android:padding="10dp">
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,7 +19,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/white_10radius_corner_bg"
-            android:orientation="vertical"></LinearLayout>
+            android:orientation="vertical">
+
+            <modernmedia.com.cn.exhibitioncalendar.view.CommonWebView
+                android:id="@+id/detail_webview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"

@@ -2,9 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/main_bg"
                 android:layout_width="match_parent"
-                android:fitsSystemWindows="true"
                 android:layout_height="match_parent"
                 android:background="@drawable/main_bg_lingshi"
+                android:fitsSystemWindows="true"
     >
 
     <android.support.v4.view.ViewPager
@@ -54,14 +54,15 @@
                 android:id="@+id/main_weather_img"
                 android:layout_width="15dp"
                 android:layout_height="15dp"
-                android:src="@mipmap/baoxue"/>
+                />
 
             <TextView
                 android:id="@+id/main_weather_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="7dp"
-                android:text="北京 多云转晴 24℃-28.5℃ 微风小于三级"
+                android:ellipsize="marquee"
+                android:lines="1"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_12"/>
 

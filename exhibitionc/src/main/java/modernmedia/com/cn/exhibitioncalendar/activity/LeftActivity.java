@@ -45,7 +45,7 @@ public class LeftActivity extends BaseActivity {
                 startActivity(new Intent(LeftActivity.this, SettingActivity.class));
                 break;
             case R.id.left_sousuo:
-                startActivity(new Intent(LeftActivity.this, SettingActivity.class));
+                startActivity(new Intent(LeftActivity.this, SearchActivity.class));
                 break;
             case R.id.all_zhanlan:
                 startActivity(new Intent(LeftActivity.this, CalendarListActivity.class));
@@ -59,7 +59,7 @@ public class LeftActivity extends BaseActivity {
             case R.id.book_iart:
                 break;
             case R.id.about_us:
-                startActivity(new Intent(LeftActivity.this, SettingActivity.class));
+                startActivity(new Intent(LeftActivity.this, AboutActivity.class));
                 break;
 
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -13,6 +14,8 @@ import java.util.List;
 import modernmedia.com.cn.corelib.model.Entry;
 import modernmedia.com.cn.corelib.util.Tools;
 import modernmedia.com.cn.exhibitioncalendar.R;
+import modernmedia.com.cn.exhibitioncalendar.activity.AboutActivity;
+import modernmedia.com.cn.exhibitioncalendar.activity.CalendarDetailActivity;
 
 /**
  * 自定义协议解析类
@@ -45,6 +48,12 @@ import modernmedia.com.cn.exhibitioncalendar.R;
  */
 
 public class UriParse {
+    public static String DETAILCALENDAR = "detailCalendar";
+    public static String CATEGORY = "category";
+    public static String SEARCH = "search";
+    public static String APECIALSEARCH = "specialSearch";
+    public static String DETAILLIVECALENDAR = "detailLiveCalendar";
+
 
     /**
      * 普通列表点击
@@ -114,23 +123,35 @@ public class UriParse {
 
     public static void clickSlate(Context context, String link, Entry[] entries, View view, Class<?>... cls) {
         if (TextUtils.isEmpty(link)) {
-//            doLinkNull(context, entries, cls);
+            //            doLinkNull(context, entries, cls);
         } else if (link.toLowerCase().startsWith("http://") || link.toLowerCase().startsWith("https://")) {
             doLinkHttp(context, link);
-        }  else if (link.toLowerCase().startsWith("slate://")) {
+        } else if (link.toLowerCase().startsWith("slate://")) {
             List<String> list = parser(link);
-            String key = list.size() > 0 ? list.get(0).toLowerCase() : "";
-            if (list.size() > 1) {
+            String key = list.size() > 0 ? list.get(0) : "";
+            if (key.equals(CATEGORY)) {
 
+            } else if (key.equals(DETAILCALENDAR)) {
+                Intent i = new Intent(context, CalendarDetailActivity.class);
+                i.putExtra(DETAILCALENDAR, detailCalendar(link));
+                context.startActivity(i);
             }
-        } else if (link.startsWith("tel://"))
-
-        {
+        } else if (link.startsWith("tel://")) {
             String arr[] = link.split("tel://");
             if (arr.length == 2) doCall(context, arr[1]);
         }
 
     }
+
+    // slate://detailCalendar/1075
+    private static String detailCalendar(String uri) {
+        String[] array = uri.split("detailCalendar/");
+        if (array.length == 2) {
+            return array[1];
+        }
+        return "";
+    }
+
     /**
      * 跳转到拨号页面
      *
@@ -160,6 +181,23 @@ public class UriParse {
         Uri uri = Uri.parse(link);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         ((Activity) context).startActivity(intent);
+    }
+
+
+    /**
+     * 跳转到内部浏览器
+     *
+     * @param link
+     */
+    public static void doLinkWeb(Context context, String link, Class<?>... cls) {
+
+        Log.e("跳转到内部浏览器", link);
+
+        Intent intent = new Intent(context, AboutActivity.class);
+        intent.putExtra("inapp_webview_url", link);
+        context.startActivity(intent);
+        if (context instanceof Activity)
+            ((Activity) context).overridePendingTransition(R.anim.down_in, R.anim.hold);
     }
 
 

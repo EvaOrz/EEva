@@ -61,6 +61,10 @@ public class DataHelper {
     public static final String ADV_TIME = "adv_time";//入版广告时间
     public static final String UUID = "uuid";
 
+    public static final String  LAST_LOGIN_USERNAME = "last_login_username";// 上次登录账号
+    public static final String NEW_LOGIN = "new_login";//整合第三方
+    public static final String NEW_LOGIN_TIME = "new_login_time";//整合第三方取消时间
+
     /**
      * 广告更新时间
      */
@@ -319,5 +323,54 @@ public class DataHelper {
         editor.putString(UUID, uuid);
         editor.commit();
     }
+
+
+    /**
+     * 存上次登录账号
+     * @param context
+     * @param name
+     */
+    public static void setLastLoginUsername(Context context,String name){
+        Editor editor = getPref(context).edit();
+        editor.putString(LAST_LOGIN_USERNAME, name);
+        editor.commit();
+    }
+
+    /**
+     * 取上次登录账号
+     * @param context
+     * @return
+     */
+    public static String getLastLoginUsername(Context context) {
+        return getPref(context).getString(LAST_LOGIN_USERNAME, "");
+    }
+
+    /**
+     * 存储是否点击新的登录接口
+     *
+     * @param context
+     */
+    public static void saveHasSync(Context context, boolean isNewLogin) {
+        Editor editor = getPref(context).edit();
+        editor.putBoolean(NEW_LOGIN, isNewLogin);
+        editor.commit();
+    }
+
+    /**
+     * 取得是否同步过新的微信账号
+     *
+     * @param context
+     * @return
+     */
+    public static boolean getSync(Context context) {
+        return getPref(context).getBoolean(NEW_LOGIN, false);
+    }
+
+    public static void clearHasSync(Context context) {
+        Editor editor = getPref(context).edit();
+        editor.putBoolean(NEW_LOGIN, false);
+        editor.commit();
+    }
+
 
 }

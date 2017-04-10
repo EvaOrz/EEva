@@ -8,6 +8,9 @@ import modernmedia.com.cn.corelib.http.BaseApi.FetchApiType;
 import modernmedia.com.cn.corelib.listener.DataCallBack;
 import modernmedia.com.cn.corelib.listener.FetchEntryListener;
 import modernmedia.com.cn.corelib.model.Entry;
+import modernmedia.com.cn.corelib.model.UserModel;
+
+import static modernmedia.com.cn.corelib.http.BaseApi.FetchApiType.USE_HTTP_ONLY;
 
 /**
  * Created by Eva. on 17/3/30.
@@ -86,16 +89,27 @@ public class ApiController {
     }
 
     /**
+     * 获取展览详情页面
+     *
+     * @param c
+     * @param id
+     * @param fetchEntryListener
+     */
+    public void getDetail(Context c, String id, FetchEntryListener fetchEntryListener) {
+        GetDetailApi getDetailApi = new GetDetailApi(c, id);
+        doPostRequest(getDetailApi, getDetailApi.getDetail(), USE_HTTP_ONLY, fetchEntryListener);
+    }
+
+    /**
      * 登录
      *
-     * @param context
      * @param userName
      * @param password
      * @param listener
      */
-    public void login(Context context, String userName, String password, FetchEntryListener listener) {
-        LoginApi loginApi = new LoginApi();
-        doPostRequest(loginApi, loginApi.getUserModel(), FetchApiType.USE_HTTP_ONLY, listener);
+    public void login(String userName, String password, FetchEntryListener listener) {
+        LoginApi loginApi = new LoginApi(userName, password);
+        doPostRequest(loginApi, loginApi.getUserModel(), USE_HTTP_ONLY, listener);
     }
 
     /**
@@ -103,9 +117,135 @@ public class ApiController {
      *
      * @param listener
      */
-    public void getAdvList(FetchApiType fetchApiType ,FetchEntryListener listener) {
+    public void getAdvList(FetchApiType fetchApiType, FetchEntryListener listener) {
         GetAdvListApi getAdvListApi = new GetAdvListApi();
         doGetRequest(getAdvListApi, getAdvListApi.getAdvList(), fetchApiType, listener);
     }
+
+    /**
+     * 搜索
+     *
+     * @param c
+     * @param k
+     * @param listener
+     */
+    public void search(Context c, String k, FetchEntryListener listener) {
+        SearchApi searchApi = new SearchApi(c, k);
+        doPostRequest(searchApi, searchApi.getCalendarListModel(), USE_HTTP_ONLY, listener);
+    }
+
+    /**
+     * @param c
+     * @param k
+     * @param listener
+     */
+    public void getWeather(Context c, String k, FetchEntryListener listener) {
+        GetWeatherApi getWeatherApi = new GetWeatherApi(c, k);
+        doPostRequest(getWeatherApi, getWeatherApi.getData(), USE_HTTP_ONLY, listener);
+    }
+
+    /**
+     * 发送验证码
+     *
+     * @param phone
+     * @param listener
+     */
+    public void getVerifyCode(String phone, FetchEntryListener listener) {
+        GetVerifyCodeApi operate = new GetVerifyCodeApi(phone);
+        doPostRequest(operate, operate.getCode(), USE_HTTP_ONLY, listener);
+    }
+
+    /**
+     * 获取绑定状态
+     *
+     * @param uid
+     * @param token
+     * @param listener
+     */
+    public void getBandStatus(String uid, String token, FetchEntryListener listener) {
+        GetBandStatusApi operate = new GetBandStatusApi(uid, token);
+        doPostRequest(operate, operate.getStatus(), USE_HTTP_ONLY, listener);
+    }
+
+    /**
+     * 获取用户绑定信息
+     */
+    public void bandAccount(String uid, String token, int bindType, String userName, String code, FetchEntryListener listener) {
+        BandAccountApi operate = new BandAccountApi(uid, bindType, token, userName, code);
+        doPostRequest(operate, operate.getError(), USE_HTTP_ONLY, listener);
+    }
+
+    /**
+     * 用户注册
+     *
+     * @param userName 用户名称
+     * @param password 密码
+     * @param listener view数据回调接口
+     */
+    public void register(String userName, String password, String code, String phone, String nick, FetchEntryListener listener) {
+        RegisterApi operate = new RegisterApi(userName, password, code, phone, nick);
+        doPostRequest(operate, operate.getUser(), USE_HTTP_ONLY, listener);
+    }
+
+    /**
+     * 忘记密码
+     *
+     * @param listener view数据回调接口
+     */
+    public void getPassword(String userName, String code, String newPwd, FetchEntryListener listener) {
+        FindPasswordApi operate = new FindPasswordApi(userName, code, newPwd);
+        doPostRequest(operate, operate.getData(), USE_HTTP_ONLY, listener);
+    }
+
+    /**
+     * 上传用户头像
+     *
+     * @param imagePath 头像存储在本地的路径
+     * @param listener  view数据回调接口
+     */
+    public void uploadUserAvatar(String imagePath, FetchEntryListener listener) {
+        UploadAvaterApi operate = new UploadAvaterApi(imagePath);
+        doPostRequest(operate, operate.getUploadResult(), USE_HTTP_ONLY, listener);
+    }
+
+    /**
+     * 开放平台(新浪微博、QQ等)账号登录
+     *
+     * @param user     用户信息
+     * @param avatar   服务器相对地址
+     * @param type     平台类型,目前0:普通登录；1：新浪微博；2：腾讯qq；3：微信4Facebook；5phone
+     * @param listener view数据回调接口
+     */
+    public void openLogin(Context context, UserModel user, String avatar, String code, int type, FetchEntryListener listener) {
+        OpenLoginApi operate = new OpenLoginApi(context, user, avatar, code, type);
+        doPostRequest(operate, operate.getUser(), USE_HTTP_ONLY, listener);
+    }
+
+    /**
+     * 修改用户资料
+     *
+     * @param uid      uid
+     * @param token    用户token
+     * @param userName 用户名
+     * @param nickName 昵称
+     * @param url      图片的相对地址(通过上传头像获得)
+     * @param password 用户登录密码
+     * @param desc     用户登录密码
+     * @param listener view数据回调接口
+     */
+    public void modifyUserInfo(String uid, String token, String userName, String nickName, String url, String password, String desc, boolean pushEmail, FetchEntryListener listener) {
+        ModifyUserInfoApi operate = new ModifyUserInfoApi(uid, token, userName, nickName, url, password, desc, pushEmail);
+        doPostRequest(operate, operate.getUser(), USE_HTTP_ONLY, listener);
+    }
+
+    /**
+     * @param c
+     * @param page
+     */
+    public void getMyList(Context c, String page, int type, FetchEntryListener listener) {
+        GetUserFavListApi getUserFavListApi = new GetUserFavListApi(c, page, type);
+        doPostRequest(getUserFavListApi, getUserFavListApi.getData(), USE_HTTP_ONLY, listener);
+    }
+
 
 }

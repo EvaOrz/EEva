@@ -74,7 +74,6 @@ public class WBWebView extends WebView {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Log.e("ssknkacjksnc", "wbwebview");
                 mWbUri.canOpenURI(url);
                 return true;
             }
