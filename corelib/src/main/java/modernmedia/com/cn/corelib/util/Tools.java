@@ -14,6 +14,7 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.drawable.NinePatchDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -33,13 +34,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import modernmedia.com.cn.corelib.BaseActivity;
+import modernmedia.com.cn.corelib.CommonApplication;
 import modernmedia.com.cn.corelib.R;
 import modernmedia.com.cn.corelib.db.DataHelper;
+import modernmedia.com.cn.corelib.listener.ImageDownloadStateListener;
+import modernmedia.com.cn.corelib.model.UserModel;
 
 import static android.widget.ImageView.ScaleType.CENTER_CROP;
 import static android.widget.ImageView.ScaleType.CENTER_INSIDE;
@@ -499,5 +504,59 @@ public class Tools {
     public static String getDeviceId(Context context) {
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return telephonyManager.getDeviceId();
+    }
+
+    /**
+     * 设置头像
+     *
+     * @param user
+     * @param avatar
+     */
+    public static void setAvatar(Context context, UserModel user, ImageView avatar) {
+        if (user != null) {
+            setAvatar(context, user.getAvatar(), avatar);
+        } else {
+            setAvatar(context, "", avatar);
+        }
+    }
+
+    /**
+     * 设置头像
+     *
+     * @param url
+     * @param avatar
+     */
+    public static void setAvatar(Context context, String url, final ImageView avatar) {
+        if (TextUtils.isEmpty(url)) {
+            return;
+        }
+        CommonApplication.finalBitmap.display(url, new ImageDownloadStateListener() {
+
+            @Override
+            public void loading() {
+
+            }
+
+            @Override
+            public void loadOk(Bitmap bitmap, NinePatchDrawable drawable, byte[] gifByte) {
+                transforCircleBitmap(bitmap, avatar);
+            }
+
+            @Override
+            public void loadError() {
+            }
+        });
+    }
+
+    /**
+     * 通过时区获取当前时间
+     */
+
+    public static String getTimeFromZone(String zone) {
+        SimpleDateFormat dff = new SimpleDateFormat("HH:mm");
+        dff.setTimeZone(TimeZone.getTimeZone(zone));
+        String ee = dff.format(new Date());
+        return ee;
+
     }
 }

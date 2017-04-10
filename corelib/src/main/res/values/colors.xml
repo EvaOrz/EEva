@@ -6,6 +6,7 @@
 
 
     <color name="white">#ffffffff</color>
+    <color name="translucent_white">#7fffffff</color>
     <color name="black">#000000</color>
     <color name="gray_line">#dbdbdb</color>
 

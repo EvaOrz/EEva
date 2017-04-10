@@ -15,6 +15,7 @@ import modernmedia.com.cn.corelib.http.HttpRequestController.RequestThread;
 import modernmedia.com.cn.corelib.listener.DataCallBack;
 import modernmedia.com.cn.corelib.listener.FetchDataListener;
 import modernmedia.com.cn.corelib.model.UserModel;
+import modernmedia.com.cn.corelib.util.DESCoder;
 import modernmedia.com.cn.corelib.util.TimeCollectUtil;
 import modernmedia.com.cn.corelib.util.Tools;
 
@@ -31,7 +32,8 @@ public abstract class BaseApi {
     private DataCallBack callBack;
     protected FetchApiType mFetchApiType = FetchApiType.USE_HTTP_FIRST;
 
-    private boolean isNeedEncode = false;
+    private boolean isNeedBaseEncode = false;
+    private boolean isNeedDesEncode = false;
     public static final String KEY = "R3%3jg*3";
 
     /**
@@ -75,14 +77,17 @@ public abstract class BaseApi {
      */
     protected abstract String getUrl();
 
-    public void setIsNeedEncode(boolean isNeedEncode) {
-        this.isNeedEncode = isNeedEncode;
+    public void setIsNeedBaseEncode(boolean isNeedEncode) {
+        this.isNeedBaseEncode = isNeedEncode;
     }
 
+    public void setIsNeedDesEncode(boolean isNeedEncode) {
+        this.isNeedDesEncode = isNeedEncode;
+    }
     /**
      * 由子类提供
      */
-    protected JSONObject getPostParams() {
+    protected String getPostParams() {
         return null;
     }
 
@@ -215,10 +220,13 @@ public abstract class BaseApi {
                         data = "{}";
                     }
                     JSONObject obj;
-                    if (isNeedEncode) {
+                    if (isNeedBaseEncode) {
                         String msg = new String(Base64.decode(data.getBytes(), Base64.DEFAULT));
                         obj = new JSONObject(msg);
-                    } else obj = new JSONObject(data);
+                    } else if(isNeedDesEncode){
+                        String msg = DESCoder.decode(KEY, data);
+                        obj = new JSONObject(msg);
+                    }else obj = new JSONObject(data);
                     if (isNull(obj)) {
                         Log.e("********", "网络出错222" + getUrl());
                         // showToast(R.string.net_error);

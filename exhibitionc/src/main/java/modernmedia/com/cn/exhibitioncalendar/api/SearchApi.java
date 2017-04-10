@@ -16,29 +16,29 @@ import modernmedia.com.cn.exhibitioncalendar.model.CalendarListModel;
 
 public class SearchApi extends BaseApi {
 
-    private JSONObject postObject = new JSONObject();
+    private String post;
     private CalendarListModel calendarListModel = new CalendarListModel();
 
     public SearchApi(Context c, String keyword) {
-
+        JSONObject postObject = new JSONObject();
         try {
             addPostParams(postObject, "appid", MyApplication.APPID + "");
             addPostParams(postObject, "version", Tools.getAppVersion(c));
             addPostParams(postObject, "keyword", keyword);
 
-            setPostParams(postObject);
+            setPostParams(postObject.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    protected JSONObject getPostParams() {
-        return postObject;
+    protected String getPostParams() {
+        return post;
     }
 
-    protected void setPostParams(JSONObject params) {
-        this.postObject = params;
+    protected void setPostParams(String params) {
+        this.post = params;
     }
 
     @Override

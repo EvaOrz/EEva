@@ -15,10 +15,10 @@ import modernmedia.com.cn.exhibitioncalendar.MyApplication;
 public class LoginApi extends BaseApi {
 
     private UserModel user = new UserModel();
-    private JSONObject postObject = new JSONObject();
+    private String postObject ;
 
     protected LoginApi( String userName, String password) {
-        setIsNeedEncode(true);
+        setIsNeedDesEncode(true);
         JSONObject object = new JSONObject();
         try {
             // username有邮箱check，可以不编码
@@ -26,8 +26,7 @@ public class LoginApi extends BaseApi {
             // 密码在输入上已经做了限制，也可以不编码
             object.put("password", password);
             object.put("appid", MyApplication.APPID + "");
-            String msg = DESCoder.encode(KEY, object.toString());
-            addPostParams(postObject, "data", msg);
+            postObject  = DESCoder.encode(KEY, object.toString());
             setPostParams(postObject);
         } catch (Exception e) {
             e.printStackTrace();
@@ -35,11 +34,11 @@ public class LoginApi extends BaseApi {
 
     }
     @Override
-    protected JSONObject getPostParams() {
+    protected String getPostParams() {
         return postObject;
     }
 
-    protected void setPostParams(JSONObject params) {
+    protected void setPostParams(String params) {
         this.postObject = params;
     }
 

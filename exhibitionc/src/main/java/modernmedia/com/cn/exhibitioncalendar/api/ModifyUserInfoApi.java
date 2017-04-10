@@ -18,7 +18,7 @@ import modernmedia.com.cn.exhibitioncalendar.MyApplication;
  */
 public class ModifyUserInfoApi extends BaseApi {
     // post 参数设置
-    private JSONObject object = new JSONObject();
+    private String post;
     private UserModel user = new UserModel();
 
     /**
@@ -36,7 +36,7 @@ public class ModifyUserInfoApi extends BaseApi {
      */
     protected ModifyUserInfoApi(String uid, String token, String userName, String nickName, String url, String password, String desc, boolean pushEmail) {
         super();
-
+        JSONObject object = new JSONObject();
         try {
             object.put("uid", uid);
             object.put("token", token);
@@ -61,7 +61,7 @@ public class ModifyUserInfoApi extends BaseApi {
                 }
             }
             Log.v("avatar", object.toString());
-            setPostParams(object);
+            setPostParams(object.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -69,12 +69,12 @@ public class ModifyUserInfoApi extends BaseApi {
     }
 
     @Override
-    protected JSONObject getPostParams() {
-        return object;
+    protected String getPostParams() {
+        return post;
     }
 
-    protected void setPostParams(JSONObject params) {
-        this.object = params;
+    protected void setPostParams(String params) {
+        this.post = params;
     }
 
 
@@ -85,8 +85,8 @@ public class ModifyUserInfoApi extends BaseApi {
 
     @Override
     protected void handler(JSONObject jsonObject) {
-        if (object == null) return;
-        user = UserModel.parseUserModel(user, object);
+        if (jsonObject == null) return;
+        user = UserModel.parseUserModel(user, jsonObject);
     }
 
     public UserModel getUser() {

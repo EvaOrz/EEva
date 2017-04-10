@@ -352,7 +352,7 @@ public class LoginActivity extends BaseActivity {
         // 返回上一级界面
 
         showToast(R.string.msg_login_success);
-
+        finish();
 
     }
 

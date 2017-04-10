@@ -1,17 +1,24 @@
 package modernmedia.com.cn.exhibitioncalendar.view;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import modernmedia.com.cn.corelib.BaseActivity;
+import modernmedia.com.cn.corelib.util.ParseUtil;
+import modernmedia.com.cn.corelib.util.Tools;
+import modernmedia.com.cn.exhibitioncalendar.MyApplication;
+import modernmedia.com.cn.exhibitioncalendar.R;
+import modernmedia.com.cn.exhibitioncalendar.activity.CalendarDetailActivity;
+import modernmedia.com.cn.exhibitioncalendar.api.UrlMaker;
+import modernmedia.com.cn.exhibitioncalendar.model.TagListModel.HouseOrCity;
+import modernmedia.com.cn.exhibitioncalendar.util.UriParse;
 
 /**
  * top_menu view
@@ -23,7 +30,6 @@ public class MainCityListScrollView extends RelativeLayout {
     private Context mContext;
     private HorizontalScrollView scrollView;
     private LinearLayout layout;
-    private List<View> checkSelectView = new ArrayList<View>();// 记录栏目列表
     /**
      * 由于可能是独立栏目，并且绑定在列表上，导致每次切换的时候都还原，所以设置成静态变量
      */
@@ -36,10 +42,6 @@ public class MainCityListScrollView extends RelativeLayout {
         init();
     }
 
-    public void setCorruntPosition(int p) {
-        selectPosition = p;
-    }
-
     public MainCityListScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.mContext = context;
@@ -48,56 +50,46 @@ public class MainCityListScrollView extends RelativeLayout {
 
     private void init() {
         scrollView = new HorizontalScrollView(mContext);
+        layout = new LinearLayout(mContext);
+
+        scrollView.addView(layout);
         addView(scrollView);
 
 
     }
 
+    public void setData(List<HouseOrCity> tagInfos) {
+        if (!ParseUtil.listNotNull(tagInfos)) return;
+        layout.removeAllViews();
+        scrollView.removeAllViews();
 
-    /**
-     * 设置子栏目选中状态
-     *
-     * @param currTagName
-     */
-    @SuppressLint("NewApi")
-    // int[] location = new int[2];
-    // child.getLocationOnScreen(location);
-    // int x = location[0];
-    public void setSelectedItemForChild(String currTagName) {
-        if (layout == null || layout.getChildCount() == 0) return;
-        int screenHalf = 0;// 屏幕宽度的一半
-        if (mContext instanceof BaseActivity)
-            screenHalf = ((BaseActivity) mContext).getWindowManager().getDefaultDisplay().getWidth() / 2 - 44 * 2 - 20;
-        for (int i = 0; i < layout.getChildCount(); i++) {
+        for (int i = 0; i < tagInfos.size(); i++) {
+            final int position = i;
+            final HouseOrCity tagInfo = tagInfos.get(i);
+            ViewHolder viewHolder = ViewHolder.get(mContext, null, R.layout.item_city);
 
-            View child = layout.getChildAt(i);
-            //            if (child.getTag() instanceof TagInfo) {
-            //
-            //                // 选中状态
-            //                if (((TagInfo) child.getTag()).getTagName().equals(currTagName)) {
-            //                    selectPosition = i;
-            //                    // 商周设置为 栏目颜色
-            //                    if (DataHelper.columnColorMap.containsKey(currTagName) && ConstData.getAppId() == 1) {
-            //                        int color = DataHelper.columnColorMap.get(currTagName);
-            //                        TextView t = (TextView) ((LinearLayout) child).getChildAt(0);
-            //                        t.setBackgroundColor(color);
-            //                        t.setTextColor(Color.WHITE);
-            //                    } else V.setViewBack(child, "#323232");
-            //                    int scrollX = scrollView.getScrollX();
-            //                    int left = child.getLeft();
-            //                    int right = child.getRight();
-            //                    int leftScreen = left - scrollX + (right - left) / 2;
-            //                    scrollView.smoothScrollBy((leftScreen - screenHalf), 0);
-            //                } else {
-            //                    if (ConstData.getAppId() == 1) {
-            //                        TextView t = (TextView) ((LinearLayout) child).getChildAt(0);
-            //                        V.setViewBack(t, "#fff0f0f0");
-            //                        t.setTextColor(Color.BLACK);
-            //                    } else V.setViewBack(child, "#191919");
-            //
-            //                }
-            //            }
+            View icon = viewHolder.getView(R.id.city_icon);
+            TextView name = viewHolder.getView(R.id.city_name);
+            TextView time = viewHolder.getView(R.id.city_time);
+
+            name.setText(tagInfo.getTagName());
+            time.setText(Tools.getTimeFromZone(tagInfo.getTimeZone()));
+            MyApplication.finalBitmap.display(icon, UrlMaker.HOST + tagInfo.getBackImg().getSourceV6PlusImg());
+            viewHolder.getConvertView().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(mContext, CalendarDetailActivity.class);
+                    i.putExtra(UriParse.DETAILCALENDAR, tagInfo.getTagId());
+                    mContext.startActivity(i);
+                }
+            });
+
+
+            layout.addView(viewHolder.getConvertView());
         }
+        scrollView.addView(layout);
+
     }
+
 }
 

@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -17,8 +18,8 @@ import modernmedia.com.cn.corelib.db.DataHelper;
 import modernmedia.com.cn.corelib.listener.FetchEntryListener;
 import modernmedia.com.cn.corelib.model.Entry;
 import modernmedia.com.cn.corelib.model.UserModel;
+import modernmedia.com.cn.corelib.util.Tools;
 import modernmedia.com.cn.corelib.widget.RoundImageView;
-import modernmedia.com.cn.exhibitioncalendar.MyApplication;
 import modernmedia.com.cn.exhibitioncalendar.R;
 import modernmedia.com.cn.exhibitioncalendar.adapter.ExhibitionAdapter;
 import modernmedia.com.cn.exhibitioncalendar.api.ApiController;
@@ -36,7 +37,8 @@ public class MyListActivity extends BaseActivity {
     private TextView nickname, clickAdd;
     private UserModel userModel;
     private ListView listView;
-    private ExhibitionAdapter exhibitionAdapter ;
+    private ImageView cover;
+    private ExhibitionAdapter exhibitionAdapter;
     private List<CalendarModel> calendarModels = new ArrayList<>();
 
     @Override
@@ -44,6 +46,18 @@ public class MyListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_list);
         initView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (userModel != null) {
+            Tools.setAvatar(this, userModel.getAvatar(), avatar);
+            nickname.setText(userModel.getNickName());
+//            MyApplication.finalBitmap.display(cover,userModel.get);
+
+            initData(1);
+        }
     }
 
     private void initView() {
@@ -59,11 +73,8 @@ public class MyListActivity extends BaseActivity {
         exhibitionAdapter = new ExhibitionAdapter(this);
         listView.setAdapter(exhibitionAdapter);
         clickAdd.setOnClickListener(this);
-        if (userModel != null) {
-            MyApplication.finalBitmap.display(avatar, userModel.getAvatar());
-            nickname.setText(userModel.getNickName());
-            initData(1);
-        }
+        cover = (ImageView) findViewById(R.id.l_cover);
+
     }
 
     private void initData(int type) {

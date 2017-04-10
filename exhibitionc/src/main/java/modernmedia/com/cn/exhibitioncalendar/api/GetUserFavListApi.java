@@ -16,13 +16,13 @@ import modernmedia.com.cn.exhibitioncalendar.model.CalendarListModel;
  */
 
 public class GetUserFavListApi extends BaseApi {
-    private JSONObject object = new JSONObject();
+    private String post;
     private CalendarListModel calendarListModel = new CalendarListModel();
     private int type;// 1：正在进行，2：已经过期
 
     public GetUserFavListApi(Context c, String page, int type) {
         this.type = type;
-
+        JSONObject object = new JSONObject();
         try {
             object.put("appid", MyApplication.APPID + "");
             object.put("version", Tools.getAppVersion(c));
@@ -30,19 +30,19 @@ public class GetUserFavListApi extends BaseApi {
             object.put("token", DataHelper.getToken(c));
             object.put("page", page);
 
-            setPostParams(object);
+            setPostParams(object.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    protected JSONObject getPostParams() {
-        return object;
+    protected String getPostParams() {
+        return post;
     }
 
-    protected void setPostParams(JSONObject params) {
-        this.object = params;
+    protected void setPostParams(String params) {
+        this.post = params;
     }
 
     @Override

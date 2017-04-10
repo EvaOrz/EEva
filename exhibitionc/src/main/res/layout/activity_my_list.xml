@@ -15,6 +15,7 @@
         >
 
         <ImageView
+            android:id="@+id/l_cover"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="centerCrop"
@@ -107,6 +108,11 @@
             android:text="@string/my_ed"
             android:textColor="@color/white"/>
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line_height"
+        android:background="@color/gray_line"/>
 
     <RelativeLayout
         android:layout_width="match_parent"

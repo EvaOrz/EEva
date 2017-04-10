@@ -17,11 +17,12 @@ import modernmedia.com.cn.exhibitioncalendar.MyApplication;
 
 public class RegisterApi extends BaseApi {
     private UserModel user = new UserModel();
-    private JSONObject object = new JSONObject();
+    private String post;
 
 
     protected RegisterApi(String userName, String password, String code, String phone, String nick) {
-        setIsNeedEncode(true);
+        setIsNeedDesEncode(true);
+        JSONObject object = new JSONObject();
         try {
             object.put("username", userName);
             object.put("password", password);
@@ -32,10 +33,8 @@ public class RegisterApi extends BaseApi {
             if (nick != null && nick.length() > 0) {// nick name
                 object.put("nickname", URLEncoder.encode(nick, "UTF-8"));
             }
-            String msg = DESCoder.encode(KEY, object.toString());
-            JSONObject j = new JSONObject();
-            j.put("data", j);
-            setPostParams(j);
+            post = DESCoder.encode(KEY, object.toString());
+            setPostParams(post);
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
@@ -49,17 +48,17 @@ public class RegisterApi extends BaseApi {
 
     @Override
     protected void handler(JSONObject jsonObject) {
-        if (object == null) return;
+        if (jsonObject == null) return;
         user = UserModel.parseUserModel(user, jsonObject);
     }
 
     @Override
-    protected JSONObject getPostParams() {
-        return object;
+    protected String getPostParams() {
+        return post;
     }
 
-    protected void setPostParams(JSONObject params) {
-        this.object = params;
+    protected void setPostParams(String params) {
+        this.post = params;
     }
 
     @Override

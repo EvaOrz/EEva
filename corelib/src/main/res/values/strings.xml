@@ -167,6 +167,8 @@
     <string name="my_ed">已经完成</string>
     <string name="no_login">未登录</string>
 
-    <string name="list_hint">暂无规划中的展览行程/n 点击添加</string>
+    <string name="list_hint">暂无规划中的展览行程\n 点击添加</string>
     <string name="click_add"></string>
+    <string name="look_detail">查看详情</string>
+
 </resources>

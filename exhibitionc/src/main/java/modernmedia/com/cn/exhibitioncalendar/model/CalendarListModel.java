@@ -9,7 +9,7 @@ import java.util.List;
 import modernmedia.com.cn.corelib.model.Entry;
 
 import static modernmedia.com.cn.exhibitioncalendar.model.CalendarListModel.CalendarModel.Coordinate.parseCoordinate;
-import static modernmedia.com.cn.exhibitioncalendar.model.CalendarListModel.CalendarModel.HouseOrCity.parseHouseOrCity;
+import static modernmedia.com.cn.exhibitioncalendar.model.TagListModel.HouseOrCity;
 
 /**
  * 展览model
@@ -23,6 +23,7 @@ public class CalendarListModel extends Entry {
     public static CalendarListModel parseCalendarListModel(CalendarListModel calendarListModel, JSONObject jsonObject) {
         List<CalendarModel> calendarModels = new ArrayList<>();
         JSONArray jsonArray = jsonObject.optJSONArray("item");
+        if (jsonArray == null) return null;
         for (int i = 0; i < jsonArray.length(); i++) {
             CalendarModel c = new CalendarModel();
             calendarModels.add(CalendarModel.parseCalendarModel(c, jsonArray.optJSONObject(i)));
@@ -295,76 +296,6 @@ public class CalendarListModel extends Entry {
             }
         }
 
-        public static class HouseOrCity extends Entry {
-            private String tagId = "";
-            private String tagName = "";
-            private String tagNameEn = "";
-            private String extension = "";
-            private int appid;
-            private int sort;
-
-            public HouseOrCity() {
-            }
-
-            public static HouseOrCity parseHouseOrCity(JSONObject jsonObject) {
-                HouseOrCity houseOrCity = new HouseOrCity();
-                houseOrCity.setTagId(jsonObject.optString("tag_id"));
-                houseOrCity.setTagName(jsonObject.optString("tag_name"));
-                houseOrCity.setTagNameEn(jsonObject.optString("tag_name_en"));
-                houseOrCity.setExtension(jsonObject.optString("extension"));
-                houseOrCity.setAppid(jsonObject.optInt("appid"));
-                houseOrCity.setSort(jsonObject.optInt("sort"));
-                return houseOrCity;
-            }
-
-            public String getTagId() {
-                return tagId;
-            }
-
-            public void setTagId(String tagId) {
-                this.tagId = tagId;
-            }
-
-            public String getTagName() {
-                return tagName;
-            }
-
-            public void setTagName(String tagName) {
-                this.tagName = tagName;
-            }
-
-            public String getTagNameEn() {
-                return tagNameEn;
-            }
-
-            public void setTagNameEn(String tagNameEn) {
-                this.tagNameEn = tagNameEn;
-            }
-
-            public String getExtension() {
-                return extension;
-            }
-
-            public void setExtension(String extension) {
-                this.extension = extension;
-            }
-
-            public int getAppid() {
-                return appid;
-            }
-
-            public void setAppid(int appid) {
-                this.appid = appid;
-            }
-
-            public int getSort() {
-                return sort;
-            }
-
-            public void setSort(int sort) {
-                this.sort = sort;
-            }
-        }
 
         public List<Coordinate> getCoordinates() {
             return coordinates;
@@ -374,7 +305,7 @@ public class CalendarListModel extends Entry {
             this.coordinates = coordinates;
         }
 
-        public List<HouseOrCity> getTypelist() {
+        public List<TagListModel.HouseOrCity> getTypelist() {
             return typelist;
         }
 
@@ -444,7 +375,8 @@ public class CalendarListModel extends Entry {
             List<HouseOrCity> list = new ArrayList<>();
             if (array == null || array.length() == 0) return list;
             for (int i = 0; i < array.length(); i++) {
-                list.add(parseHouseOrCity(array.optJSONObject(i)));
+                HouseOrCity houseOrCity = new HouseOrCity();
+                list.add(HouseOrCity.parseHouseOrCity(houseOrCity, array.optJSONObject(i)));
             }
             return list;
         }

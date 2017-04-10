@@ -10,6 +10,7 @@ import modernmedia.com.cn.corelib.listener.FetchEntryListener;
 import modernmedia.com.cn.corelib.model.Entry;
 import modernmedia.com.cn.corelib.model.UserModel;
 
+import static modernmedia.com.cn.corelib.http.BaseApi.FetchApiType.USE_CACHE_FIRST;
 import static modernmedia.com.cn.corelib.http.BaseApi.FetchApiType.USE_HTTP_ONLY;
 
 /**
@@ -245,6 +246,25 @@ public class ApiController {
     public void getMyList(Context c, String page, int type, FetchEntryListener listener) {
         GetUserFavListApi getUserFavListApi = new GetUserFavListApi(c, page, type);
         doPostRequest(getUserFavListApi, getUserFavListApi.getData(), USE_HTTP_ONLY, listener);
+    }
+
+    /**
+     * @param c
+     */
+    public void getCitys(Context c, FetchEntryListener listener) {
+        GetUserCitysApi getUserCitysApi = new GetUserCitysApi(c);
+        doPostRequest(getUserCitysApi, getUserCitysApi.getData(), USE_HTTP_ONLY, listener);
+    }
+
+    /**
+     * 获取推荐列表
+     *
+     * @param c
+     * @param listener
+     */
+    public void getRecommondList(Context c, FetchEntryListener listener) {
+        GetRecommendedListApi getRecommendedListApi = new GetRecommendedListApi(c);
+        doPostRequest(getRecommendedListApi, getRecommendedListApi.getCalendarListModel(), USE_CACHE_FIRST, listener);
     }
 
 

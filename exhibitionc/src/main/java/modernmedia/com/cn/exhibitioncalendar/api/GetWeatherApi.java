@@ -18,20 +18,21 @@ import modernmedia.com.cn.exhibitioncalendar.MyApplication;
 
 public class GetWeatherApi extends BaseApi {
     private String city;
-    private JSONObject postObject = new JSONObject();
+    private String post;
     private WeatherModel weatherModel = new WeatherModel();
 
     public GetWeatherApi(Context c, String city) {
         this.city = city;
+        JSONObject postObject = new JSONObject();
         try {
             addPostParams(postObject, "appid", MyApplication.APPID + "");
             addPostParams(postObject, "version", Tools.getAppVersion(c));
 
-            setPostParams(postObject);
+            setPostParams(postObject.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        setIsNeedEncode(true);
+        setIsNeedBaseEncode(true);
     }
 
     @Override
@@ -55,12 +56,12 @@ public class GetWeatherApi extends BaseApi {
     }
 
     @Override
-    protected JSONObject getPostParams() {
-        return postObject;
+    protected String getPostParams() {
+        return post;
     }
 
-    protected void setPostParams(JSONObject params) {
-        this.postObject = params;
+    protected void setPostParams(String params) {
+        this.post = params;
     }
 
     @Override

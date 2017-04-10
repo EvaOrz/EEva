@@ -12,8 +12,6 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
-import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -73,7 +71,7 @@ public class HttpRequestController {
         private FetchDataListener mFetchDataListener;
         private String url = "";
         private boolean isPost = false; // 默认用GET方式
-        private JSONObject jsonParams; // post用参数
+        private String jsonParams; // post用参数
         private String imagePath; // 要上传的图片存储路径(目前仅支持post方式)
         private BaseApi mOperate;
         private String userAgent = "";// iweekly统计广告使用
@@ -105,7 +103,7 @@ public class HttpRequestController {
             this.isPost = isPost;
         }
 
-        protected void setPostParams(JSONObject nameValuePairs) {
+        protected void setPostParams(String nameValuePairs) {
             this.jsonParams = nameValuePairs;
         }
 

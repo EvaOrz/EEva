@@ -16,7 +16,8 @@ public class UrlMaker {
     /**
      * Host信息
      **/
-    private static String HOST;
+    public static String HOST;
+    private static String API_URL;
     private static String USER_MODEL_URL;
 
     /**
@@ -24,13 +25,14 @@ public class UrlMaker {
      */
     public static void setHost() {
         if (MyApplication.DEBUG == 0) {// 线上环境
-            HOST = "https://artcalendar.bbwc.cn/index/api/";
+            HOST = "https://artcalendar.bbwc.cn/";
             USER_MODEL_URL = "http://user.bbwc.cn/interface/index.php";
 
         } else if (MyApplication.DEBUG == 1) {// inhouse环境
-            HOST = "https://artcalendar-test.bbwc.cn/index/api/";
+            HOST = "https://artcalendar-test.bbwc.cn/";
             USER_MODEL_URL = "http://user.test.bbwc.cn/interface/index.php";
         }
+        API_URL = HOST + "index/api/";
     }
 
     public static String calendarHomePage = "https://artcalendar.bbwc.cn/html/artCalendar/index.html";
@@ -48,7 +50,7 @@ public class UrlMaker {
      * @return
      */
     public static String login() {
-        return "";
+        return USER_MODEL_URL + "?m=user&a=login&datatype=" + ConstData.DATA_TYPE + "&datapass=" + ConstData.DATA_TYPE;
     }
 
     /**
@@ -101,7 +103,7 @@ public class UrlMaker {
      * @return
      */
     public static String uploadPic() {
-        return HOST + "uploadcover?datatype=" + ConstData.DATA_TYPE;
+        return API_URL + "uploadcover?datatype=" + ConstData.DATA_TYPE;
     }
 
     /**
@@ -110,7 +112,7 @@ public class UrlMaker {
      * @return
      */
     public static String addUserFav() {
-        return HOST + "eventadd?datatype=" + ConstData.DATA_TYPE;
+        return API_URL + "eventadd?datatype=" + ConstData.DATA_TYPE;
     }
 
     /**
@@ -119,7 +121,7 @@ public class UrlMaker {
      * @return
      */
     public static String deleteUserFav() {
-        return HOST + "eventdel?datatype=" + ConstData.DATA_TYPE;
+        return API_URL + "eventdel?datatype=" + ConstData.DATA_TYPE;
     }
 
     /**
@@ -128,7 +130,7 @@ public class UrlMaker {
      * @return
      */
     public static String changeUserFav() {
-        return HOST + "eventedit?datatype=" + ConstData.DATA_TYPE;
+        return API_URL + "eventedit?datatype=" + ConstData.DATA_TYPE;
     }
 
 
@@ -138,7 +140,7 @@ public class UrlMaker {
      * @return
      */
     public static String getUserFavList() {
-        return HOST + "futurelist?datatype=" + ConstData.DATA_TYPE;
+        return API_URL + "futurelist?datatype=" + ConstData.DATA_TYPE;
     }
 
     /**
@@ -147,7 +149,7 @@ public class UrlMaker {
      * @return
      */
     public static String getUserFavExpiredList() {
-        return HOST + "expiredlist?datatype=" + ConstData.DATA_TYPE;
+        return API_URL + "expiredlist?datatype=" + ConstData.DATA_TYPE;
     }
 
     /**
@@ -156,7 +158,7 @@ public class UrlMaker {
      * @return
      */
     public static String getHotList() {
-        return HOST + "hotlist?datatype=" + ConstData.DATA_TYPE;
+        return API_URL + "hotlist?datatype=" + ConstData.DATA_TYPE;
     }
 
     /**
@@ -165,7 +167,7 @@ public class UrlMaker {
      * @return
      */
     public static String getRecommendedList() {
-        return HOST + "recommendedlist?datatype=" + ConstData.DATA_TYPE;
+        return API_URL + "recommendedlist?datatype=" + ConstData.DATA_TYPE;
     }
 
     /**
@@ -174,7 +176,7 @@ public class UrlMaker {
      * @return
      */
     public static String addCity() {
-        return HOST + "cityadd?datatype=" + ConstData.DATA_TYPE;
+        return API_URL + "cityadd?datatype=" + ConstData.DATA_TYPE;
     }
 
     /**
@@ -183,7 +185,7 @@ public class UrlMaker {
      * @return
      */
     public static String deleteCity() {
-        return HOST + "citydel?datatype=" + ConstData.DATA_TYPE;
+        return API_URL + "citydel?datatype=" + ConstData.DATA_TYPE;
     }
 
     /**
@@ -192,7 +194,7 @@ public class UrlMaker {
      * @return
      */
     public static String getUserCitys() {
-        return HOST + "mycity?datatype=" + ConstData.DATA_TYPE;
+        return API_URL + "mycity?datatype=" + ConstData.DATA_TYPE;
     }
 
     /**
@@ -201,7 +203,7 @@ public class UrlMaker {
      * @return
      */
     public static String getItemTagList() {
-        return HOST + "getitemtag?datatype=" + ConstData.DATA_TYPE;
+        return API_URL + "getitemtag?datatype=" + ConstData.DATA_TYPE;
     }
 
     /**
@@ -210,7 +212,7 @@ public class UrlMaker {
      * @return
      */
     public static String getExhibitionDetail() {
-        return HOST + "details?datatype=" + ConstData.DATA_TYPE;
+        return API_URL + "details?datatype=" + ConstData.DATA_TYPE;
     }
 
     /**
@@ -219,7 +221,7 @@ public class UrlMaker {
      * @return
      */
     public static String getExhibitionList() {
-        return HOST + "itemlist?datatype=" + ConstData.DATA_TYPE;
+        return API_URL + "itemlist?datatype=" + ConstData.DATA_TYPE;
     }
 
     /**
@@ -229,7 +231,7 @@ public class UrlMaker {
      * @return
      */
     public static String getWeather(String city) {
-        return HOST + "weather?city=" + city + "&datatype=" + ConstData.DATA_TYPE;
+        return API_URL + "weather?city=" + city + "&datatype=" + ConstData.DATA_TYPE;
     }
 
     /**
@@ -287,6 +289,6 @@ public class UrlMaker {
      * @return
      */
     public static String search() {
-        return HOST + "search?datatype=" + ConstData.DATA_TYPE;
+        return API_URL + "search?datatype=" + ConstData.DATA_TYPE;
     }
 }

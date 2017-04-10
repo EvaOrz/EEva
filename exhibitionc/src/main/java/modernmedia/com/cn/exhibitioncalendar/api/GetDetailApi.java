@@ -18,16 +18,18 @@ import modernmedia.com.cn.exhibitioncalendar.model.CalendarListModel.CalendarMod
 
 public class GetDetailApi extends BaseApi {
 
-    private JSONObject postObject = new JSONObject();
+
     private CalendarModel calendarModel = new CalendarModel();
+    private String post;
 
     public GetDetailApi(Context c, String id) {
         try {
+             JSONObject postObject = new JSONObject();
             addPostParams(postObject, "appid", MyApplication.APPID + "");
             addPostParams(postObject, "version", Tools.getAppVersion(c));
             addPostParams(postObject, "item_id", id);
 
-            setPostParams(postObject);
+            setPostParams(postObject.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -39,12 +41,12 @@ public class GetDetailApi extends BaseApi {
     }
 
     @Override
-    protected JSONObject getPostParams() {
-        return postObject;
+    protected String  getPostParams() {
+        return post;
     }
 
-    protected void setPostParams(JSONObject params) {
-        this.postObject = params;
+    protected void setPostParams(String params) {
+        this.post = params;
     }
 
     @Override

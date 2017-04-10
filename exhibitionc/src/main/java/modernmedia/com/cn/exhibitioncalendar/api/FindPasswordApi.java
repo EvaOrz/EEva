@@ -13,7 +13,7 @@ import modernmedia.com.cn.exhibitioncalendar.MyApplication;
  * @author lusiyuan
  */
 public class FindPasswordApi extends BaseApi {
-    private JSONObject object = new JSONObject();
+    private String post;
     private UserModel user = new UserModel();
 
     /**
@@ -24,12 +24,13 @@ public class FindPasswordApi extends BaseApi {
     protected FindPasswordApi(String userName, String code, String newPwd) {
 
         try {
+            JSONObject object = new JSONObject();
             object.put("username", userName);
             object.put("appid", MyApplication.APPID);
             if (code != null) object.put("code", code);
             if (newPwd != null) object.put("newpassword", newPwd);
 
-            setPostParams(object);
+            setPostParams(object.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -37,19 +38,19 @@ public class FindPasswordApi extends BaseApi {
     }
 
     @Override
-    protected JSONObject getPostParams() {
-        return object;
+    protected String getPostParams() {
+        return post;
     }
 
-    protected void setPostParams(JSONObject params) {
-        this.object = params;
+    protected void setPostParams(String params) {
+        this.post = params;
     }
 
 
     @Override
     protected void handler(JSONObject jsonObject) {
-        if (object == null) return;
-        user = UserModel.parseUserModel(user, object);
+        if (jsonObject == null) return;
+        user = UserModel.parseUserModel(user, jsonObject);
     }
 
     @Override

@@ -23,12 +23,12 @@ public class OpenLoginApi extends BaseApi {
     private Context context;
 
     private UserModel user = new UserModel();
-    private JSONObject postObject = new JSONObject();
+    private String post;
 
 
     protected OpenLoginApi(Context context, UserModel user, String avatar, String code, int type) {
         this.context = context;
-        setIsNeedEncode(true);
+        setIsNeedDesEncode(true);
         mType = type;
         // post 参数设置
         JSONObject object = new JSONObject();
@@ -55,11 +55,10 @@ public class OpenLoginApi extends BaseApi {
             object.put("logintype", type + "");
             object.put("deviceid", Tools.getDeviceId(context));
             object.put("appid", MyApplication.APPID + "");
-            String data = DESCoder.encode(KEY, object.toString());
-            Log.e("des2", data);
+            post = DESCoder.encode(KEY, object.toString());
+            Log.e("des2", post);
 
-            postObject.put("data", data);
-            setPostParams(postObject);
+            setPostParams(post);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -67,12 +66,12 @@ public class OpenLoginApi extends BaseApi {
 
 
     @Override
-    protected JSONObject getPostParams() {
-        return postObject;
+    protected String getPostParams() {
+        return post;
     }
 
-    protected void setPostParams(JSONObject params) {
-        this.postObject = params;
+    protected void setPostParams(String params) {
+        this.post = params;
     }
 
 

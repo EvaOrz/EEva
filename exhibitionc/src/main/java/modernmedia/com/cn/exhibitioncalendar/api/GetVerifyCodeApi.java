@@ -15,15 +15,16 @@ public class GetVerifyCodeApi extends BaseApi {
 
     private ErrorMsg error;
     private VerifyCode code;// 验证码
-    private JSONObject postObject = new JSONObject();
+    private String post;
 
     protected GetVerifyCodeApi(String phone) {
         this.error = new ErrorMsg();
         // post 参数设置
+        JSONObject postObject = new JSONObject();
         try {
             addPostParams(postObject, "phone", phone);
             addPostParams(postObject, "appid", MyApplication.APPID + "");
-            setPostParams(postObject);
+            setPostParams(postObject.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -31,12 +32,12 @@ public class GetVerifyCodeApi extends BaseApi {
 
 
     @Override
-    protected JSONObject getPostParams() {
-        return postObject;
+    protected String getPostParams() {
+        return post;
     }
 
-    protected void setPostParams(JSONObject params) {
-        this.postObject = params;
+    protected void setPostParams(String params) {
+        this.post = params;
     }
 
     @Override

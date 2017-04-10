@@ -19,12 +19,13 @@ public class BandAccountApi extends BaseApi {
     public static int WEIXIN = 3;
     public static int WEIBO = 4;
     public static int QQ = 5;
-    JSONObject postObject = new JSONObject();
+    private String post;
 
     public BandAccountApi(String uid, int bindType, String token, String userName, String code) {
         error = new ErrorMsg();
 
         try {
+            JSONObject postObject = new JSONObject();
             addPostParams(postObject, "uid", uid);
             addPostParams(postObject, "token", token);
             addPostParams(postObject, "appid", MyApplication.APPID + "");
@@ -47,7 +48,7 @@ public class BandAccountApi extends BaseApi {
                 addPostParams(postObject, "bindtype", "qq");
             }
 
-            setPostParams(postObject);
+            setPostParams(postObject.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -55,12 +56,12 @@ public class BandAccountApi extends BaseApi {
     }
 
     @Override
-    protected JSONObject getPostParams() {
-        return postObject;
+    protected String getPostParams() {
+        return post;
     }
 
-    protected void setPostParams(JSONObject params) {
-        this.postObject = params;
+    protected void setPostParams(String params) {
+        this.post = params;
     }
 
     protected ErrorMsg getError() {

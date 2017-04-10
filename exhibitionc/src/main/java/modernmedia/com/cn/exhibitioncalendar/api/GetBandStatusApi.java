@@ -13,32 +13,32 @@ import modernmedia.com.cn.exhibitioncalendar.MyApplication;
  * @author lusiyuan
  */
 public class GetBandStatusApi extends BaseApi {
-    private String uid;
     private ErrorMsg error;
     private UserModel user;
-    JSONObject postObject = new JSONObject();
+    private String post;
 
     public GetBandStatusApi(String uid, String token) {
         // post 参数设置
         user = new UserModel();
 
         try {
+            JSONObject postObject = new JSONObject();
             addPostParams(postObject, "uid", uid);
             addPostParams(postObject, "token", token);
             addPostParams(postObject, "appid", MyApplication.APPID + "");
-            setPostParams(postObject);
+            setPostParams(postObject.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    protected JSONObject getPostParams() {
-        return postObject;
+    protected String getPostParams() {
+        return post;
     }
 
-    protected void setPostParams(JSONObject params) {
-        this.postObject = params;
+    protected void setPostParams(String params) {
+        this.post = params;
     }
 
     @Override
