@@ -355,7 +355,7 @@ public class CalendarListModel extends Entry {
             calendarModel.setAddTime(jsonObject.optString("add_time"));
             calendarModel.setTypelist(parseHouseOrCityList(jsonObject.optJSONArray("typelist")));
             calendarModel.setHouselist(parseHouseOrCityList(jsonObject.optJSONArray("houselist")));
-            calendarModel.setCitylist(parseHouseOrCityList(jsonObject.optJSONArray("citylist")));
+            calendarModel.setCitylist(parseHouseOrCityList(jsonObject.optJSONArray("cityOneList")));
             calendarModel.setHotlist(parseHouseOrCityList(jsonObject.optJSONArray("hotlist")));
             return calendarModel;
         }

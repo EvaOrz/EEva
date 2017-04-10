@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/corelib/corelib.iml" filepath="$PROJECT_DIR$/corelib/corelib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/exhibitionc/exhibitionc.iml" filepath="$PROJECT_DIR$/exhibitionc/exhibitionc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/exhibitioncalendar.iml" filepath="$PROJECT_DIR$/exhibitioncalendar.iml" />
+    </modules>
+  </component>
+</project>

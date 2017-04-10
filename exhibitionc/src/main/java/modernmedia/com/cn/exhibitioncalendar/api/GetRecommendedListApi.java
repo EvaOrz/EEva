@@ -1,6 +1,7 @@
 package modernmedia.com.cn.exhibitioncalendar.api;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -41,7 +42,7 @@ public class GetRecommendedListApi extends BaseApi {
     @Override
     protected void handler(JSONObject jsonObject) {
         if (jsonObject == null) return;
-
+        Log.e("GetRecommendedListApi", jsonObject.toString());
         calendarListModel = CalendarListModel.parseCalendarListModel(calendarListModel, jsonObject);
     }
 

@@ -36,12 +36,8 @@ public class UrlMaker {
     }
 
     public static String calendarHomePage = "https://artcalendar.bbwc.cn/html/artCalendar/index.html";
-    public static String calendarHomePageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/index.html";
-    public static String calendarHomePageEdit = "https://artcalendar.bbwc.cn/html/editartCalendar/index.html";
 
     public static String calendarDetailPage = "https://artcalendar.bbwc.cn/html/artCalendar/detail.html";
-    public static String calendarDetailPageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/detail.html";
-    public static String calendarDetailPageEdit = "https://artcalendar.bbwc.cn/html/editartCalendar/detail.html";
     public static String calendarAboutPage = "https://artcalendar.bbwc.cn/html/artCalendar/about.html";
 
     /**

@@ -1,5 +1,6 @@
 package modernmedia.com.cn.exhibitioncalendar.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -28,18 +29,20 @@ public class CalendarDetailActivity extends BaseActivity {
     private CalendarModel calendarModel;
     private CommonWebView webView;
     private View view;
+    private ApiController apiController;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar_detail);
         id = getIntent().getStringExtra(UriParse.DETAILCALENDAR);
+        apiController = ApiController.getInstance(this);
         initView();
         initData();
     }
 
     private void initData() {
-        ApiController.getInstance(this).getDetail(this, id, new FetchEntryListener() {
+        apiController.getDetail(this, id, new FetchEntryListener() {
             @Override
             public void setData(Entry entry) {
                 if (entry != null && entry instanceof CalendarModel) {
@@ -82,6 +85,11 @@ public class CalendarDetailActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.detail_add:
+                Intent i = new Intent(CalendarDetailActivity.this,AddActivity.class);
+                i.putExtra("add_detail",calendarModel);
+                startActivity(i);
+
+
                 break;
             case R.id.detail_share:
                 break;

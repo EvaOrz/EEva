@@ -268,4 +268,12 @@ public class ApiController {
     }
 
 
+    public void handleFav(Context c, int type, String id, String img, String time,
+                          FetchEntryListener listener){
+        HandleFavApi handleFavApi = new HandleFavApi(c,type,id,img,time);
+        doPostRequest(handleFavApi, handleFavApi.getData(),
+                USE_HTTP_ONLY,
+                listener);
+    }
+
 }

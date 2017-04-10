@@ -15,10 +15,9 @@ import modernmedia.com.cn.corelib.util.ParseUtil;
 import modernmedia.com.cn.corelib.util.Tools;
 import modernmedia.com.cn.exhibitioncalendar.MyApplication;
 import modernmedia.com.cn.exhibitioncalendar.R;
-import modernmedia.com.cn.exhibitioncalendar.activity.CalendarDetailActivity;
+import modernmedia.com.cn.exhibitioncalendar.activity.CalendarListActivity;
 import modernmedia.com.cn.exhibitioncalendar.api.UrlMaker;
 import modernmedia.com.cn.exhibitioncalendar.model.TagListModel.HouseOrCity;
-import modernmedia.com.cn.exhibitioncalendar.util.UriParse;
 
 /**
  * top_menu view
@@ -78,8 +77,9 @@ public class MainCityListScrollView extends RelativeLayout {
             viewHolder.getConvertView().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent i = new Intent(mContext, CalendarDetailActivity.class);
-                    i.putExtra(UriParse.DETAILCALENDAR, tagInfo.getTagId());
+                    Intent i = new Intent(mContext, CalendarListActivity.class);
+                    i.putExtra("list_tagid", tagInfo.getTagId());
+                    i.putExtra("list_tagname", tagInfo.getTagName());
                     mContext.startActivity(i);
                 }
             });

@@ -104,6 +104,10 @@
         <activity
             android:name=".activity.ForgetPwdActivity"
             android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".activity.AddActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

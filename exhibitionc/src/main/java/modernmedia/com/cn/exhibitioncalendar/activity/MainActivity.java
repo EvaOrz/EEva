@@ -9,7 +9,11 @@ import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import modernmedia.com.cn.corelib.BaseActivity;
 import modernmedia.com.cn.corelib.listener.FetchEntryListener;
@@ -18,9 +22,11 @@ import modernmedia.com.cn.corelib.model.WeatherModel;
 import modernmedia.com.cn.exhibitioncalendar.MyApplication;
 import modernmedia.com.cn.exhibitioncalendar.R;
 import modernmedia.com.cn.exhibitioncalendar.adapter.CoverVPAdapter;
+import modernmedia.com.cn.exhibitioncalendar.adapter.DetailVPAdapter;
 import modernmedia.com.cn.exhibitioncalendar.api.ApiController;
 import modernmedia.com.cn.exhibitioncalendar.model.CalendarListModel;
 import modernmedia.com.cn.exhibitioncalendar.model.TagListModel;
+import modernmedia.com.cn.exhibitioncalendar.view.ChildHeightViewpager;
 import modernmedia.com.cn.exhibitioncalendar.view.MainCityListScrollView;
 
 
@@ -30,7 +36,7 @@ import modernmedia.com.cn.exhibitioncalendar.view.MainCityListScrollView;
 
 public class MainActivity extends BaseActivity {
     private ImageView weatherImg;
-    private TextView weatherTxt;
+    private TextView weatherTxt, actionButton;
     private ApiController apiController;
     private WeatherModel weatherModel;
     private TagListModel tagListModel;
@@ -38,6 +44,10 @@ public class MainActivity extends BaseActivity {
     private CalendarListModel calendarListModel;
     private ViewPager coverPager, detailPager;
     private CoverVPAdapter coverVPAdapter;
+    private DetailVPAdapter detailVPAdapter;
+
+    private LinearLayout dotLayout;
+    private List<View> dots = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -96,6 +106,12 @@ public class MainActivity extends BaseActivity {
                         coverVPAdapter = new CoverVPAdapter(MainActivity.this, calendarListModel.getCalendarModels());
                         coverPager.setAdapter(coverVPAdapter);
                         coverVPAdapter.notifyDataSetChanged();
+
+                        detailVPAdapter = new DetailVPAdapter(MainActivity.this, calendarListModel.getCalendarModels());
+                        detailPager.setAdapter(detailVPAdapter);
+                        detailVPAdapter.notifyDataSetChanged();
+
+                        dot(calendarListModel.getCalendarModels());
                     }
                     break;
             }
@@ -110,7 +126,50 @@ public class MainActivity extends BaseActivity {
         weatherImg = (ImageView) findViewById(R.id.main_weather_img);
         weatherTxt = (TextView) findViewById(R.id.main_weather_txt);
         coverPager = (ViewPager) findViewById(R.id.main_viewpager_cover);
-        detailPager = (ViewPager) findViewById(R.id.main_viewpager_detail);
+        coverPager.setOffscreenPageLimit(3);
+        dotLayout = (LinearLayout) findViewById(R.id.main_dot_layout);
+        actionButton = (TextView) findViewById(R.id.main_action);
+        detailPager = (ChildHeightViewpager) findViewById(R.id.main_viewpager_detail);
+        detailPager.setOffscreenPageLimit(3);
+        detailPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                int width = coverPager.getWidth();
+                //滑动外部Viewpager
+                coverPager.scrollTo((int) (width * position + width * positionOffset), 0);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        coverPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                int width = detailPager.getWidth();
+                //滑动外部Viewpager
+                detailPager.scrollTo((int) (width * position + width * positionOffset), 0);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     @Override
@@ -124,5 +183,28 @@ public class MainActivity extends BaseActivity {
                 break;
         }
 
+    }
+
+
+    /**
+     * 设置dot
+     */
+    public void dot(List<CalendarListModel.CalendarModel> itemList) {
+        dotLayout.removeAllViews();
+        dots.clear();
+        ImageView iv;
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(12, 12);
+
+        lp.leftMargin = 5;
+        for (int i = 0; i < itemList.size(); i++) {
+            iv = new ImageView(this);
+            if (i == 0) {
+                iv.setImageResource(R.drawable.dot_active);
+            } else {
+                iv.setImageResource(R.drawable.dot);
+            }
+            dotLayout.addView(iv, lp);
+            dots.add(iv);
+        }
     }
 }

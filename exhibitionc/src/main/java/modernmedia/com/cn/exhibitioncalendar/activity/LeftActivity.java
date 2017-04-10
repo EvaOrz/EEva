@@ -51,7 +51,10 @@ public class LeftActivity extends BaseActivity {
                 startActivity(new Intent(LeftActivity.this, CalendarListActivity.class));
                 break;
             case R.id.hot_zhanlan:
-                startActivity(new Intent(LeftActivity.this, CalendarDetailActivity.class));
+                Intent i = new Intent(LeftActivity.this, CalendarListActivity.class);
+                i.putExtra("list_tagid", "13");
+                i.putExtra("list_tagname", "热门");
+                startActivity(i);
                 break;
             case R.id.my_zhanlan:
                 startActivity(new Intent(LeftActivity.this, MyListActivity.class));

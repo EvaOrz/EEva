@@ -88,7 +88,7 @@
     <string name="dial_error">您的手机缺少所需的功能模块，无法继续操作。</string>
 
     <string name="all_zhanlan">全部展览</string>
-    <string name="all_zhanlan_list">全部展览列表</string>
+    <string name="all_zhanlan_list">分类浏览新展</string>
     <string name="hot_zhanlan">热门展览</string>
     <string name="my_zhanlan">我的展览</string>
     <string name="book_iart">订阅iArt</string>
@@ -101,6 +101,7 @@
     <string name="zhanguan">展馆</string>
     <string name="add_title">添加新的观展行程</string>
     <string name="add_date">观展日期</string>
+    <string name="add_to_calendar">添加至日历</string>
 
 
     <!--个人中心-->
@@ -170,5 +171,7 @@
     <string name="list_hint">暂无规划中的展览行程\n 点击添加</string>
     <string name="click_add"></string>
     <string name="look_detail">查看详情</string>
+    <string name="notification">提醒</string>
+    <string name="notification_desc">提前一个小时</string>
 
 </resources>

@@ -130,7 +130,7 @@ public class Tools {
 
     public static String getStringToDate(String timeStr) {
         long t = Long.parseLong(timeStr) * 1000;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd", Locale.getDefault());
         String start = format.format(new Date(t));
         return start;
     }

@@ -17,4 +17,7 @@
 
     <color name="gray_dark">#ff4b4b4b</color>
     <color name="title_bar">#FFFAFAFA</color>
+
+    <color name="dot_active_color">#ffffffff</color>
+    <color name="dot_color">#7fffffff</color>
 </resources>

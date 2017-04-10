@@ -171,9 +171,11 @@ public class TagListModel extends Entry {
 
         public static BackImg parseBackImg(JSONObject jsonObject) {
             BackImg backImg = new BackImg();
-            backImg.setSourceV6PlusImg(jsonObject.optString("sourceV6PlusImg"));
-            backImg.setSourceV6Img(jsonObject.optString("sourceV6Img"));
-            backImg.setSourceV5Img(jsonObject.optString("sourceV5Img"));
+            if (jsonObject != null) {
+                backImg.setSourceV6PlusImg(jsonObject.optString("sourceV6PlusImg"));
+                backImg.setSourceV6Img(jsonObject.optString("sourceV6Img"));
+                backImg.setSourceV5Img(jsonObject.optString("sourceV5Img"));
+            }
             return backImg;
         }
     }
