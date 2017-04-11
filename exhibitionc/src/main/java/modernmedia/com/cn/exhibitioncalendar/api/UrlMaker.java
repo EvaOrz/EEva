@@ -216,7 +216,7 @@ public class UrlMaker {
      *
      * @return
      */
-    public static String getExhibitionList() {
+    public static String getAllList() {
         return API_URL + "itemlist?datatype=" + ConstData.DATA_TYPE;
     }
 

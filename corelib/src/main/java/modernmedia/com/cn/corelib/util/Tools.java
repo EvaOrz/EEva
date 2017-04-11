@@ -135,6 +135,79 @@ public class Tools {
         return start;
     }
 
+    public static String getChinaDate() {
+        String s = "";
+        long time = System.currentTimeMillis();
+        Date date = new Date(time);
+        SimpleDateFormat month = new SimpleDateFormat("MM");
+        SimpleDateFormat riqi = new SimpleDateFormat("dd");
+
+        SimpleDateFormat week = new SimpleDateFormat("E");
+        s = enToCn(month.format(date)) + "月 " + enToCn(riqi.format(date)) + "日 " + week.format(date);
+        return s;
+    }
+
+    public static String getEnDate() {
+        long time = System.currentTimeMillis();
+        Date date = new Date(time);
+        SimpleDateFormat month = new SimpleDateFormat("MM");
+
+        return enToEn(month.format(date));
+    }
+
+    private static String enToCn(String ss) {
+        if (ss.equals("01")) return "一";
+        if (ss.equals("02")) return "二";
+        if (ss.equals("03")) return "三";
+        if (ss.equals("04")) return "四";
+        if (ss.equals("05")) return "五";
+        if (ss.equals("06")) return "六";
+        if (ss.equals("07")) return "七";
+        if (ss.equals("08")) return "八";
+        if (ss.equals("09")) return "九";
+        if (ss.equals("10")) return "十";
+        if (ss.equals("11")) return "十一";
+        if (ss.equals("12")) return "十二";
+        if (ss.equals("13")) return "十三";
+        if (ss.equals("14")) return "十四";
+        if (ss.equals("15")) return "十五";
+        if (ss.equals("16")) return "十六";
+        if (ss.equals("17")) return "十七";
+        if (ss.equals("18")) return "十八";
+        if (ss.equals("19")) return "十九";
+        if (ss.equals("20")) return "二十";
+        if (ss.equals("21")) return "二十一";
+        if (ss.equals("22")) return "二十二";
+        if (ss.equals("23")) return "二十三";
+        if (ss.equals("24")) return "二十四";
+        if (ss.equals("25")) return "二十五";
+        if (ss.equals("26")) return "二十六";
+        if (ss.equals("27")) return "二十七";
+        if (ss.equals("28")) return "二十八";
+        if (ss.equals("29")) return "二十九";
+        if (ss.equals("30")) return "三十";
+        if (ss.equals("31")) return "三十一";
+
+        return "";
+    }
+
+
+    private static String enToEn(String ss) {
+        if (ss.equals("01")) return "Jan.";
+        if (ss.equals("02")) return "Feb.";
+        if (ss.equals("03")) return "Mar.";
+        if (ss.equals("04")) return "Apr.";
+        if (ss.equals("05")) return "May.";
+        if (ss.equals("06")) return "June.";
+        if (ss.equals("07")) return "July.";
+        if (ss.equals("08")) return "Aug.";
+        if (ss.equals("09")) return "Sept.";
+        if (ss.equals("10")) return "Oct.";
+        if (ss.equals("11")) return "Nov.";
+        if (ss.equals("12")) return "Dec.";
+
+        return "";
+    }
 
     /**
      * 判断用户名、密码是否为空
@@ -169,23 +242,6 @@ public class Tools {
         return true;
     }
 
-    /**
-     * 获取直播状态
-     * type 1:已结束 2：直播中 3：未开始
-     */
-    public static int getEventStatus(String startTime, String endTime) {
-        long now = System.currentTimeMillis() / 1000;
-        long s = Long.valueOf(startTime);
-        long e = Long.valueOf(endTime);
-        if (now < s) {
-            return 3;
-        } else if (s < now && now < e) {
-            return 2;
-        } else if (now > e) {
-            return 1;
-        }
-        return 1;
-    }
 
     /**
      * 进入系统的图片裁剪页面

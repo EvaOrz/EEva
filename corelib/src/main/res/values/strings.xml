@@ -90,6 +90,7 @@
     <string name="all_zhanlan">全部展览</string>
     <string name="all_zhanlan_list">分类浏览新展</string>
     <string name="hot_zhanlan">热门展览</string>
+    <string name="hot_hint">推荐全球各个城市的热门展览</string>
     <string name="my_zhanlan">我的展览</string>
     <string name="book_iart">订阅iArt</string>
     <string name="about_us">关于我们</string>
@@ -102,6 +103,7 @@
     <string name="add_title">添加新的观展行程</string>
     <string name="add_date">观展日期</string>
     <string name="add_to_calendar">添加至日历</string>
+    <string name="add_more">添加更多展览</string>
 
 
     <!--个人中心-->
@@ -173,5 +175,7 @@
     <string name="look_detail">查看详情</string>
     <string name="notification">提醒</string>
     <string name="notification_desc">提前一个小时</string>
+    <string name="tongbu">同步</string>
+    <string name="tongbu_desc">同步到系统日历</string>
 
 </resources>

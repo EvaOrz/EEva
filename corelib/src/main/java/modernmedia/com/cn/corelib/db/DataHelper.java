@@ -373,4 +373,49 @@ public class DataHelper {
     }
 
 
+    /**
+     * 存储用户签名
+     *
+     * @param context
+     * @param desc
+     */
+    public static void setDesc(Context context, String desc) {
+        Editor editor = getPref(context).edit();
+        editor.putString(DESC, desc);
+        editor.commit();
+    }
+
+    /**
+     * 获取用户签名
+     *
+     * @param context
+     * @return
+     */
+    public static String getDesc(Context context) {
+        return getPref(context).getString(DESC, "");
+    }
+
+    /**
+     * 存储用户昵称
+     *
+     * @param context
+     * @param nickname
+     */
+    public static void setNickname(Context context, String nickname) {
+        Editor editor = getPref(context).edit();
+        editor.putString(NICKNAME, nickname);
+        editor.commit();
+    }
+
+    /**
+     * 获取用户昵称
+     *
+     * @param context
+     * @return
+     */
+    public static String getNickname(Context context) {
+        return getPref(context).getString(NICKNAME, "");
+    }
+
+
 }

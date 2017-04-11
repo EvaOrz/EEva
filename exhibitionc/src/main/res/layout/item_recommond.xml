@@ -4,7 +4,7 @@
               android:layout_height="wrap_content"
               android:orientation="vertical">
 
-
+    <!---->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,16 +21,17 @@
 
             <ImageView
                 android:id="@+id/recommond_new"
-                android:layout_width="40dp"
-
-                android:layout_height="wrap_content"/>
+                android:layout_width="20dp"
+                android:layout_height="36dp"
+                android:layout_alignParentTop="true"
+                android:scaleType="fitXY"
+                android:src="@mipmap/tuijian"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:paddingTop="10dp"
+android:paddingTop="10dp"
                 android:text="@string/look_detail"
                 android:textColor="@color/gray_dark"
                 android:textSize="@dimen/text_size_12"/>

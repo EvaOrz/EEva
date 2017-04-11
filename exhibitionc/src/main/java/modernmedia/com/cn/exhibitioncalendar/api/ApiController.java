@@ -244,8 +244,16 @@ public class ApiController {
      * @param page
      */
     public void getMyList(Context c, String page, int type, FetchEntryListener listener) {
-        GetUserFavListApi getUserFavListApi = new GetUserFavListApi(c, page, type);
-        doPostRequest(getUserFavListApi, getUserFavListApi.getData(), USE_HTTP_ONLY, listener);
+        GetMyListApi getMyListApi = new GetMyListApi(c, page, type);
+        doPostRequest(getMyListApi, getMyListApi.getData(), USE_HTTP_ONLY, listener);
+    }
+
+    /**
+     * @param c
+     */
+    public void getAllList(Context c, FetchEntryListener listener) {
+        GetAllListApi getAllListApi = new GetAllListApi(c);
+        doPostRequest(getAllListApi, getAllListApi.getData(), USE_HTTP_ONLY, listener);
     }
 
     /**

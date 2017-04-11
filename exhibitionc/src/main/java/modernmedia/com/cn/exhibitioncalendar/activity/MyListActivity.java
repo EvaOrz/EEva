@@ -20,6 +20,7 @@ import modernmedia.com.cn.corelib.model.Entry;
 import modernmedia.com.cn.corelib.model.UserModel;
 import modernmedia.com.cn.corelib.util.Tools;
 import modernmedia.com.cn.corelib.widget.RoundImageView;
+import modernmedia.com.cn.exhibitioncalendar.MyApplication;
 import modernmedia.com.cn.exhibitioncalendar.R;
 import modernmedia.com.cn.exhibitioncalendar.adapter.ExhibitionAdapter;
 import modernmedia.com.cn.exhibitioncalendar.api.ApiController;
@@ -46,16 +47,13 @@ public class MyListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_list);
         initView();
+        initData(1);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (userModel != null) {
-            Tools.setAvatar(this, userModel.getAvatar(), avatar);
-            nickname.setText(userModel.getNickName());
-//            MyApplication.finalBitmap.display(cover,userModel.get);
-
+        if (MyApplication.loginStatusChange) {
             initData(1);
         }
     }
@@ -78,6 +76,9 @@ public class MyListActivity extends BaseActivity {
     }
 
     private void initData(int type) {
+        Tools.setAvatar(this, userModel.getAvatar(), avatar);
+        nickname.setText(userModel.getNickName());
+        initData(1);
         ApiController.getInstance(this).getMyList(this, "1", type, new FetchEntryListener() {
             @Override
             public void setData(Entry entry) {

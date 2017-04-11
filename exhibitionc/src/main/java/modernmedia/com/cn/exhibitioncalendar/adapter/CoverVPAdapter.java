@@ -29,7 +29,7 @@ public class CoverVPAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return list.size();
+        return 5;
     }
 
     @Override

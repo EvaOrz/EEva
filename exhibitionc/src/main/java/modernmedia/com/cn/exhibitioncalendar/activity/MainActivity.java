@@ -1,15 +1,20 @@
 package modernmedia.com.cn.exhibitioncalendar.activity;
 
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -19,6 +24,7 @@ import modernmedia.com.cn.corelib.BaseActivity;
 import modernmedia.com.cn.corelib.listener.FetchEntryListener;
 import modernmedia.com.cn.corelib.model.Entry;
 import modernmedia.com.cn.corelib.model.WeatherModel;
+import modernmedia.com.cn.corelib.util.Tools;
 import modernmedia.com.cn.exhibitioncalendar.MyApplication;
 import modernmedia.com.cn.exhibitioncalendar.R;
 import modernmedia.com.cn.exhibitioncalendar.adapter.CoverVPAdapter;
@@ -26,6 +32,7 @@ import modernmedia.com.cn.exhibitioncalendar.adapter.DetailVPAdapter;
 import modernmedia.com.cn.exhibitioncalendar.api.ApiController;
 import modernmedia.com.cn.exhibitioncalendar.model.CalendarListModel;
 import modernmedia.com.cn.exhibitioncalendar.model.TagListModel;
+import modernmedia.com.cn.exhibitioncalendar.util.AppValue;
 import modernmedia.com.cn.exhibitioncalendar.view.ChildHeightViewpager;
 import modernmedia.com.cn.exhibitioncalendar.view.MainCityListScrollView;
 
@@ -47,7 +54,9 @@ public class MainActivity extends BaseActivity {
     private DetailVPAdapter detailVPAdapter;
 
     private LinearLayout dotLayout;
-    private List<View> dots = new ArrayList<>();
+    private View headView;
+    private ListView listView;
+    private List<ImageView> dots = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,6 +96,33 @@ public class MainActivity extends BaseActivity {
                 }
             }
         });
+
+        apiController.getAllList(this, new FetchEntryListener() {
+            @Override
+            public void setData(Entry entry) {
+                if (entry != null && entry instanceof CalendarListModel) {
+                    AppValue.allList = (CalendarListModel) entry;
+                }
+            }
+        });
+
+        apiController.getMyList(this, "", 1, new FetchEntryListener() {
+            @Override
+            public void setData(Entry entry) {
+                if (entry != null && entry instanceof CalendarListModel) {
+                    AppValue.myList = (CalendarListModel) entry;
+                }
+            }
+        });
+        apiController.getMyList(this, "", 2, new FetchEntryListener() {
+            @Override
+            public void setData(Entry entry) {
+                if (entry != null && entry instanceof CalendarListModel) {
+                    AppValue.edList = (CalendarListModel) entry;
+                }
+            }
+        });
+
     }
 
     private Handler handler = new Handler() {
@@ -111,7 +147,7 @@ public class MainActivity extends BaseActivity {
                         detailPager.setAdapter(detailVPAdapter);
                         detailVPAdapter.notifyDataSetChanged();
 
-                        dot(calendarListModel.getCalendarModels());
+                        initDots(calendarListModel.getCalendarModels());
                     }
                     break;
             }
@@ -122,15 +158,43 @@ public class MainActivity extends BaseActivity {
         findViewById(R.id.main_left).setOnClickListener(this);
         findViewById(R.id.main_right).setOnClickListener(this);
 
-        mainCityListScrollView = (MainCityListScrollView) findViewById(R.id.main_city_listview);
-        weatherImg = (ImageView) findViewById(R.id.main_weather_img);
-        weatherTxt = (TextView) findViewById(R.id.main_weather_txt);
+
+
+        //        headView = (View) findViewById(R.id.head_view);
+        //        part1 = (View) findViewById(R.id.part1);
+        //        part2 = (View) findViewById(R.id.part2);
+                int headerHeight = findViewById(R.id.main_headview).getHeight();
+        // 用户绘制区域
+                Rect outRect = new Rect();
+                getWindow().findViewById(Window.ID_ANDROID_CONTENT).getDrawingRect(outRect);
+                int screenWidth = outRect.width();
+                int screenHeight = outRect.height();
+        //         LinearLayout.LayoutParams params =  new LinearLayout.LayoutParams(LinearLayout
+        //                 .LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
+        //        part1.setLayoutParams(params);
+        //        part2.setLayoutParams(params);
+        headView = LayoutInflater.from(this).inflate(R.layout.view_main_head, null);
+        AbsListView.LayoutParams params = new AbsListView.LayoutParams(screenWidth,
+                screenHeight-headerHeight);
+        headView.setLayoutParams(params);
+        listView = (ListView) findViewById(R.id.my_listview);
+        listView.addHeaderView(headView);
+
+
+        ((TextView) headView.findViewById(R.id.main_date)).setText(Tools.format(System.currentTimeMillis(), "dd"));
+        ((TextView) headView.findViewById(R.id.main_month)).setText(Tools.getEnDate());
+        ((TextView) headView.findViewById(R.id.main_week)).setText(Tools.getChinaDate());
+        mainCityListScrollView = (MainCityListScrollView) headView.findViewById(R.id.main_city_listview);
+        weatherImg = (ImageView) headView.findViewById(R.id.main_weather_img);
+        weatherTxt = (TextView) headView.findViewById(R.id.main_weather_txt);
         coverPager = (ViewPager) findViewById(R.id.main_viewpager_cover);
-        coverPager.setOffscreenPageLimit(3);
-        dotLayout = (LinearLayout) findViewById(R.id.main_dot_layout);
-        actionButton = (TextView) findViewById(R.id.main_action);
-        detailPager = (ChildHeightViewpager) findViewById(R.id.main_viewpager_detail);
-        detailPager.setOffscreenPageLimit(3);
+        coverPager.setOffscreenPageLimit(5);
+        dotLayout = (LinearLayout) headView.findViewById(R.id.main_dot_layout);
+        actionButton = (TextView) headView.findViewById(R.id.main_action);
+        actionButton.setOnClickListener(this);
+
+        detailPager = (ChildHeightViewpager) headView.findViewById(R.id.main_viewpager_detail);
+        detailPager.setOffscreenPageLimit(5);
         detailPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -138,6 +202,7 @@ public class MainActivity extends BaseActivity {
                 int width = coverPager.getWidth();
                 //滑动外部Viewpager
                 coverPager.scrollTo((int) (width * position + width * positionOffset), 0);
+                updateDots(position);
             }
 
             @Override
@@ -158,6 +223,7 @@ public class MainActivity extends BaseActivity {
                 int width = detailPager.getWidth();
                 //滑动外部Viewpager
                 detailPager.scrollTo((int) (width * position + width * positionOffset), 0);
+                updateDots(position);
             }
 
             @Override
@@ -181,6 +247,14 @@ public class MainActivity extends BaseActivity {
             case R.id.main_right:
                 startActivity(new Intent(MainActivity.this, MyListActivity.class));
                 break;
+            case R.id.main_action:
+                if (calendarListModel != null) {
+
+                    Intent i = new Intent(MainActivity.this, AddActivity.class);
+                    i.putExtra("add_detail", calendarListModel.getCalendarModels().get(detailPager.getCurrentItem()));
+                    startActivity(i);
+                }
+                break;
         }
 
     }
@@ -189,7 +263,7 @@ public class MainActivity extends BaseActivity {
     /**
      * 设置dot
      */
-    public void dot(List<CalendarListModel.CalendarModel> itemList) {
+    public void initDots(List<CalendarListModel.CalendarModel> itemList) {
         dotLayout.removeAllViews();
         dots.clear();
         ImageView iv;
@@ -205,6 +279,19 @@ public class MainActivity extends BaseActivity {
             }
             dotLayout.addView(iv, lp);
             dots.add(iv);
+        }
+    }
+
+
+    public void updateDots(int position) {
+        if (dots != null && dots.size() > position && dots.size() > 1) {
+            for (int i = 0; i < dots.size(); i++) {
+                if (i == position) {
+                    dots.get(i).setImageResource(R.drawable.dot_active);
+                } else {
+                    dots.get(i).setImageResource(R.drawable.dot);
+                }
+            }
         }
     }
 }

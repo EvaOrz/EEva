@@ -15,12 +15,12 @@ import modernmedia.com.cn.exhibitioncalendar.model.CalendarListModel;
  * Created by Eva. on 17/3/28.
  */
 
-public class GetUserFavListApi extends BaseApi {
+public class GetMyListApi extends BaseApi {
     private String post;
     private CalendarListModel calendarListModel = new CalendarListModel();
     private int type;// 1：正在进行，2：已经过期
 
-    public GetUserFavListApi(Context c, String page, int type) {
+    public GetMyListApi(Context c, String page, int type) {
         this.type = type;
         JSONObject object = new JSONObject();
         try {
@@ -29,8 +29,8 @@ public class GetUserFavListApi extends BaseApi {
             object.put("uid", DataHelper.getUid(c));
             object.put("token", DataHelper.getToken(c));
             object.put("page", page);
-
-            setPostParams(object.toString());
+            post = object.toString();
+            setPostParams(post);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -53,7 +53,7 @@ public class GetUserFavListApi extends BaseApi {
     @Override
     protected void handler(JSONObject jsonObject) {
         if (jsonObject == null) return;
-        Log.e("GetUserFavListApi", jsonObject.toString());
+        Log.e("GetMyListApi", jsonObject.toString());
         calendarListModel = CalendarListModel.parseCalendarListModel(calendarListModel, jsonObject);
     }
 

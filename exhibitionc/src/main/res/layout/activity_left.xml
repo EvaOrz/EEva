@@ -2,10 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@drawable/column_activity_bg"
+              android:background="@mipmap/column_activity_bg"
               android:fitsSystemWindows="true"
-              android:orientation="vertical"
-    >
+              android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,11 +37,11 @@
                 android:textSize="@dimen/text_size_16"/>
 
             <TextView
+                android:id="@+id/all_num"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:text="共有235个正在进行展览"
                 android:textColor="@color/gray_line"
                 android:textSize="@dimen/text_size_12"/>
 
@@ -73,11 +72,12 @@
                 android:textSize="@dimen/text_size_16"/>
 
             <TextView
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:text="共有235个正在进行展览"
+                android:text="@string/hot_hint"
                 android:textColor="@color/gray_line"
                 android:textSize="@dimen/text_size_12"/>
 
@@ -108,46 +108,11 @@
                 android:textSize="@dimen/text_size_16"/>
 
             <TextView
+                android:id="@+id/my_num"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:text="共有235个正在进行展览"
-                android:textColor="@color/gray_line"
-                android:textSize="@dimen/text_size_12"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/line_height"
-                android:layout_marginTop="15dp"
-                android:background="@color/gray_line"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/book_iart"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="15dp"
-                android:text="@string/book_iart"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_16"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:text="共有235个正在进行展览"
                 android:textColor="@color/gray_line"
                 android:textSize="@dimen/text_size_12"/>
 

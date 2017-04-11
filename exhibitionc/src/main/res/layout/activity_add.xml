@@ -20,7 +20,7 @@
             android:gravity="center"
             android:text="@string/add_title"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_size_16"/>
+            android:textSize="@dimen/text_size_14"/>
 
         <TextView
             android:id="@+id/add_title"
@@ -29,7 +29,7 @@
             android:layout_marginBottom="5dp"
             android:layout_marginTop="10dp"
             android:textColor="@color/black"
-            android:textSize="@dimen/text_size_18"/>
+            android:textSize="@dimen/text_size_16"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,7 +38,10 @@
             android:background="@drawable/white_10radius_corner_bg"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="10dp">
+            android:paddingBottom="5dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp">
 
             <ImageView
                 android:layout_width="20dp"
@@ -51,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:textColor="@color/black"
-                android:textSize="@dimen/text_size_16"/>
+                android:textSize="@dimen/text_size_14"/>
         </LinearLayout>
 
         <LinearLayout
@@ -61,7 +64,10 @@
             android:background="@drawable/white_10radius_corner_bg"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="10dp">
+            android:paddingBottom="5dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp">
 
             <ImageView
                 android:layout_width="20dp"
@@ -75,7 +81,7 @@
                 android:layout_marginLeft="10dp"
                 android:text="@string/add_date"
                 android:textColor="@color/black"
-                android:textSize="@dimen/text_size_16"/>
+                android:textSize="@dimen/text_size_14"/>
         </LinearLayout>
 
         <RelativeLayout
@@ -84,7 +90,10 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/white_10radius_corner_bg"
             android:gravity="center_vertical"
-            android:padding="10dp">
+            android:paddingBottom="5dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp">
 
             <ImageView
                 android:id="@+id/add_notification_img"
@@ -101,7 +110,7 @@
                 android:layout_toRightOf="@id/add_notification_img"
                 android:text="@string/notification"
                 android:textColor="@color/black"
-                android:textSize="@dimen/text_size_16"/>
+                android:textSize="@dimen/text_size_14"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -110,7 +119,7 @@
                 android:layout_below="@id/add_notification_txt"
                 android:text="@string/notification_desc"
                 android:textColor="@color/gray_dark"
-                android:textSize="@dimen/text_size_14"/>
+                android:textSize="@dimen/text_size_12"/>
 
             <modernmedia.com.cn.corelib.widget.EvaSwitchBar
                 android:id="@+id/notification_switch"
@@ -127,7 +136,10 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/white_10radius_corner_bg"
             android:gravity="center_vertical"
-            android:padding="10dp">
+            android:paddingBottom="5dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp">
 
             <ImageView
                 android:id="@+id/add_tong_img"
@@ -142,18 +154,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_toRightOf="@id/add_tong_img"
-                android:text="@string/notification"
+                android:text="@string/tongbu"
                 android:textColor="@color/black"
-                android:textSize="@dimen/text_size_16"/>
+                android:textSize="@dimen/text_size_14"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@id/add_tong_txt"
                 android:layout_below="@id/add_tong_txt"
-                android:text="@string/notification_desc"
+                android:text="@string/tongbu_desc"
                 android:textColor="@color/gray_dark"
-                android:textSize="@dimen/text_size_14"/>
+                android:textSize="@dimen/text_size_12"/>
 
             <modernmedia.com.cn.corelib.widget.EvaSwitchBar
                 android:id="@+id/tong_switch"
@@ -164,16 +176,12 @@
         </RelativeLayout>
 
 
-       <modernmedia.com.cn.exhibitioncalendar.view.ChildHeightViewpager
-           android:id="@+id/add_viewpager"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"/>
-
-        <View
+        <android.support.v4.view.ViewPager
+            android:id="@+id/add_viewpager"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
-
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingTop="5dp"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
