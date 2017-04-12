@@ -21,7 +21,7 @@
             android:background="@drawable/white_10radius_corner_bg"
             android:orientation="vertical">
 
-            <modernmedia.com.cn.exhibitioncalendar.view.CommonWebView
+            <cn.com.modernmedia.exhibitioncalendar.view.CommonWebView
                 android:id="@+id/detail_webview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>

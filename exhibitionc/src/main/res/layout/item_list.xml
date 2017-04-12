@@ -17,39 +17,36 @@
             android:src="@mipmap/holder_bg"/>
 
         <ImageView
+            android:id="@+id/sandian"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_alignParentRight="true"
-            android:src="@mipmap/more"/>
+            android:paddingRight="10dp"
+            android:paddingTop="10dp"
+            android:src="@mipmap/sandian"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:layout_below="@id/l_img"
+            android:background="@color/white"
             android:orientation="vertical"
+            android:padding="10dp"
             >
 
             <TextView
-                android:id="@+id/l_time"
+                android:id="@+id/l_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_22"/>
+                android:lines="1"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_16"
+                android:textStyle="bold"/>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/book_item_title_bac"
-                android:orientation="vertical"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/l_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:lines="1"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_18"/>
+                android:layout_marginTop="10dp">
 
                 <TextView
                     android:id="@+id/l_date"
@@ -57,30 +54,18 @@
                     android:layout_height="wrap_content"
                     android:lines="1"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_16"/>
+                    android:textSize="@dimen/text_size_14"/>
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/l_city"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:textColor="@color/gray_dark"
-                        android:textSize="@dimen/text_size_14"/>
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="5dp"
-                        android:layout_toLeftOf="@id/l_city"
-                        android:src="@mipmap/zuobiao"/>
-                </RelativeLayout>
+                <TextView
+                    android:id="@+id/l_city"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@color/gray_dark"
+                    android:textSize="@dimen/text_size_12"/>
+            </RelativeLayout>
 
 
-            </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
 

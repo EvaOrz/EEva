@@ -33,10 +33,10 @@ import afinal.bitmap.core.BitmapProcess;
 import afinal.bitmap.download.Downloader;
 import afinal.bitmap.download.SimpleDownloader;
 import afinal.core.AsyncTask;
-import modernmedia.com.cn.corelib.R;
-import modernmedia.com.cn.corelib.listener.ImageDownloadStateListener;
-import modernmedia.com.cn.corelib.util.Tools;
-import modernmedia.com.cn.corelib.widget.GifView;
+import cn.com.modernmedia.corelib.R;
+import cn.com.modernmedia.corelib.listener.ImageDownloadStateListener;
+import cn.com.modernmedia.corelib.util.Tools;
+import cn.com.modernmedia.corelib.widget.GifView;
 
 
 public class FinalBitmap {

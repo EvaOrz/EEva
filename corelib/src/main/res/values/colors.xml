@@ -20,4 +20,5 @@
 
     <color name="dot_active_color">#ffffffff</color>
     <color name="dot_color">#7fffffff</color>
+    <color name="blue">#2c97e8</color>
 </resources>

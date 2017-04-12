@@ -4,28 +4,44 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/city_icon"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:layout_marginRight="8dp"
-        android:gravity="center"
-        android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
 
-        <TextView
-            android:id="@+id/city_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_size_14"/>
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/city_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_size_12"/>
+        <LinearLayout
+            android:id="@+id/city_icon"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_marginRight="8dp"
+            android:gravity="center"
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/city_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_14"/>
+
+            <TextView
+                android:id="@+id/city_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_12"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/city_tian"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:src="@mipmap/baitian"/>
+
+    </RelativeLayout>
+
 
 </LinearLayout>

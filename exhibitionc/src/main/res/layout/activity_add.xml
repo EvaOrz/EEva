@@ -121,7 +121,7 @@
                 android:textColor="@color/gray_dark"
                 android:textSize="@dimen/text_size_12"/>
 
-            <modernmedia.com.cn.corelib.widget.EvaSwitchBar
+            <cn.com.modernmedia.corelib.widget.EvaSwitchBar
                 android:id="@+id/notification_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -167,7 +167,7 @@
                 android:textColor="@color/gray_dark"
                 android:textSize="@dimen/text_size_12"/>
 
-            <modernmedia.com.cn.corelib.widget.EvaSwitchBar
+            <cn.com.modernmedia.corelib.widget.EvaSwitchBar
                 android:id="@+id/tong_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

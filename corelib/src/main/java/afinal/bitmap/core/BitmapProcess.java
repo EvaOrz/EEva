@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import afinal.bitmap.download.Downloader;
-import modernmedia.com.cn.corelib.util.ImgFileManager;
+import cn.com.modernmedia.corelib.util.ImgFileManager;
 
 
 public class BitmapProcess {

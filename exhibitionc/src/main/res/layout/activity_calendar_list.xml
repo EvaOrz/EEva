@@ -106,7 +106,7 @@
     <!--</RadioGroup>-->
     <!--</LinearLayout>-->
 
-    <modernmedia.com.cn.exhibitioncalendar.view.CommonWebView
+    <cn.com.modernmedia.exhibitioncalendar.view.CommonWebView
         android:id="@+id/list_webview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
