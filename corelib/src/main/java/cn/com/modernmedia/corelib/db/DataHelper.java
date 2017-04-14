@@ -64,6 +64,8 @@ public class DataHelper {
     public static final String  LAST_LOGIN_USERNAME = "last_login_username";// 上次登录账号
     public static final String NEW_LOGIN = "new_login";//整合第三方
     public static final String NEW_LOGIN_TIME = "new_login_time";//整合第三方取消时间
+    private static final String INDEX_HEAD_AUTO_LOOP = "index_head_auto_loop";// 首页自动轮播开关
+    private static final String WIFI_AUTO_PLAY_VEDIO = "wifi_auto_play_vedio";// WiFi下自动播放视频
     private static final String PUSH_SERVICE_ENABLE = "push_service_enable";// 推送服务是否可用
     /**
      * 广告更新时间
@@ -373,49 +375,7 @@ public class DataHelper {
     }
 
 
-    /**
-     * 存储用户签名
-     *
-     * @param context
-     * @param desc
-     */
-    public static void setDesc(Context context, String desc) {
-        Editor editor = getPref(context).edit();
-        editor.putString(DESC, desc);
-        editor.commit();
-    }
 
-    /**
-     * 获取用户签名
-     *
-     * @param context
-     * @return
-     */
-    public static String getDesc(Context context) {
-        return getPref(context).getString(DESC, "");
-    }
-
-    /**
-     * 存储用户昵称
-     *
-     * @param context
-     * @param nickname
-     */
-    public static void setNickname(Context context, String nickname) {
-        Editor editor = getPref(context).edit();
-        editor.putString(NICKNAME, nickname);
-        editor.commit();
-    }
-
-    /**
-     * 获取用户昵称
-     *
-     * @param context
-     * @return
-     */
-    public static String getNickname(Context context) {
-        return getPref(context).getString(NICKNAME, "");
-    }
 
     /**
      * 获取推送服务是否可用
@@ -438,5 +398,46 @@ public class DataHelper {
         editor.commit();
     }
 
+    /**
+     * 是否首页自动轮播
+     *
+     * @param context
+     * @return
+     */
+    public static boolean getIndexHeadAutoLoop(Context context) {
+        return getPref(context).getBoolean(INDEX_HEAD_AUTO_LOOP, true);
+    }
 
+    /**
+     * 设置首页是否轮播
+     *
+     * @param context
+     */
+    public static void setIndexHeadAutoLoop(Context context, boolean ifAuto) {
+        Editor editor = getPref(context).edit();
+        editor.putBoolean(INDEX_HEAD_AUTO_LOOP, ifAuto);
+        editor.commit();
+    }
+
+
+    /**
+     * 是否WiFi下自动播放视频
+     *
+     * @param context
+     * @return
+     */
+    public static boolean getWiFiAutoPlayVedio(Context context) {
+        return getPref(context).getBoolean(WIFI_AUTO_PLAY_VEDIO, true);
+    }
+
+    /**
+     * 设置WiFi下自动播放视频
+     *
+     * @param context
+     */
+    public static void setWiFiAutoPlayVedio(Context context, boolean ifAuto) {
+        Editor editor = getPref(context).edit();
+        editor.putBoolean(WIFI_AUTO_PLAY_VEDIO, ifAuto);
+        editor.commit();
+    }
 }

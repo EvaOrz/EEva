@@ -1,5 +1,7 @@
 package cn.com.modernmedia.exhibitioncalendar.api;
 
+import android.util.Log;
+
 import org.json.JSONObject;
 
 import cn.com.modernmedia.corelib.http.BaseApi;
@@ -51,6 +53,7 @@ public class LoginApi extends BaseApi {
     @Override
     protected void handler(JSONObject object) {
         if (object == null) return;
+        Log.e("LoginApi", object.toString());
         user = UserModel.parseUserModel(user, object);
     }
 

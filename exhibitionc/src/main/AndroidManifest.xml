@@ -50,7 +50,6 @@
         <!--登录页面 栈内单例模式-->
         <activity
             android:name=".activity.LoginActivity"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 
         <!--全屏广告页面 栈内单例模式-->

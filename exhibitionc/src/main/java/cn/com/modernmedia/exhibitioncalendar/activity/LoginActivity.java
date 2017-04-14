@@ -156,28 +156,6 @@ public class LoginActivity extends BaseActivity {
         getVerify.setOnClickListener(this);
     }
 
-    /**
-     * 检查是否来自应用分享，若是，则会取得要分享的文本信息
-     *
-     * @return
-     */
-    public boolean checkIsShare() {
-        Intent intent = getIntent();
-        if (intent != null && intent.getExtras() != null) {
-            Bundle bundle = intent.getExtras();
-            if (intent.getAction() != null && intent.getAction().equals(Intent.ACTION_SEND)) {
-                if (bundle.containsKey(Intent.EXTRA_TEXT)) {
-                    shareData = bundle.getString(Intent.EXTRA_TEXT);
-                    if (TextUtils.isEmpty(shareData)) {
-                        finish();
-                    } else {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
 
     @Override
     public void onClick(View v) {

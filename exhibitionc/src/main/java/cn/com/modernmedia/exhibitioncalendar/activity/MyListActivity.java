@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.com.modernmedia.corelib.BaseActivity;
+import cn.com.modernmedia.corelib.CommonApplication;
 import cn.com.modernmedia.corelib.db.DataHelper;
 import cn.com.modernmedia.corelib.listener.FetchEntryListener;
 import cn.com.modernmedia.corelib.model.Entry;
@@ -41,7 +43,6 @@ public class MyListActivity extends BaseActivity {
     private UserModel userModel;
     private ListView listView;
     private ImageView cover;
-    //    private ExhibitionAdapter ingAdapter, edAdapter;
     private List<CalendarModel> ingdatas = new ArrayList<>();
     private List<CalendarModel> eddatas = new ArrayList<>();
 
@@ -84,7 +85,9 @@ public class MyListActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (MyApplication.loginStatusChange) {
+
+        if (CommonApplication.loginStatusChange) {
+            Log.e("My_list_login", "loginStatusChange");
             initData();
         }
     }
@@ -116,7 +119,16 @@ public class MyListActivity extends BaseActivity {
 
     private void initData() {
         userModel = DataHelper.getUserLoginInfo(this);
-        if (userModel == null) return;
+        if (userModel == null) {
+            avatar.setImageResource(R.mipmap.avatar_bg);
+            nickname.setText(R.string.no_login);
+            edText.setBackgroundResource(R.drawable.gray_3radius_corner_bg);
+            ingText.setBackgroundResource(R.drawable.red_3radius_corner_bg);
+            ingdatas.clear();
+            eddatas.clear();
+            handler.sendEmptyMessage(1);
+            return;
+        }
         Tools.setAvatar(this, userModel.getAvatar(), avatar);
         nickname.setText(userModel.getNickName());
         if (AppValue.myList == null) {
@@ -181,9 +193,9 @@ public class MyListActivity extends BaseActivity {
                 break;
 
             case R.id.list_ing:
+                edText.setBackgroundResource(R.drawable.gray_3radius_corner_bg);
+                ingText.setBackgroundResource(R.drawable.red_3radius_corner_bg);
                 if (userModel != null) {
-                    edText.setBackgroundResource(R.drawable.gray_3radius_corner_bg);
-                    ingText.setBackgroundResource(R.drawable.red_3radius_corner_bg);
                     handler.sendEmptyMessage(1);
                 }
 

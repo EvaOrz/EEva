@@ -117,7 +117,7 @@
 
                     <TextView
 
-                        android:layout_width="wrap_content"
+                        android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:text="@string/real_name"
                         android:textColor="@color/gray_dark"
@@ -126,8 +126,9 @@
                     <TextView
                         android:id="@+id/real_name"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:singleLine="true"
+
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_14"/>
                 </LinearLayout>
@@ -146,7 +147,7 @@
                     >
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:text="@string/sign"
                         android:textColor="@color/gray_dark"
@@ -155,7 +156,7 @@
                     <TextView
                         android:id="@+id/sign"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:singleLine="true"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_14"/>
@@ -175,7 +176,7 @@
                     >
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:text="@string/birthday"
                         android:textColor="@color/gray_dark"
@@ -184,7 +185,7 @@
                     <TextView
                         android:id="@+id/birthday"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:singleLine="true"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_14"/>
@@ -204,7 +205,7 @@
                     >
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:text="@string/telephone"
                         android:textColor="@color/gray_dark"
@@ -213,7 +214,7 @@
                     <TextView
                         android:id="@+id/telephone"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:singleLine="true"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_14"/>
@@ -233,7 +234,7 @@
                     >
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:text="@string/address"
                         android:textColor="@color/gray_dark"
@@ -242,7 +243,7 @@
                     <TextView
                         android:id="@+id/address"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:singleLine="true"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_14"/>
@@ -262,7 +263,7 @@
                     >
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:text="@string/email_ch"
                         android:textColor="@color/gray_dark"
@@ -271,7 +272,7 @@
                     <TextView
                         android:id="@+id/email_ch"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:singleLine="true"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_14"/>
@@ -291,7 +292,7 @@
                     >
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:text="@string/banded"
                         android:textColor="@color/gray_dark"
@@ -306,6 +307,7 @@
                     android:background="@color/gray_line"/>
 
                 <ImageView
+                    android:id="@+id/user_ok"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_margin="20dp"

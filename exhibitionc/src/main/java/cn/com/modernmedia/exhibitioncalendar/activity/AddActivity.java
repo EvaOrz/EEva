@@ -38,13 +38,18 @@ public class AddActivity extends BaseActivity {
     private ViewPager viewPager;
     private AddAdapter adapter;
     private List<String> pics = new ArrayList<>();
+    private ApiController apiController;
+
+    private int type = 0;// 0:添加；1：编辑
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
         initView();
+        apiController = ApiController.getInstance(this);
         calendarModel = (CalendarModel) getIntent().getSerializableExtra("add_detail");
+        type = getIntent().getIntExtra("add_type", 0);
         if (calendarModel != null) {
             initData();
         } else {
@@ -76,23 +81,6 @@ public class AddActivity extends BaseActivity {
         tongbu = (EvaSwitchBar) findViewById(R.id.tong_switch);
         viewPager = (ViewPager) findViewById(R.id.add_viewpager);
 
-
-        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
         notification.setChecked(true);
         tongbu.setChecked(false);
     }
@@ -104,20 +92,33 @@ public class AddActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.add_ok:
-                ApiController.getInstance(AddActivity.this).handleFav(AddActivity.this, HandleFavApi.HANDLE_ADD, calendarModel.getItemId(), "img", "", new FetchEntryListener() {
-                    @Override
-                    public void setData(Entry entry) {
+                showLoadingDialog(true);
+                String img = pics.get(viewPager.getCurrentItem());
+                String tt = date.getText() + " " + time.getText();
+                if (type == 1) {
 
-                    }
-                });
+                    apiController.handleFav(AddActivity.this, HandleFavApi.HANDLE_EDIT, calendarModel.getEventId(), img, tt, new FetchEntryListener() {
+                        @Override
+                        public void setData(Entry entry) {
+
+                        }
+                    });
+                } else {
+                    apiController.handleFav(AddActivity.this, HandleFavApi.HANDLE_ADD, calendarModel.getItemId(), img, tt, new FetchEntryListener() {
+                        @Override
+                        public void setData(Entry entry) {
+
+                        }
+                    });
+                }
                 break;
             case R.id.add_time:
 
-                AddPopView timePop = new AddPopView(AddActivity.this, 1);
+                AddPopView timePop = new AddPopView(AddActivity.this, 1, calendarModel.getStartTime());
                 break;
             case R.id.add_date:
 
-                AddPopView datePop = new AddPopView(AddActivity.this, 2);
+                AddPopView datePop = new AddPopView(AddActivity.this, 2, calendarModel.getStartTime());
                 break;
 
         }
@@ -173,8 +174,9 @@ public class AddActivity extends BaseActivity {
     }
 
 
-    public void changePop(int year,int month,int day,int hour,int minute){
-
+    public void changePop(int year, int month, int day, int hour, int minute) {
+        date.setText(year + "-" + month + "-" + day);
+        time.setText(hour + ":" + minute);
     }
 }
 

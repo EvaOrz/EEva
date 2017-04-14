@@ -2,16 +2,20 @@ package cn.com.modernmedia.exhibitioncalendar.view;
 
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
+import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.activity.AddActivity;
+import cn.com.modernmedia.exhibitioncalendar.activity.UserCenterActivity;
 
 /**
  * Created by Eva. on 17/4/11.
@@ -26,11 +30,24 @@ public class AddPopView {
     private DatePicker datePicker;
     private TimePicker timePicker;
     private int aa, bb, cc, dd, ee;
+    private TextView cancle, save;
 
 
-    public AddPopView(Context context, int type) {
+    public AddPopView(Context context, int type, String time) {
         this.mContext = context;
-        this.type = type;// 1：time 2：date
+        this.type = type;// 1：time 2：date 3:birthday
+        String tt = Tools.format(Long.valueOf(time) * 1000, "yyyy-MM-dd-HH-mm");
+        if (!TextUtils.isEmpty(tt)) {
+            String[] array = tt.split("-");
+            if (array.length > 0) aa = Integer.valueOf(array[0]);
+            if (array.length > 1) bb = Integer.valueOf(array[1]);
+            if (array.length > 2) cc = Integer.valueOf(array[2]);
+            if (array.length > 3) dd = Integer.valueOf(array[3]);
+            if (array.length > 4) ee = Integer.valueOf(array[4]);
+
+
+        }
+
         init();
     }
 
@@ -49,18 +66,22 @@ public class AddPopView {
 
         datePicker = (DatePicker) view.findViewById(R.id.datePicker);
         timePicker = (TimePicker) view.findViewById(R.id.timePicker);
-
-        view.findViewById(R.id.add_cancle).setOnClickListener(new View.OnClickListener() {
+        timePicker.setIs24HourView(true);
+        cancle = (TextView) view.findViewById(R.id.add_cancle);
+        cancle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 window.dismiss();
             }
         });
-        view.findViewById(R.id.add_save).setOnClickListener(new View.OnClickListener() {
+        save = (TextView) view.findViewById(R.id.add_save);
+        save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                ((AddActivity) mContext).changePop(aa, bb, cc, dd, ee);
+                if (mContext instanceof AddActivity && (type == 1 || type == 2))
+                    ((AddActivity) mContext).changePop(aa, bb, cc, dd, ee);
+                else if (mContext instanceof UserCenterActivity && type == 3)
+                    ((UserCenterActivity) mContext).setBirth(aa, bb, cc);
                 window.dismiss();
             }
         });
@@ -70,10 +91,14 @@ public class AddPopView {
         } else if (type == 2) {
             timePicker.setVisibility(View.GONE);
             datePicker.setVisibility(View.VISIBLE);
+        } else if (type == 3) {
+            timePicker.setVisibility(View.GONE);
+            datePicker.setVisibility(View.VISIBLE);
         }
 
+
         // 初始化DatePicker组件，初始化时指定监听器
-        datePicker.init(2017, 2, 2, new DatePicker.OnDateChangedListener() {
+        datePicker.init(aa, bb, cc, new DatePicker.OnDateChangedListener() {
 
             @Override
             public void onDateChanged(DatePicker arg0, int year, int month, int day) {

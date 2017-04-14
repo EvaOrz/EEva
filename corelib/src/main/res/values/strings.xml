@@ -183,6 +183,18 @@
     <string name="menu_cancle">取消行程</string>
     <string name="shut">关闭</string>
     <string name="save">保存</string>
-
-
+    <string name="user_sign">个人签名</string>
+    <string name="motify_sign">修改个人签名</string>
+    <string name="motify_email">修改邮箱</string>
+    <string name="motify_nickname">修改昵称</string>
+    <string name="motify_realname">修改真实姓名</string>
+    <string name="motify_telephone">修改电话号码</string>
+    <string name="motify_address">修改地址</string>
+    <string name="confirm_change">确认修改</string>
+    <string name="setting_push_switch">推送开关</string>
+    <string name="setting_push">消息推送</string>
+    <string name="setting_auto_loop">首页焦点图自动轮播</string>
+    <string name="setting_wifi_auto_vedio">Wi-Fi下自动播放视频</string>
+    <string name="setting_function">功能设置</string>
+    <string name="setting">系统设置</string>
 </resources>

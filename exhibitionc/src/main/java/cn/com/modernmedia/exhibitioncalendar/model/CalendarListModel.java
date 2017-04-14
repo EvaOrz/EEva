@@ -65,10 +65,12 @@ public class CalendarListModel extends Entry {
         private List<HouseOrCity> citylist;
         private List<HouseOrCity> hotlist;
         private String address = "";
+        private String eventId = "";
         private String addTime = "";
         private String coverImg = "";
         private String weburl = "";
         private int category;
+
         public CalendarModel() {
         }
 
@@ -87,6 +89,7 @@ public class CalendarListModel extends Entry {
             calendarModel.setExtension(jsonObject.optString("extension"));
             calendarModel.setCoordinates(parseCoordinateList(jsonObject.optJSONArray("coordinates")));
             calendarModel.setAddress(jsonObject.optString("address"));
+            calendarModel.setEventId(jsonObject.optString("event_id"));
             calendarModel.setAddTime(jsonObject.optString("add_time"));
             calendarModel.setTypelist(parseHouseOrCityList(jsonObject.optJSONArray("typelist")));
             calendarModel.setHouselist(parseHouseOrCityList(jsonObject.optJSONArray("houselist")));
@@ -103,6 +106,14 @@ public class CalendarListModel extends Entry {
                 list.add(parseCoordinate(array.optJSONObject(i)));
             }
             return list;
+        }
+
+        public String getEventId() {
+            return eventId;
+        }
+
+        public void setEventId(String eventId) {
+            this.eventId = eventId;
         }
 
         public static List<HouseOrCity> parseHouseOrCityList(JSONArray array) {
