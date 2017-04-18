@@ -60,7 +60,7 @@
                 android:paddingTop="10dp"
                 android:src="@mipmap/my_share"
 
-                android:visibility="invisible"/>
+                />
         </RelativeLayout>
 
 

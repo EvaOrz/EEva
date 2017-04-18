@@ -3,6 +3,7 @@ package cn.com.modernmedia.exhibitioncalendar.api;
 import android.content.Context;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import cn.com.modernmedia.corelib.db.DataHelper;
@@ -43,7 +44,7 @@ public class HandleFavApi extends BaseApi {
             addPostParams(postObject, "appid", MyApplication.APPID + "");
             addPostParams(postObject, "version", Tools.getAppVersion(c));
             addPostParams(postObject, "uid", DataHelper.getUid(c));
-            addPostParams(postObject, "token", DataHelper.getUid(c));
+            addPostParams(postObject, "token", DataHelper.getToken(c));
             addPostParams(postObject, "item_id", id);
             addPostParams(postObject, "img", img);
             addPostParams(postObject, "time", time);
@@ -67,6 +68,11 @@ public class HandleFavApi extends BaseApi {
     protected void handler(JSONObject jsonObject) {
         if (jsonObject == null) return;
         Log.e("HandleFavApi", jsonObject.toString());
+        JSONArray jsonArray = jsonObject.optJSONArray("item");
+        if (jsonArray == null || jsonArray.length() == 0) return;
+
+
+        calendarModel = CalendarModel.parseCalendarModel(calendarModel, jsonArray.optJSONObject(0));
     }
 
     @Override

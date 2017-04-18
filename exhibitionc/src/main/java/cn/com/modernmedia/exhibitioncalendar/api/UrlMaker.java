@@ -295,4 +295,23 @@ public class UrlMaker {
     public static String search() {
         return API_URL + "search?datatype=" + ConstData.DATA_TYPE;
     }
+
+    /**
+     * 获取分享id
+     *
+     * @return
+     */
+    public static String getShareId() {
+        return API_URL + "addshare?datatype=" + ConstData.DATA_TYPE;
+    }
+
+    /**
+     * 获取分享地址
+     *
+     * @param shareId
+     * @return
+     */
+    public static String getShareWebUrl(String shareId) {
+        return HOST + "api/share?id=" + shareId;
+    }
 }

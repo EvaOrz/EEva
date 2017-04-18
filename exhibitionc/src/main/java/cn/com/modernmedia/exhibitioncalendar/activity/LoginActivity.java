@@ -33,7 +33,7 @@ import cn.com.modernmedia.corelib.CommonApplication;
 import cn.com.modernmedia.corelib.db.DataHelper;
 import cn.com.modernmedia.corelib.listener.FetchEntryListener;
 import cn.com.modernmedia.corelib.listener.ImageDownloadStateListener;
-import cn.com.modernmedia.corelib.listener.UserModelAuthListener;
+import cn.com.modernmedia.corelib.listener.OpenAuthListener;
 import cn.com.modernmedia.corelib.model.Entry;
 import cn.com.modernmedia.corelib.model.ErrorMsg;
 import cn.com.modernmedia.corelib.model.UserModel;
@@ -471,13 +471,10 @@ public class LoginActivity extends BaseActivity {
         } else {
             doAfterSinaIsOAuthed();
         }
-        weiboAuth.setAuthListener(new UserModelAuthListener() {
-
+        weiboAuth.setWeiboAuthListener(new OpenAuthListener() {
             @Override
-            public void onCallBack(boolean isSuccess) {
-                if (isSuccess) {
-                    doAfterSinaIsOAuthed();
-                }
+            public void onCallBack(boolean isSuccess, String uid, String token) {
+                if (isSuccess) doAfterSinaIsOAuthed();
             }
         });
 

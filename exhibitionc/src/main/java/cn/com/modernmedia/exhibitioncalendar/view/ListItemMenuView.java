@@ -49,7 +49,7 @@ public class ListItemMenuView {
         view.findViewById(R.id.menu_share).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                new ShareDialog(mContext, calendarModel);
             }
         });
         view.findViewById(R.id.menu_edit).setOnClickListener(new View.OnClickListener() {

@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -23,12 +24,12 @@ import cn.com.modernmedia.corelib.listener.FetchEntryListener;
 import cn.com.modernmedia.corelib.model.Entry;
 import cn.com.modernmedia.corelib.model.UserModel;
 import cn.com.modernmedia.corelib.model.WeatherModel;
+import cn.com.modernmedia.corelib.util.ParseUtil;
 import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.exhibitioncalendar.MyApplication;
 import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.adapter.CoverVPAdapter;
 import cn.com.modernmedia.exhibitioncalendar.adapter.DetailVPAdapter;
-import cn.com.modernmedia.exhibitioncalendar.adapter.ExhibitionAdapter;
 import cn.com.modernmedia.exhibitioncalendar.adapter.VerticleVPAdapter;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel;
@@ -36,10 +37,12 @@ import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarMod
 import cn.com.modernmedia.exhibitioncalendar.model.TagListModel;
 import cn.com.modernmedia.exhibitioncalendar.push.NewPushManager;
 import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
+import cn.com.modernmedia.exhibitioncalendar.util.UriParse;
 import cn.com.modernmedia.exhibitioncalendar.view.ChildHeightViewpager;
+import cn.com.modernmedia.exhibitioncalendar.view.ListItemMenuView;
 import cn.com.modernmedia.exhibitioncalendar.view.MainCityListScrollView;
-import cn.com.modernmedia.exhibitioncalendar.view.MyListView;
 import cn.com.modernmedia.exhibitioncalendar.view.VerticalViewPager;
+import cn.com.modernmedia.exhibitioncalendar.view.ViewHolder;
 
 
 /**
@@ -58,11 +61,9 @@ public class MainActivity extends BaseActivity {
     private CoverVPAdapter coverVPAdapter;
     private DetailVPAdapter detailVPAdapter;
 
-    private LinearLayout dotLayout;
+    private LinearLayout dotLayout, myListLayout;
     private List<ImageView> dots = new ArrayList<>();
 
-    private MyListView listView;
-    private ExhibitionAdapter myAdapter;
     private List<CalendarModel> myCalendarList = new ArrayList<>();
 
     private VerticalViewPager verticalViewPager;
@@ -98,9 +99,10 @@ public class MainActivity extends BaseActivity {
                     break;
 
                 case 3:// 用户数据
-                    myAdapter.setData(myCalendarList);
-                    myAdapter.notifyDataSetChanged();
-
+                    myListLayout.removeAllViews();
+                    for (CalendarModel ca : myCalendarList) {
+                        myListLayout.addView(getMylistItemView(ca));
+                    }
                     myNum.setText(myCalendarList.size() + "个待参观展览");
 
                 case 4:// 用户数据
@@ -110,6 +112,40 @@ public class MainActivity extends BaseActivity {
             }
         }
     };
+
+    private View getMylistItemView(final CalendarModel item) {
+        ViewHolder viewHolder = ViewHolder.get(MainActivity.this, null, R.layout.item_list);
+        TextView title = viewHolder.getView(R.id.l_title);
+        TextView city = viewHolder.getView(R.id.l_city);
+        TextView date = viewHolder.getView(R.id.l_date);
+        ImageView img = viewHolder.getView(R.id.l_img);
+
+        int width = MyApplication.width - 20;
+        int height = width * 9 / 16;
+        img.setLayoutParams(new RelativeLayout.LayoutParams(width, height));
+        title.setText(item.getTitle());
+        date.setText(Tools.getStringToDate(item.getStartTime()) + "-" + Tools.getStringToDate(item.getEndTime()));
+        if (ParseUtil.listNotNull(item.getCitylist())) {
+            city.setText(item.getCitylist().get(0).getTagName());
+        }
+        MyApplication.finalBitmap.display(img, item.getImg());
+        final ImageView sandian = viewHolder.getView(R.id.sandian);
+        sandian.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new ListItemMenuView(MainActivity.this, item, sandian);
+            }
+        });
+        viewHolder.getConvertView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this, CalendarDetailActivity.class);
+                i.putExtra(UriParse.DETAILCALENDAR, item.getItemId());
+                startActivity(i);
+            }
+        });
+        return viewHolder.getConvertView();
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -209,10 +245,7 @@ public class MainActivity extends BaseActivity {
         verticalViewPager.setAdapter(verticleVPAdapter);
         verticleVPAdapter.notifyDataSetChanged();
 
-
-        listView = (MyListView) page2.findViewById(R.id.my_listview);
-        myAdapter = new ExhibitionAdapter(this);
-        listView.setAdapter(myAdapter);
+        myListLayout = (LinearLayout) page2.findViewById(R.id.ceshi);
         page2.findViewById(R.id.main_add).setOnClickListener(this);
         ((TextView) page1.findViewById(R.id.main_date)).setText(Tools.format(System.currentTimeMillis(), "dd"));
         ((TextView) page1.findViewById(R.id.main_month)).setText(Tools.getEnDate());

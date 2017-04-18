@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 
 import cn.com.modernmedia.corelib.BaseActivity;
+import cn.com.modernmedia.corelib.db.DataHelper;
 import cn.com.modernmedia.corelib.listener.FetchEntryListener;
 import cn.com.modernmedia.corelib.model.Entry;
 import cn.com.modernmedia.exhibitioncalendar.MyApplication;
@@ -18,6 +19,7 @@ import cn.com.modernmedia.exhibitioncalendar.api.UrlMaker;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
 import cn.com.modernmedia.exhibitioncalendar.util.UriParse;
 import cn.com.modernmedia.exhibitioncalendar.view.CommonWebView;
+import cn.com.modernmedia.exhibitioncalendar.view.ShareDialog;
 
 /**
  * Created by Eva. on 17/4/4.
@@ -84,13 +86,22 @@ public class CalendarDetailActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.detail_add:
-                Intent i = new Intent(CalendarDetailActivity.this, AddActivity.class);
-                i.putExtra("add_detail", calendarModel);
-                startActivity(i);
 
+                if (DataHelper.getUserLoginInfo(CalendarDetailActivity.this) == null) {
+                    startActivity(new Intent(CalendarDetailActivity.this, LoginActivity.class));
 
+                } else {
+                    Intent i = new Intent(CalendarDetailActivity.this, AddActivity.class);
+                    i.putExtra("add_detail", calendarModel);
+                    startActivity(i);
+                }
                 break;
             case R.id.detail_share:
+                if (calendarModel != null) {
+                    calendarModel.setWeburl(UrlMaker.calendarDetailPage + "?itemid=" + id);
+                    new ShareDialog(CalendarDetailActivity.this, calendarModel);
+                }
+
                 break;
 
 

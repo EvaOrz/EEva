@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -81,6 +82,10 @@ public class AddActivity extends BaseActivity {
         tongbu = (EvaSwitchBar) findViewById(R.id.tong_switch);
         viewPager = (ViewPager) findViewById(R.id.add_viewpager);
 
+        int width = MyApplication.width - 20;
+        int height = width * 3 / 4;
+        viewPager.setLayoutParams(new LinearLayout.LayoutParams(width, height));
+        viewPager.setOffscreenPageLimit(3);
         notification.setChecked(true);
         tongbu.setChecked(false);
     }
@@ -100,14 +105,14 @@ public class AddActivity extends BaseActivity {
                     apiController.handleFav(AddActivity.this, HandleFavApi.HANDLE_EDIT, calendarModel.getEventId(), img, tt, new FetchEntryListener() {
                         @Override
                         public void setData(Entry entry) {
-
+                            showToast("保存成功");
                         }
                     });
                 } else {
                     apiController.handleFav(AddActivity.this, HandleFavApi.HANDLE_ADD, calendarModel.getItemId(), img, tt, new FetchEntryListener() {
                         @Override
                         public void setData(Entry entry) {
-
+                            showToast("添加成功");
                         }
                     });
                 }

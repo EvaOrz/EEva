@@ -283,7 +283,19 @@ public class ApiController {
     }
 
     /**
+     * 获取分享id
+     *
+     * @param c
+     * @param listener
+     */
+    public void getShareId(Context c, String title, FetchEntryListener listener) {
+        GetShareIdApi getShareIdApi = new GetShareIdApi(c, title);
+        doPostRequest(getShareIdApi, getShareIdApi.getData(), USE_HTTP_ONLY, listener);
+    }
+
+    /**
      * 增删改行程
+     *
      * @param c
      * @param type
      * @param id

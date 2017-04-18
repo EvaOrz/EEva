@@ -23,11 +23,11 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"/>
 
-            <cn.com.modernmedia.exhibitioncalendar.view.MyListView
-                android:id="@+id/my_listview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:divider="@null"/>
+            <!--<cn.com.modernmedia.exhibitioncalendar.view.MyListView-->
+                <!--android:id="@+id/my_listview"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:divider="@null"/>-->
 
             <ImageView
                 android:id="@+id/main_add"

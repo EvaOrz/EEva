@@ -27,9 +27,12 @@ import cn.com.modernmedia.exhibitioncalendar.MyApplication;
 import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.adapter.ExhibitionAdapter;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
+import cn.com.modernmedia.exhibitioncalendar.api.GetShareIdApi;
+import cn.com.modernmedia.exhibitioncalendar.api.UrlMaker;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
 import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
+import cn.com.modernmedia.exhibitioncalendar.view.ShareDialog;
 
 /**
  * Created by Eva. on 17/4/4.
@@ -42,6 +45,7 @@ public class MyListActivity extends BaseActivity {
     private TextView nickname, clickAdd, ingText, edText;
     private UserModel userModel;
     private ListView listView;
+    private String shareId;
     private ImageView cover;
     private List<CalendarModel> ingdatas = new ArrayList<>();
     private List<CalendarModel> eddatas = new ArrayList<>();
@@ -66,7 +70,9 @@ public class MyListActivity extends BaseActivity {
                     edAdapter.notifyDataSetChanged();
                     clickAdd.setVisibility(View.GONE);
                     break;
-
+                case 3:
+                    new ShareDialog(MyListActivity.this, userModel.getUserName() + "的观展行程", "", userModel.getAvatar(), UrlMaker.getShareWebUrl(shareId));
+                    break;
 
             }
 
@@ -95,6 +101,7 @@ public class MyListActivity extends BaseActivity {
     private void initView() {
 
         findViewById(R.id.my_back).setOnClickListener(this);
+        findViewById(R.id.my_share).setOnClickListener(this);
         avatar = (RoundImageView) findViewById(R.id.my_avatar);
         avatar.setOnClickListener(this);
         nickname = (TextView) findViewById(R.id.my_nickname);
@@ -178,7 +185,25 @@ public class MyListActivity extends BaseActivity {
             case R.id.my_back:
                 finish();
                 break;
+            case R.id.my_share:
+                if (userModel == null) {
+                    startActivity(new Intent(MyListActivity.this, LoginActivity.class));
+                } else {
+                    ApiController.getInstance(MyListActivity.this).getShareId(MyListActivity
+                            .this, userModel.getUserName() + "的观展行程", new FetchEntryListener() {
+                        @Override
+                        public void setData(Entry entry) {
+                            if (entry != null && entry instanceof GetShareIdApi.ShareId) {
+                                shareId = ((GetShareIdApi.ShareId) entry).getId();
+                                handler.sendEmptyMessage(3);
+                            }
 
+
+                        }
+                    });
+                }
+
+                break;
             case R.id.my_avatar:
                 if (userModel == null) {
                     startActivity(new Intent(MyListActivity.this, LoginActivity.class));

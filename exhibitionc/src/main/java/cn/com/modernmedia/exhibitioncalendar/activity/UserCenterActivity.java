@@ -176,7 +176,7 @@ public class UserCenterActivity extends BaseActivity {
                     }
                 });
             case R.id.birthday:
-                new AddPopView(UserCenterActivity.this, 3);
+                new AddPopView(UserCenterActivity.this, 3,mUser.getBirth());
                 break;
 
             case R.id.user_ok:

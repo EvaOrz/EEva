@@ -35,5 +35,5 @@ dependencies {
     // 图片显示
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
     compile files('libs/open_sdk.jar')
-    compile files('libs/weibosdkcore.jar')
+    compile files('libs/weiboSDKCore_3.1.4.jar')
 }

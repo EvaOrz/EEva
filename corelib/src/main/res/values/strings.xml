@@ -197,4 +197,9 @@
     <string name="setting_wifi_auto_vedio">Wi-Fi下自动播放视频</string>
     <string name="setting_function">功能设置</string>
     <string name="setting">系统设置</string>
+    <string name="QQ">QQ</string>
+    <string name="weixin">微信</string>
+    <string name="mail_">邮件</string>
+    <string name="pengyouquan">朋友圈</string>
+    <string name="sina">微博</string>
 </resources>

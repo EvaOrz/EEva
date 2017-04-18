@@ -27,7 +27,7 @@ public interface SinaConstants {
     /**
      * 当前 DEMO 应用的 APP_KEY，第三方应用应该使用自己的 APP_KEY 替换该 APP_KEY
      */
-    public static final String APP_KEY = "1280042338";
+    public static final String APP_KEY = "3608123411";
 
     /**
      * 当前 DEMO 应用的回调页，第三方应用可以使用自己的回调页。
@@ -38,7 +38,7 @@ public interface SinaConstants {
      * 建议使用默认回调页：https://api.weibo.com/oauth2/default.html
      * </p>
      */
-    public static final String REDIRECT_URL = "https://api.weibo.com/oauth2/default.html";
+    public static final String REDIRECT_URL = "http://https://artcalendar.bbwc.cn/callback.php";
 
     /**
      * Scope 是 OAuth2.0 授权机制中 authorize 接口的一个参数。通过 Scope，平台将开放更多的微博
