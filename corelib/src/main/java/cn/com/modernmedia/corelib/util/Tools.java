@@ -131,6 +131,7 @@ public class Tools {
     }
 
     public static String getStringToDate(String timeStr) {
+        if (TextUtils.isEmpty(timeStr)) return "";
         long t = Long.parseLong(timeStr) * 1000;
         SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd", Locale.getDefault());
         String start = format.format(new Date(t));
@@ -415,7 +416,7 @@ public class Tools {
         HashMap<String, String> headerMap = new HashMap<String, String>();
         headerMap.put("X-Slate-UserId", DataHelper.getUid(context));
         headerMap.put("X-Slate-DeviceId", DataHelper.getUUID(context));
-        //        headerMap.put("X-Slate-AppId", ConstData.getInitialAppId() + "");
+        headerMap.put("X-Slate-AppId", CommonApplication.APP_ID + "");
         headerMap.put("X-SLATE-JAILBROKEN", Tools.isRooted() ? "11" : "10");//是否root（如果可以获取就获取）
 
         headerMap.put("X-SLATE-CLIENTTYPE", "android");

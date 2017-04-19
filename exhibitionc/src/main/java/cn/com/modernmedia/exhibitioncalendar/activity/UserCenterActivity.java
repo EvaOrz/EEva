@@ -111,7 +111,7 @@ public class UserCenterActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.edit_pwd:
-                startActivity(new Intent(UserCenterActivity.this, ForgetPwdActivity.class));
+                startActivity(new Intent(UserCenterActivity.this, ModifyPwdActivity.class));
                 break;
             case R.id.logout:
                 logout();
@@ -176,7 +176,7 @@ public class UserCenterActivity extends BaseActivity {
                     }
                 });
             case R.id.birthday:
-                new AddPopView(UserCenterActivity.this, 3,mUser.getBirth());
+                new AddPopView(UserCenterActivity.this, 3, mUser.getBirth());
                 break;
 
             case R.id.user_ok:
@@ -192,7 +192,7 @@ public class UserCenterActivity extends BaseActivity {
     public void modifyUserInfo() {
         showLoadingDialog(true);
         // 只更新头像、昵称信息
-        mController.modifyUserInfo(mUser.getUid(), mUser.getToken(), mUser.getUserName(), mUser.getNickName(), mUser.getAvatar(), null, mUser.getDesc(), false, new FetchEntryListener() {
+        mController.modifyUserInfo(this, mUser.getUid(), mUser.getToken(), mUser.getUserName(), mUser.getNickName(), mUser.getAvatar(), null, mUser.getDesc(), false, new FetchEntryListener() {
 
             @Override
             public void setData(final Entry entry) {
@@ -225,44 +225,44 @@ public class UserCenterActivity extends BaseActivity {
     }
 
 
-//    /**
-//     * 上传用户头像
-//     *
-//     * @param imagePath 头像存储在本地的路径
-//     */
-//    protected void uploadAvatar(String imagePath) {
-//        if (user == null || TextUtils.isEmpty(imagePath)) return;
-//
-//        if (!new File(imagePath).exists()) {
-//            showLoadingDialog(false);
-//            showToast(R.string.msg_avatar_get_failed);// 头像获取失败
-//            return;
-//        }
-//
-//        showLoadingDialog(true);
-//        mController.uploadAvatar(imagePath, new FetchEntryListener() {
-//
-//                    @Override
-//                    public void setData(final Entry entry) {
-//                        showLoadingDialog(false);
-//                        String toast = "";
-//                        if (entry instanceof UploadAvaterApi.) {
-//                            UploadAvatarApi.UploadAvatarResult result = (UploadAvatarApi.UploadAvatarResult) entry;
-//                            //                    String status = result.getStatus();
-//                            //                    if (status.equals("success")) { // 头像上传成功
-//                            if (!TextUtils.isEmpty(result.getAvatarPath())) {
-//
-//                                doModify(result.getAvatarPath());
-//                                return;
-//                                //                    }
-//                            } else {
-//                                toast = result.getMsg();
-//                            }
-//                        }
-//                        showToast(TextUtils.isEmpty(toast) ? getString(R.string.msg_avatar_upload_failed) : toast);
-//                    }
-//                }
-//
-//        );
-//    }
+    //    /**
+    //     * 上传用户头像
+    //     *
+    //     * @param imagePath 头像存储在本地的路径
+    //     */
+    //    protected void uploadAvatar(String imagePath) {
+    //        if (user == null || TextUtils.isEmpty(imagePath)) return;
+    //
+    //        if (!new File(imagePath).exists()) {
+    //            showLoadingDialog(false);
+    //            showToast(R.string.msg_avatar_get_failed);// 头像获取失败
+    //            return;
+    //        }
+    //
+    //        showLoadingDialog(true);
+    //        mController.uploadAvatar(imagePath, new FetchEntryListener() {
+    //
+    //                    @Override
+    //                    public void setData(final Entry entry) {
+    //                        showLoadingDialog(false);
+    //                        String toast = "";
+    //                        if (entry instanceof UploadAvaterApi.) {
+    //                            UploadAvatarApi.UploadAvatarResult result = (UploadAvatarApi.UploadAvatarResult) entry;
+    //                            //                    String status = result.getStatus();
+    //                            //                    if (status.equals("success")) { // 头像上传成功
+    //                            if (!TextUtils.isEmpty(result.getAvatarPath())) {
+    //
+    //                                doModify(result.getAvatarPath());
+    //                                return;
+    //                                //                    }
+    //                            } else {
+    //                                toast = result.getMsg();
+    //                            }
+    //                        }
+    //                        showToast(TextUtils.isEmpty(toast) ? getString(R.string.msg_avatar_upload_failed) : toast);
+    //                    }
+    //                }
+    //
+    //        );
+    //    }
 }

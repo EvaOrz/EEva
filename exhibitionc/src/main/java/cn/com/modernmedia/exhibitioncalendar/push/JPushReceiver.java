@@ -25,7 +25,7 @@ public class JPushReceiver extends BroadcastReceiver {
     private static String jsonMessage;// 自定义json消息
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, Intent intent) {
         Bundle bundle = intent.getExtras();
         Log.e(TAG, "[MyReceiver] onReceive - " + intent.getAction() + ", extras: " + printBundle(bundle));
 
@@ -34,7 +34,9 @@ public class JPushReceiver extends BroadcastReceiver {
             Log.e(TAG + "regid", regId);
             //send the Registration Id to your server...
             // 注册成功 发送给服务器设备token
-            NewPushManager.sendDeviceToken(context,  regId);
+            NewPushManager.getInstance(context).sendDeviceToken(context,  regId);
+
+
 
         } else if (JPushInterface.ACTION_MESSAGE_RECEIVED.equals(intent.getAction())) {
             Log.d(TAG, "[MyReceiver] 接收到推送下来的自定义消息: " + bundle.getString(JPushInterface.EXTRA_MESSAGE));

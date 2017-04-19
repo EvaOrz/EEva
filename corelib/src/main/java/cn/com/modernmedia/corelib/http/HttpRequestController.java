@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.MultipartBuilder;
 import com.squareup.okhttp.OkHttpClient;
@@ -23,8 +22,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import cn.com.modernmedia.corelib.CommonApplication;
+import cn.com.modernmedia.corelib.db.DataHelper;
 import cn.com.modernmedia.corelib.listener.FetchDataListener;
 import cn.com.modernmedia.corelib.util.TimeCollectUtil;
+import cn.com.modernmedia.corelib.util.Tools;
 
 
 /**
@@ -203,27 +205,16 @@ public class HttpRequestController {
                     requestBody = builder.build();
                     //                    requestBody = new MultipartBuilder().type(MultipartBuilder.FORM).addPart(Headers.of("Content-Disposition", "form-data; name=\"image\""), RequestBody.create(MediaType.parse("image/jpg"), f)).build();
                 }
+
                 /**
                  * 提交参数表单
                  */
                 if (jsonParams != null)
 
                     requestBody = new MultipartBuilder().type(MultipartBuilder.FORM).addFormDataPart("data", jsonParams.toString()).build();
+                //
+                request = new Request.Builder().addHeader("X-Slate-UserId", DataHelper.getUid(context)).addHeader("X-Slate-DeviceId", DataHelper.getUUID(context)).addHeader("X-Slate-AppId", CommonApplication.APP_ID + "").addHeader("X-SLATE-JAILBROKEN", Tools.isRooted() ? "11" : "10").addHeader("X-SLATE-CLIENTTYPE", "android").addHeader("X-SLATE-CLIENTVERSION", Tools.getAppVersion(context)).url(url).post(requestBody).build();
 
-                request = new Request.Builder().url(url).post(requestBody).build();
-                /**
-                 * add请求头
-                 */
-                Iterator<String> iterator = headerMap.keySet().iterator();
-                Headers headers = null;
-                while (iterator.hasNext()) {
-                    String key = iterator.next();
-                    String value = headerMap.get(key);
-                    if (!TextUtils.isEmpty(key)) {
-                        //                        headers = new Headers.Builder().addHeader(value, key);
-
-                    }
-                }
                 Response response = client.newCall(request).execute();
                 String resData = null;
                 if (response.isSuccessful()) {

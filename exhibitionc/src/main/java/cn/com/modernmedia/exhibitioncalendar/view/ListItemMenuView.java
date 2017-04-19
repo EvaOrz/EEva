@@ -12,9 +12,12 @@ import cn.com.modernmedia.corelib.listener.FetchEntryListener;
 import cn.com.modernmedia.corelib.model.Entry;
 import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.activity.AddActivity;
+import cn.com.modernmedia.exhibitioncalendar.activity.MainActivity;
+import cn.com.modernmedia.exhibitioncalendar.activity.MyListActivity;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
 import cn.com.modernmedia.exhibitioncalendar.api.HandleFavApi;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
+import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
 
 /**
  * Created by Eva. on 17/4/12.
@@ -63,10 +66,25 @@ public class ListItemMenuView {
         view.findViewById(R.id.menu_cancle).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 ApiController.getInstance(mContext).handleFav(mContext, HandleFavApi.HANDLE_DELETE, calendarModel.getItemId(), calendarModel.getCoverImg(), calendarModel.getStartTime(), new FetchEntryListener() {
                     @Override
                     public void setData(Entry entry) {
+                        if (entry != null && entry instanceof CalendarModel) {
+                            CalendarModel a = (CalendarModel) entry;
+                            for (CalendarModel c : AppValue.myList.getCalendarModels()) {
+                                if (c.getItemId().equals(a.getItemId())) {
+                                    AppValue.myList.getCalendarModels().remove(c);
+                                    if (mContext instanceof MainActivity) {
+                                        ((MainActivity) mContext).handler.sendEmptyMessage(3);
+                                    } else if (mContext instanceof MyListActivity) {
+                                        ((MyListActivity) mContext).handler.sendEmptyMessage(1);
+                                    }
+                                }
+                            }
 
+                        }
                     }
                 });
             }

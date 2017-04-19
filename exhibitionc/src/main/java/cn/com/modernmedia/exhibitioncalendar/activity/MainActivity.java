@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -32,6 +33,7 @@ import cn.com.modernmedia.exhibitioncalendar.adapter.CoverVPAdapter;
 import cn.com.modernmedia.exhibitioncalendar.adapter.DetailVPAdapter;
 import cn.com.modernmedia.exhibitioncalendar.adapter.VerticleVPAdapter;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
+import cn.com.modernmedia.exhibitioncalendar.api.HandleFavApi;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
 import cn.com.modernmedia.exhibitioncalendar.model.TagListModel;
@@ -56,7 +58,7 @@ public class MainActivity extends BaseActivity {
     private WeatherModel weatherModel;
     private TagListModel tagListModel;
     private MainCityListScrollView mainCityListScrollView;
-    private CalendarListModel calendarListModel;
+    private CalendarListModel calendarListModel;// 首页推荐数据
     private ViewPager coverPager, detailPager;
     private CoverVPAdapter coverVPAdapter;
     private DetailVPAdapter detailVPAdapter;
@@ -71,20 +73,21 @@ public class MainActivity extends BaseActivity {
     private View page1, page2;
     private UserModel userModel;
 
+    private long lastClickTime = 0;// 上次点击返回按钮时间
 
-    private Handler handler = new Handler() {
+    public Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case 0:
+                case 0:// 天气数据
                     if (!TextUtils.isEmpty(weatherModel.getIcon()))
                         MyApplication.finalBitmap.display(weatherImg, weatherModel.getIcon());
                     weatherTxt.setText(weatherModel.getDesc());
                     break;
-                case 1:
+                case 1:// 城市数据
                     mainCityListScrollView.setData(tagListModel.getHouseOrCities());
                     break;
-                case 2:
+                case 2:// 初始化首页推荐数据
                     if (calendarListModel != null) {
                         coverVPAdapter = new CoverVPAdapter(MainActivity.this, calendarListModel.getCalendarModels());
                         coverPager.setAdapter(coverVPAdapter);
@@ -95,24 +98,45 @@ public class MainActivity extends BaseActivity {
                         detailVPAdapter.notifyDataSetChanged();
 
                         initDots(calendarListModel.getCalendarModels());
+                        if (ParseUtil.listNotNull(calendarListModel.getCalendarModels()))
+                            checkAdd(calendarListModel.getCalendarModels().get(0).getItemId());
                     }
                     break;
 
                 case 3:// 用户数据
                     myListLayout.removeAllViews();
+                    myCalendarList.clear();
+                    myCalendarList.addAll(AppValue.myList.getCalendarModels());
                     for (CalendarModel ca : myCalendarList) {
                         myListLayout.addView(getMylistItemView(ca));
                     }
                     myNum.setText(myCalendarList.size() + "个待参观展览");
 
-                case 4:// 用户数据
+                case 4:// 头像
                     if (userModel != null)
                         Tools.setAvatar(MainActivity.this, userModel.getAvatar(), avatar);
+                    break;
+
+                case 5:// 取消行程
+                    actionButton.setTag("delete");
+                    actionButton.setText(R.string.menu_cancle);
+                    actionButton.setBackgroundResource(R.drawable.green_3radius_corner_bg);
+                    break;
+                case 6:// 添加行程
+                    actionButton.setTag("add");
+                    actionButton.setText(R.string.add_to_calendar);
+                    actionButton.setBackgroundResource(R.drawable.red_3radius_corner_bg);
                     break;
             }
         }
     };
 
+    /**
+     * 初始化 mylist itemview
+     *
+     * @param item
+     * @return
+     */
     private View getMylistItemView(final CalendarModel item) {
         ViewHolder viewHolder = ViewHolder.get(MainActivity.this, null, R.layout.item_list);
         TextView title = viewHolder.getView(R.id.l_title);
@@ -155,6 +179,19 @@ public class MainActivity extends BaseActivity {
         initData();
         uploadDeviceInfoForPush();
     }
+    /**
+     * Push需要：上传device信息
+     */
+    private void uploadDeviceInfoForPush() {
+        if (DataHelper.isPushServiceEnable(this)) NewPushManager.getInstance(this).register(this);
+    }
+
+
+
+    protected void onPause() {
+        super.onPause();
+        NewPushManager.getInstance(this).onpause(this);
+    }
 
 
     /**
@@ -169,9 +206,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void setData(Entry entry) {
                 if (entry != null && entry instanceof CalendarListModel) {
-                    AppValue.myList = (CalendarListModel) entry;
-                    myCalendarList.clear();
-                    myCalendarList.addAll(AppValue.myList.getCalendarModels());
+
                     handler.sendEmptyMessage(3);
                 }
             }
@@ -181,7 +216,6 @@ public class MainActivity extends BaseActivity {
             @Override
             public void setData(Entry entry) {
                 if (entry != null && entry instanceof CalendarListModel) {
-                    AppValue.edList = (CalendarListModel) entry;
                 }
             }
         });
@@ -270,6 +304,7 @@ public class MainActivity extends BaseActivity {
                 //滑动外部Viewpager
                 coverPager.scrollTo((int) (width * position + width * positionOffset), 0);
                 updateDots(position);
+                checkAdd(calendarListModel.getCalendarModels().get(detailPager.getCurrentItem()).getItemId());
             }
 
             @Override
@@ -291,6 +326,7 @@ public class MainActivity extends BaseActivity {
                 //滑动外部Viewpager
                 detailPager.scrollTo((int) (width * position + width * positionOffset), 0);
                 updateDots(position);
+                checkAdd(calendarListModel.getCalendarModels().get(coverPager.getCurrentItem()).getItemId());
             }
 
             @Override
@@ -314,20 +350,58 @@ public class MainActivity extends BaseActivity {
             case R.id.main_right:
                 startActivity(new Intent(MainActivity.this, MyListActivity.class));
                 break;
-            case R.id.main_action:
-                if (calendarListModel != null) {
-
-                    Intent i = new Intent(MainActivity.this, AddActivity.class);
-                    i.putExtra("add_detail", calendarListModel.getCalendarModels().get(detailPager.getCurrentItem()));
-                    startActivity(i);
+            case R.id.main_action:// 添加|取消
+                if (userModel == null) {
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                } else {
+                    if (calendarListModel != null) {
+                        CalendarModel c = calendarListModel.getCalendarModels().get(detailPager.getCurrentItem());
+                        if (view.getTag().toString().equals("delete")) {
+                            doDelete(c);
+                        } else {
+                            doAdd(c);
+                        }
+                    }
                 }
                 break;
 
-            case R.id.main_add:// 添加
+            case R.id.main_add:// 添加红按钮
                 startActivity(new Intent(MainActivity.this, CalendarListActivity.class));
                 break;
         }
 
+    }
+
+    /**
+     * 添加行程
+     */
+    private void doAdd(CalendarModel c) {
+        Intent i = new Intent(MainActivity.this, AddActivity.class);
+        i.putExtra("add_detail", c);
+        startActivity(i);
+
+
+    }
+
+    /**
+     * 取消行程
+     */
+    private void doDelete(CalendarModel c) {
+        apiController.handleFav(MainActivity.this, HandleFavApi.HANDLE_DELETE, c.getItemId(), c.getCoverImg(), c.getStartTime(), new FetchEntryListener() {
+            @Override
+            public void setData(Entry entry) {
+                if (entry != null && entry instanceof CalendarModel) {
+                    CalendarModel a = (CalendarModel) entry;
+                    for (CalendarModel c : AppValue.myList.getCalendarModels()) {
+                        if (c.getItemId().equals(a.getItemId())) {
+                            AppValue.myList.getCalendarModels().remove(c);
+                            handler.sendEmptyMessage(3);
+                        }
+                    }
+
+                }
+            }
+        });
     }
 
 
@@ -363,19 +437,18 @@ public class MainActivity extends BaseActivity {
             MyApplication.loginStatusChange = false;
 
         }
+        // 更新我的展览列表
+        handler.sendEmptyMessage(3);
 
 
     }
 
 
     /**
-     * Push需要：上传device信息
+     * 更新dot选中状态
+     *
+     * @param position
      */
-    private void uploadDeviceInfoForPush() {
-        if (DataHelper.isPushServiceEnable(this)) NewPushManager.getInstance(this).register(this);
-    }
-
-
     public void updateDots(int position) {
         if (dots != null && dots.size() > position && dots.size() > 1) {
             for (int i = 0; i < dots.size(); i++) {
@@ -387,4 +460,41 @@ public class MainActivity extends BaseActivity {
             }
         }
     }
+
+    /**
+     * 更新添加按钮状态
+     */
+    private void checkAdd(String itemId) {
+        List<CalendarModel> ll = AppValue.myList.getCalendarModels();
+        if (ParseUtil.listNotNull(ll)) {
+
+            boolean ifShow = true;
+            for (int i = 0; i < ll.size(); i++) {
+                if (ll.get(i).getItemId().equals(itemId)) {
+                    ifShow = false;
+                }
+            }
+            if (ifShow) {// visible
+                handler.sendEmptyMessage(6);
+            } else {
+                handler.sendEmptyMessage(5);
+            }
+        } else// invisible
+
+            handler.sendEmptyMessage(6);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            long clickTime = System.currentTimeMillis() / 1000;
+            if (clickTime - lastClickTime >= 3) {
+                lastClickTime = clickTime;
+                showToast(R.string.exit_app);
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
 }

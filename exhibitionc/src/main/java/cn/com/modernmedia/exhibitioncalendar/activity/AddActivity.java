@@ -24,6 +24,7 @@ import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
 import cn.com.modernmedia.exhibitioncalendar.api.HandleFavApi;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
+import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
 import cn.com.modernmedia.exhibitioncalendar.view.AddPopView;
 
 
@@ -83,8 +84,10 @@ public class AddActivity extends BaseActivity {
         viewPager = (ViewPager) findViewById(R.id.add_viewpager);
 
         int width = MyApplication.width - 20;
-        int height = width * 3 / 4;
-        viewPager.setLayoutParams(new LinearLayout.LayoutParams(width, height));
+        int height = width * 9 / 16;
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, height);
+        params.setMargins(0, 30, 0, 0);
+        viewPager.setLayoutParams(params);
         viewPager.setOffscreenPageLimit(3);
         notification.setChecked(true);
         tongbu.setChecked(false);
@@ -105,14 +108,30 @@ public class AddActivity extends BaseActivity {
                     apiController.handleFav(AddActivity.this, HandleFavApi.HANDLE_EDIT, calendarModel.getEventId(), img, tt, new FetchEntryListener() {
                         @Override
                         public void setData(Entry entry) {
-                            showToast("保存成功");
+                            showLoadingDialog(false);
+                            if (entry != null && entry instanceof CalendarModel) {
+                                CalendarModel a = (CalendarModel) entry;
+                                for (CalendarModel c : AppValue.myList.getCalendarModels()) {
+                                    if (c.getItemId().equals(a.getItemId())) {
+                                        AppValue.myList.getCalendarModels().remove(c);
+                                        AppValue.myList.getCalendarModels().add(a);
+                                    }
+                                }
+                                showToast(R.string.edit_success);
+                            } else showToast(R.string.edit_faild);
                         }
                     });
                 } else {
                     apiController.handleFav(AddActivity.this, HandleFavApi.HANDLE_ADD, calendarModel.getItemId(), img, tt, new FetchEntryListener() {
                         @Override
                         public void setData(Entry entry) {
-                            showToast("添加成功");
+                            showLoadingDialog(false);
+                            if (entry != null && entry instanceof CalendarModel) {
+                                CalendarModel a = (CalendarModel) entry;
+                                AppValue.myList.getCalendarModels().add(a);
+                                showToast(R.string.add_success);
+                            } else showToast(R.string.add_faild);
+
                         }
                     });
                 }
@@ -179,9 +198,19 @@ public class AddActivity extends BaseActivity {
     }
 
 
-    public void changePop(int year, int month, int day, int hour, int minute) {
-        date.setText(year + "-" + month + "-" + day);
-        time.setText(hour + ":" + minute);
+    public void changePop(int type, int year, int month, int day, int hour, int minute) {
+
+        if (type == 1) {
+            String h = hour + "", m = minute + "";
+            if (hour < 10) h = "0" + h;
+            if (minute < 10) m = "0" + m;
+
+            time.setText(h + ":" + m);
+        } else if (type == 2) {
+            date.setText(year + "-" + month + "-" + day);
+        }
+
+
     }
 }
 

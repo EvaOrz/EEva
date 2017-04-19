@@ -1,5 +1,6 @@
 package cn.com.modernmedia.exhibitioncalendar.api;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -7,7 +8,9 @@ import org.json.JSONObject;
 
 import java.net.URLEncoder;
 
+import cn.com.modernmedia.corelib.db.DataHelper;
 import cn.com.modernmedia.corelib.http.BaseApi;
+import cn.com.modernmedia.corelib.model.ErrorMsg;
 import cn.com.modernmedia.corelib.model.UserModel;
 import cn.com.modernmedia.exhibitioncalendar.MyApplication;
 
@@ -20,6 +23,7 @@ public class ModifyUserInfoApi extends BaseApi {
     // post 参数设置
     private String post;
     private UserModel user = new UserModel();
+    private Context context;
 
     /**
      * 修改用户资料 password为空时，更新用户昵称、头像；反之则更新邮箱
@@ -34,8 +38,9 @@ public class ModifyUserInfoApi extends BaseApi {
      * @param password
      * @param desc
      */
-    protected ModifyUserInfoApi(String uid, String token, String userName, String nickName, String url, String password, String desc, boolean pushEmail) {
+    protected ModifyUserInfoApi(Context context, String uid, String token, String userName, String nickName, String url, String password, String desc, boolean pushEmail) {
         super();
+        this.context = context;
         JSONObject object = new JSONObject();
         try {
             object.put("uid", uid);
@@ -85,8 +90,18 @@ public class ModifyUserInfoApi extends BaseApi {
 
     @Override
     protected void handler(JSONObject jsonObject) {
-        if (jsonObject == null) return;
-        user = UserModel.parseUserModel(user, jsonObject);
+        if (isNull(jsonObject)) return;
+        Log.e("ModifyUserInfoApi", jsonObject.toString());
+        ErrorMsg errorMsg = new ErrorMsg();
+        JSONObject errorObject = jsonObject.optJSONObject("error");
+        if (!isNull(errorObject)) {
+            errorMsg.setNo(errorObject.optInt("no", -1));
+            errorMsg.setDesc(errorObject.optString("desc", ""));
+        }
+        if (errorMsg.getNo() == 0) {
+            user = UserModel.parseUserModel(user, jsonObject);
+            DataHelper.saveUserLoginInfo(context, user);
+        }
     }
 
     public UserModel getUser() {

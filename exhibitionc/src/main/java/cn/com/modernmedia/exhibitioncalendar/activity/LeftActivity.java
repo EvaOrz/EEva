@@ -39,16 +39,30 @@ public class LeftActivity extends BaseActivity {
 
         myNum = (TextView) findViewById(R.id.my_num);
 
+
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         if (AppValue.allList != null && ParseUtil.listNotNull(AppValue.allList.getCalendarModels())) {
-            allNum.setText("共有" + AppValue.allList.getCalendarModels().size() + "个正在进行/即将展开");
+            allNum.setText("共有 " + AppValue.allList.getCalendarModels().size() + " 个正在进行/即将展开");
         }
         String s = "共";
+        int ing = 0;
         if (AppValue.myList != null && ParseUtil.listNotNull(AppValue.myList.getCalendarModels())) {
-            s = s + AppValue.myList.getCalendarModels().size() + "个展览";
+            ing = AppValue.myList.getCalendarModels().size();
+            s = s + ing + "个展览";
+
         }
+
         if (AppValue.edList != null && ParseUtil.listNotNull(AppValue.edList.getCalendarModels())) {
-            s = s + " 其中" + AppValue.edList.getCalendarModels().size() + "个展览即将开展";
+            ing = AppValue.myList.getCalendarModels().size() - AppValue.edList.getCalendarModels().size();
         }
+        s = s + " 其中 " + ing + " 个展览即将开展";
+        myNum.setText(s);
+
     }
 
     @Override

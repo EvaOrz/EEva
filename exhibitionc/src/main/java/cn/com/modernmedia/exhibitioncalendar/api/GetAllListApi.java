@@ -48,7 +48,7 @@ public class GetAllListApi extends BaseApi {
     @Override
     protected void handler(JSONObject jsonObject) {
         if (jsonObject == null) return;
-        Log.e("GetAllListApi", jsonObject.toString());
+//        Log.e("GetAllListApi", jsonObject.toString());
         calendarListModel = CalendarListModel.parseCalendarListModel(calendarListModel, jsonObject);
     }
 

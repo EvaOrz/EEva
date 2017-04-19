@@ -9,6 +9,7 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
 import afinal.FinalBitmap;
 import cn.com.modernmedia.corelib.CommonApplication;
+import cn.com.modernmedia.corelib.util.ConstData;
 import cn.com.modernmedia.exhibitioncalendar.api.UrlMaker;
 
 /**
@@ -19,7 +20,7 @@ public class MyApplication extends CommonApplication {
 
     // 展览日历appid
     public static int APPID = 61;
-    public static int DEBUG = 0;
+    public static int DEBUG = 1;
 
     private static int memorySize;
 
@@ -49,7 +50,7 @@ public class MyApplication extends CommonApplication {
         UrlMaker.setHost();
         initMemorySize();
 
-
+        ConstData.setAppId(APPID);
         WEIXIN_APP_ID = "b682346e1e6b28dba3a47079";
         WEIXIN_SECRET = "26628cd60eeaf05037622770";
         SINA_APP_ID = "3608123411";

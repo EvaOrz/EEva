@@ -30,7 +30,6 @@ import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
 import cn.com.modernmedia.exhibitioncalendar.api.GetShareIdApi;
 import cn.com.modernmedia.exhibitioncalendar.api.UrlMaker;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel;
-import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
 import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
 import cn.com.modernmedia.exhibitioncalendar.view.ShareDialog;
 
@@ -47,15 +46,18 @@ public class MyListActivity extends BaseActivity {
     private ListView listView;
     private String shareId;
     private ImageView cover;
-    private List<CalendarModel> ingdatas = new ArrayList<>();
-    private List<CalendarModel> eddatas = new ArrayList<>();
+    //    private List<CalendarModel> ingdatas = new ArrayList<>();
+    //    private List<CalendarModel> eddatas = new ArrayList<>();
 
 
-    private Handler handler = new Handler() {
+    public Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 1:
+                    List<CalendarListModel.CalendarModel> ingdatas = new ArrayList<>();
+                    ingdatas.addAll(AppValue.myList.getCalendarModels());
+
                     ExhibitionAdapter ingAdapter = new ExhibitionAdapter(MyListActivity.this);
                     listView.setAdapter(ingAdapter);
                     ingAdapter.setData(ingdatas);
@@ -64,13 +66,16 @@ public class MyListActivity extends BaseActivity {
                     else clickAdd.setVisibility(View.VISIBLE);
                     break;
                 case 2:
+                    List<CalendarListModel.CalendarModel> eddatas = new ArrayList<>();
+                    eddatas.addAll(AppValue.edList.getCalendarModels());
+
                     ExhibitionAdapter edAdapter = new ExhibitionAdapter(MyListActivity.this);
                     listView.setAdapter(edAdapter);
                     edAdapter.setData(eddatas);
                     edAdapter.notifyDataSetChanged();
                     clickAdd.setVisibility(View.GONE);
                     break;
-                case 3:
+                case 3:// 分享个人行程
                     new ShareDialog(MyListActivity.this, userModel.getUserName() + "的观展行程", "", userModel.getAvatar(), UrlMaker.getShareWebUrl(shareId));
                     break;
 
@@ -85,7 +90,7 @@ public class MyListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_list);
         initView();
-        initData();
+        initData(false);
     }
 
     @Override
@@ -94,7 +99,7 @@ public class MyListActivity extends BaseActivity {
 
         if (CommonApplication.loginStatusChange) {
             Log.e("My_list_login", "loginStatusChange");
-            initData();
+            initData(true);
         }
     }
 
@@ -124,42 +129,45 @@ public class MyListActivity extends BaseActivity {
         cover.setImageResource(R.mipmap.my_bg);
     }
 
-    private void initData() {
+    /**
+     * 初始化，没登录
+     * <p>
+     * 初始化，登录了
+     * <p>
+     * 登录状态变化，清空
+     * 登录状态变化，取线上数据
+     *
+     * @param isLoginStatusChange
+     */
+    private void initData(boolean isLoginStatusChange) {
         userModel = DataHelper.getUserLoginInfo(this);
         if (userModel == null) {
             avatar.setImageResource(R.mipmap.avatar_bg);
             nickname.setText(R.string.no_login);
             edText.setBackgroundResource(R.drawable.gray_3radius_corner_bg);
             ingText.setBackgroundResource(R.drawable.red_3radius_corner_bg);
-            ingdatas.clear();
-            eddatas.clear();
             handler.sendEmptyMessage(1);
             return;
         }
         Tools.setAvatar(this, userModel.getAvatar(), avatar);
         nickname.setText(userModel.getNickName());
-        if (AppValue.myList == null) {
+        if (isLoginStatusChange) {
             getIngData();
-        } else {
-            ingdatas.addAll(AppValue.myList.getCalendarModels());
+            getEdData();
+        } else {//
             handler.sendEmptyMessage(1);
         }
 
-        if (AppValue.edList == null) {
-            getEdData();
-        } else {
-            eddatas.addAll(AppValue.edList.getCalendarModels());
-        }
+
     }
 
     private void getIngData() {
+        showLoadingDialog(true);
         ApiController.getInstance(this).getMyList(this, "1", 1, new FetchEntryListener() {
             @Override
             public void setData(Entry entry) {
+                showLoadingDialog(false);
                 if (entry != null && entry instanceof CalendarListModel) {
-                    CalendarListModel c = (CalendarListModel) entry;
-                    ingdatas.clear();
-                    ingdatas.addAll(c.getCalendarModels());
                     handler.sendEmptyMessage(1);
                 }
             }
@@ -171,9 +179,6 @@ public class MyListActivity extends BaseActivity {
             @Override
             public void setData(Entry entry) {
                 if (entry != null && entry instanceof CalendarListModel) {
-                    CalendarListModel c = (CalendarListModel) entry;
-                    eddatas.clear();
-                    eddatas.addAll(c.getCalendarModels());
                 }
             }
         });

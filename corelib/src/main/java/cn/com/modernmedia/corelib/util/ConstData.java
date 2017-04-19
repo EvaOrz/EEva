@@ -1,5 +1,7 @@
 package cn.com.modernmedia.corelib.util;
 
+import cn.com.modernmedia.corelib.CommonApplication;
+
 /**
  * 常量类
  * Created by Eva. on 17/3/14.
@@ -63,6 +65,9 @@ public class ConstData {
         return advUpdateTime;
     }
 
-    public static final int REQUEST_READ_PHONE_STATE = 1;
 
+
+    public static void setAppId(int appId) {
+        CommonApplication.APP_ID = appId;
+    }
 }

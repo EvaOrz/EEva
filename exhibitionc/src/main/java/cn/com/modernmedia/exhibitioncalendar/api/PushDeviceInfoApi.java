@@ -63,9 +63,12 @@ public class PushDeviceInfoApi extends BaseApi {
             String encryk = getRandomString(6);
             addPostParams(postObject, "encryk", encryk);
 
-            String md5 = MyApplication.APPID + "|" + Tools.getMyUUID(context) + "|" + DataHelper.getUid(context) + "|" + devicetoken + "|" + Tools.getAppVersion(context) + "|" + MyApplication.width + "|" + MyApplication.height + "|" + android.os.Build.MODEL + "|" + Tools.getNetMacAdress(context) + "|" + android.os.Build.VERSION.RELEASE + "|" + android.os.Build.VERSION.SDK + "|" + CommonApplication.CHANNEL + "|" + encryk + "|" + SECRET;
+            String md5 = MyApplication.APPID + "|" + DataHelper.getUUID(context) + "|" + DataHelper
+                    .getUid(context) + "|" + devicetoken + "|" + Tools.getAppVersion(context) + "|" + MyApplication.width + "|" + MyApplication.height + "|" + android.os.Build.MODEL + "|" + Tools.getNetMacAdress(context) + "|" + android.os.Build.VERSION.RELEASE + "|" + android.os.Build.VERSION.SDK + "|" + CommonApplication.CHANNEL + "|" + encryk + "|" + SECRET;
             addPostParams(postObject, "encryv", MD5.MD5Encode(md5));
 
+            Log.e("********************", md5);
+            Log.e("********************", postObject.toString());
             post = postObject.toString();
             setPostParams(post);
         } catch (Exception e) {

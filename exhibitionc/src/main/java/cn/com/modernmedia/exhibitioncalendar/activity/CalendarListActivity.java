@@ -33,7 +33,7 @@ public class CalendarListActivity extends BaseActivity {
 
     private void initView() {
         wbWebView = (CommonWebView) findViewById(R.id.list_webview);
-        String url = UrlMaker.calendarHomePage;
+        String url = UrlMaker.getHomePage();
         if (!TextUtils.isEmpty(tagId) && !TextUtils.isEmpty(tagName)) {
             try {
                 url = url + "?tagid=" + tagId + "&tagname=" + URLEncoder.encode(URLEncoder.encode(tagName, "UTF-8"), "UTF-8");

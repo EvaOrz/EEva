@@ -44,6 +44,7 @@
     <string name="forget_email_text2">如5分钟后仍未收到密码重置邮件，请与我们联系。</string>
     <string name="need_band">请先绑定手机或邮箱后再设置密码</string>
     <string name="set_band">去设置</string>
+    <string name="msg_modify_pwd_failed">密码修改失败</string>
 
     <string name="cover_share_message">%1$s - %2$s %3$s --分享来自@iWeekly周末画报 Android 版</string>
     <string name="entry_share_url">阅读全文:\u0020</string>
@@ -202,4 +203,10 @@
     <string name="mail_">邮件</string>
     <string name="pengyouquan">朋友圈</string>
     <string name="sina">微博</string>
+    <string name="exit_app">再按一次退出应用</string>
+
+    <string name="add_success">添加行程成功</string>
+    <string name="add_faild">添加行程失败</string>
+    <string name="edit_success">修改行程成功</string>
+    <string name="edit_faild">修改行程失败</string>
 </resources>

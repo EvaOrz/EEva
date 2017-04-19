@@ -2,26 +2,33 @@ package cn.com.modernmedia.corelib;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import cn.com.modernmedia.corelib.db.DataHelper;
+import cn.com.modernmedia.corelib.util.Tools;
+
 /**
  * Created by Eva. on 17/3/17.
  */
 
-public class BaseActivity extends Activity implements View.OnClickListener {
+public class BaseActivity extends Activity implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
     /**
      * 网页跳转uri
      */
     protected String fromHtmlUri = "";
+    public Context mContext;
 
     private Dialog dialog;
 
@@ -153,5 +160,15 @@ public class BaseActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 100:
+                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    DataHelper.setUUID(mContext, Tools.getMyUUID(mContext));
+                }
+        }
     }
 }

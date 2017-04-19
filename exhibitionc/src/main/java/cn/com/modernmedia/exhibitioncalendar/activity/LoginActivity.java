@@ -432,7 +432,7 @@ public class LoginActivity extends BaseActivity {
     public void modifyUserInfo(UserModel user, String url) {
         if (user == null) return;
         // 只更新头像
-        mController.modifyUserInfo(user.getUid(), user.getToken(), user.getUserName(), user.getNickName(), url, null, user.getDesc(), false, new FetchEntryListener() {
+        mController.modifyUserInfo(this, user.getUid(), user.getToken(), user.getUserName(), user.getNickName(), url, null, user.getDesc(), false, new FetchEntryListener() {
 
             @Override
             public void setData(final Entry entry) {

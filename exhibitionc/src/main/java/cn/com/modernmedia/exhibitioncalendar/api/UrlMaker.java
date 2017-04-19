@@ -17,9 +17,12 @@ public class UrlMaker {
      * Host信息
      **/
     public static String HOST;
-    public static String calendarHomePage = "https://artcalendar.bbwc.cn/html/artCalendar/index.html";
-    public static String calendarDetailPage = "https://artcalendar.bbwc.cn/html/artCalendar/detail.html";
+    private static String calendarHomePage = "https://artcalendar.bbwc.cn/html/artCalendar/index.html";
+    private static String calendarDetailPage = "https://artcalendar.bbwc.cn/html/artCalendar/detail.html";
     public static String calendarAboutPage = "https://artcalendar.bbwc.cn/html/artCalendar/about.html";
+
+    private static String calendarHomePageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/index.html";
+    private static String calendarDetailPageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/detail.html";
     private static String API_URL;
     private static String USER_MODEL_URL;
 
@@ -36,6 +39,24 @@ public class UrlMaker {
             USER_MODEL_URL = "http://user.test.bbwc.cn/interface/index.php";
         }
         API_URL = HOST + "index/api/";
+    }
+
+    public static String getDetailPage() {
+        if (MyApplication.DEBUG == 0) {
+            return calendarDetailPage;
+        } else if (MyApplication.DEBUG == 1) {
+            return calendarDetailPageDev;
+        }
+        return calendarDetailPage;
+    }
+
+    public static String getHomePage() {
+        if (MyApplication.DEBUG == 0) {
+            return calendarHomePage;
+        } else if (MyApplication.DEBUG == 1) {
+            return calendarHomePageDev;
+        }
+        return calendarHomePage;
     }
 
     /**

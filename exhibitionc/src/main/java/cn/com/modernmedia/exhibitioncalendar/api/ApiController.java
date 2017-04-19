@@ -229,8 +229,8 @@ public class ApiController {
      * @param desc     用户登录密码
      * @param listener view数据回调接口
      */
-    public void modifyUserInfo(String uid, String token, String userName, String nickName, String url, String password, String desc, boolean pushEmail, FetchEntryListener listener) {
-        ModifyUserInfoApi operate = new ModifyUserInfoApi(uid, token, userName, nickName, url, password, desc, pushEmail);
+    public void modifyUserInfo(Context context, String uid, String token, String userName, String nickName, String url, String password, String desc, boolean pushEmail, FetchEntryListener listener) {
+        ModifyUserInfoApi operate = new ModifyUserInfoApi(context, uid, token, userName, nickName, url, password, desc, pushEmail);
         doPostRequest(operate, operate.getUser(), USE_HTTP_ONLY, listener);
     }
 
@@ -291,6 +291,18 @@ public class ApiController {
     public void getShareId(Context c, String title, FetchEntryListener listener) {
         GetShareIdApi getShareIdApi = new GetShareIdApi(c, title);
         doPostRequest(getShareIdApi, getShareIdApi.getData(), USE_HTTP_ONLY, listener);
+    }
+
+    /**
+     * 修改用户密码
+     *
+     * @param password    旧密码
+     * @param newPassword 新密码
+     * @param listener    view数据回调接口
+     */
+    public void modifyUserPassword(Context c, String password, String newPassword, FetchEntryListener listener) {
+        ModifyUserPasswordApi operate = new ModifyUserPasswordApi(c, password, newPassword);
+        doPostRequest(operate, operate.getUser(), USE_HTTP_ONLY, listener);
     }
 
     /**

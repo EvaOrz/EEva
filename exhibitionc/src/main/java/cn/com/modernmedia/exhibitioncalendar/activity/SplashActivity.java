@@ -22,15 +22,12 @@ import cn.com.modernmedia.corelib.model.Entry;
 import cn.com.modernmedia.corelib.util.ConstData;
 import cn.com.modernmedia.corelib.util.FileManager;
 import cn.com.modernmedia.corelib.util.ParseUtil;
-import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
 import cn.com.modernmedia.exhibitioncalendar.model.AdvListModel;
 import cn.com.modernmedia.exhibitioncalendar.model.AdvListModel.AdvItem;
 import cn.com.modernmedia.exhibitioncalendar.model.AdvListModel.AdvItem.AdvSource;
 import cn.com.modernmedia.exhibitioncalendar.util.AdvTools;
-
-import static cn.com.modernmedia.corelib.CommonApplication.mContext;
 
 
 /**
@@ -45,9 +42,11 @@ public class SplashActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        mContext = this;
         getAdvList(FetchApiType.USE_HTTP_ONLY);
-
         askPermission();
+
+
     }
 
 
@@ -65,7 +64,6 @@ public class SplashActivity extends BaseActivity {
         }, ConstData.SPLASH_DELAY_TIME);
 
     }
-
 
     /**
      * 分析入版广告
@@ -206,14 +204,6 @@ public class SplashActivity extends BaseActivity {
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case ConstData.REQUEST_READ_PHONE_STATE:
-                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    DataHelper.setUUID(SplashActivity.this, Tools.getMyUUID(SplashActivity.this));
-                }
-        }
-    }
+
 
 }

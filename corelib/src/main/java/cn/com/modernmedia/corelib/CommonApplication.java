@@ -29,6 +29,8 @@ import cn.com.modernmedia.corelib.breakpoint.DownloadPackageCallBack;
 
 public class CommonApplication extends Application {
 
+    public static int APP_ID;
+
     /**
      * 文件夹名
      */

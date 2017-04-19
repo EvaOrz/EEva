@@ -1,15 +1,16 @@
 package cn.com.modernmedia.exhibitioncalendar.api;
 
 import android.content.Context;
-import android.util.Log;
 
 import org.json.JSONObject;
 
 import cn.com.modernmedia.corelib.db.DataHelper;
 import cn.com.modernmedia.corelib.http.BaseApi;
+import cn.com.modernmedia.corelib.model.ErrorMsg;
 import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.exhibitioncalendar.MyApplication;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel;
+import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
 
 /**
  * Created by Eva. on 17/3/28.
@@ -52,9 +53,28 @@ public class GetMyListApi extends BaseApi {
 
     @Override
     protected void handler(JSONObject jsonObject) {
-        if (jsonObject == null) return;
-        Log.e("GetMyListApi", jsonObject.toString());
-        calendarListModel = CalendarListModel.parseCalendarListModel(calendarListModel, jsonObject);
+        if (isNull(jsonObject)) return;
+//        Log.e("GetMyListApi", jsonObject.toString());
+        ErrorMsg errorMsg = new ErrorMsg();
+        JSONObject errorObject = jsonObject.optJSONObject("error");
+        if (!isNull(errorObject)) {
+            errorMsg.setNo(errorObject.optInt("no", -1));
+            errorMsg.setDesc(errorObject.optString("desc", ""));
+        }
+        if (errorMsg.getNo() == 0) {
+            calendarListModel = CalendarListModel.parseCalendarListModel(calendarListModel, jsonObject);
+
+            /**
+             * 保存本地数据
+             */
+            if (type == 1) {
+                AppValue.myList.getCalendarModels().clear();
+                AppValue.myList.getCalendarModels().addAll(calendarListModel.getCalendarModels());
+            } else if (type == 2) {
+                AppValue.edList.getCalendarModels().clear();
+                AppValue.edList.getCalendarModels().addAll(calendarListModel.getCalendarModels());
+            }
+        }
     }
 
     public CalendarListModel getData() {

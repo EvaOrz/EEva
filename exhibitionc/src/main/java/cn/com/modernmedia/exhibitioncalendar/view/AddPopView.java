@@ -3,6 +3,7 @@ package cn.com.modernmedia.exhibitioncalendar.view;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,16 +37,18 @@ public class AddPopView {
     public AddPopView(Context context, int type, String time) {
         this.mContext = context;
         this.type = type;// 1：time 2：date 3:birthday
-        String tt = Tools.format(Long.valueOf(time) * 1000, "yyyy-MM-dd-HH-mm");
-        if (!TextUtils.isEmpty(tt)) {
-            String[] array = tt.split("-");
-            if (array.length > 0) aa = Integer.valueOf(array[0]);
-            if (array.length > 1) bb = Integer.valueOf(array[1]);
-            if (array.length > 2) cc = Integer.valueOf(array[2]);
-            if (array.length > 3) dd = Integer.valueOf(array[3]);
-            if (array.length > 4) ee = Integer.valueOf(array[4]);
+        if (!TextUtils.isEmpty(time)) {
+            String tt = Tools.format(Long.valueOf(time) * 1000, "yyyy-MM-dd-HH-mm");
+            if (!TextUtils.isEmpty(tt)) {
+                String[] array = tt.split("-");
+                if (array.length > 0) aa = Integer.valueOf(array[0]);
+                if (array.length > 1) bb = Integer.valueOf(array[1]);
+                if (array.length > 2) cc = Integer.valueOf(array[2]);
+                if (array.length > 3) dd = Integer.valueOf(array[3]);
+                if (array.length > 4) ee = Integer.valueOf(array[4]);
 
 
+            }
         }
 
         init();
@@ -78,8 +81,10 @@ public class AddPopView {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.e("选中时间", aa + "-" + bb + "-" + cc + " " + dd + ":" + ee);
+
                 if (mContext instanceof AddActivity && (type == 1 || type == 2))
-                    ((AddActivity) mContext).changePop(aa, bb, cc, dd, ee);
+                    ((AddActivity) mContext).changePop(type, aa, bb, cc, dd, ee);
                 else if (mContext instanceof UserCenterActivity && type == 3)
                     ((UserCenterActivity) mContext).setBirth(aa, bb, cc);
                 window.dismiss();
@@ -98,15 +103,17 @@ public class AddPopView {
 
 
         // 初始化DatePicker组件，初始化时指定监听器
-        datePicker.init(aa, bb, cc, new DatePicker.OnDateChangedListener() {
+        datePicker.init(aa, bb - 1, cc, new DatePicker.OnDateChangedListener() {
 
             @Override
             public void onDateChanged(DatePicker arg0, int year, int month, int day) {
+
                 aa = year;
-                bb = month;
+                bb = month + 1;
                 cc = day;
             }
         });
+
         // 为TimePicker指定监听器
         timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
 
