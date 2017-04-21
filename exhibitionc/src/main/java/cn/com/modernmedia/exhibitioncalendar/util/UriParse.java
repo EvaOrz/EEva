@@ -16,6 +16,7 @@ import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.activity.AboutActivity;
 import cn.com.modernmedia.exhibitioncalendar.activity.CalendarDetailActivity;
+import cn.com.modernmedia.exhibitioncalendar.activity.CalendarListActivity;
 
 /**
  * 自定义协议解析类
@@ -130,7 +131,10 @@ public class UriParse {
             List<String> list = parser(link);
             String key = list.size() > 0 ? list.get(0) : "";
             if (key.equals(CATEGORY)) {
-
+                Intent i = new Intent(context, CalendarListActivity.class);
+//                i.putExtra("list_tagid", "13");
+//                i.putExtra("list_tagname", "热门");
+                context.startActivity(i);
             } else if (key.equals(DETAILCALENDAR)) {
                 Intent i = new Intent(context, CalendarDetailActivity.class);
                 i.putExtra(DETAILCALENDAR, detailCalendar(link));

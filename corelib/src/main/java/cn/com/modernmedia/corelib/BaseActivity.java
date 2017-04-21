@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -160,6 +161,17 @@ public class BaseActivity extends Activity implements View.OnClickListener, Acti
     @Override
     public void onClick(View view) {
 
+    }
+
+    public void askPermission(String permission, int requestCode) {
+
+        int permissionCheck = ContextCompat.checkSelfPermission(this, permission);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
+        } else {
+            //TODO
+        }
     }
 
     @Override

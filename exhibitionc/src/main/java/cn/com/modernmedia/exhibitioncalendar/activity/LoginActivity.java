@@ -131,7 +131,9 @@ public class LoginActivity extends BaseActivity {
         lastTextView = (TextView) findViewById(R.id.login_login_username);
 
         String last = DataHelper.getLastLoginUsername(this);
-        if (last.equals("qq")) {
+        if (TextUtils.isEmpty(last)) {
+            lastTextView.setText("");
+        } else if (last.equals("qq")) {
             lastTextView.setText("上次登录方式：QQ登录");
         } else if (last.equals("sina")) {
             lastTextView.setText("上次登录方式：新浪微博登录");
@@ -432,7 +434,10 @@ public class LoginActivity extends BaseActivity {
     public void modifyUserInfo(UserModel user, String url) {
         if (user == null) return;
         // 只更新头像
-        mController.modifyUserInfo(this, user.getUid(), user.getToken(), user.getUserName(), user.getNickName(), url, null, user.getDesc(), false, new FetchEntryListener() {
+        mController.modifyUserInfo(this, user.getUid(), user.getToken(),user.getRealname(), user
+                        .getUserName
+                        (),
+                user.getNickName(), url, null, user.getDesc(), false, new FetchEntryListener() {
 
             @Override
             public void setData(final Entry entry) {

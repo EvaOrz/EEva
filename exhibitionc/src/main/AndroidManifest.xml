@@ -25,6 +25,10 @@
     <uses-permission android:name="android.permission.PERMISSION_NAME"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
+    <!--读写日历-->
+    <uses-permission android:name="android.permission.READ_CALENDAR"/>
+    <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
+
     <!-- JPush -->
     <permission
         android:name="cn.com.modernmedia.exhibitioncalendar.permission.JPUSH_MESSAGE"

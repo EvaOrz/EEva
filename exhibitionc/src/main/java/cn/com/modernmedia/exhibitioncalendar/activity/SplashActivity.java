@@ -2,12 +2,9 @@ package cn.com.modernmedia.exhibitioncalendar.activity;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
@@ -44,7 +41,7 @@ public class SplashActivity extends BaseActivity {
         setContentView(R.layout.activity_splash);
         mContext = this;
         getAdvList(FetchApiType.USE_HTTP_ONLY);
-        askPermission();
+        askPermission(Manifest.permission.READ_PHONE_STATE, 100);
 
 
     }
@@ -192,18 +189,6 @@ public class SplashActivity extends BaseActivity {
             }
         });
     }
-
-    private void askPermission() {
-
-        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
-
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 100);
-        } else {
-            //TODO
-        }
-    }
-
 
 
 }

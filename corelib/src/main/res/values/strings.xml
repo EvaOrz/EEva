@@ -209,4 +209,6 @@
     <string name="add_faild">添加行程失败</string>
     <string name="edit_success">修改行程成功</string>
     <string name="edit_faild">修改行程失败</string>
+    <string name="upload_success">上传成功</string>
+    <string name="upload_failed">上传失败</string>
 </resources>

@@ -229,8 +229,10 @@ public class ApiController {
      * @param desc     用户登录密码
      * @param listener view数据回调接口
      */
-    public void modifyUserInfo(Context context, String uid, String token, String userName, String nickName, String url, String password, String desc, boolean pushEmail, FetchEntryListener listener) {
-        ModifyUserInfoApi operate = new ModifyUserInfoApi(context, uid, token, userName, nickName, url, password, desc, pushEmail);
+    public void modifyUserInfo(Context context, String uid, String token, String realName,String
+            userName, String nickName, String url, String password, String desc, boolean pushEmail, FetchEntryListener listener) {
+        ModifyUserInfoApi operate = new ModifyUserInfoApi(context, uid, token, realName,userName,
+                nickName, url, password, desc, pushEmail);
         doPostRequest(operate, operate.getUser(), USE_HTTP_ONLY, listener);
     }
 
@@ -304,6 +306,8 @@ public class ApiController {
         ModifyUserPasswordApi operate = new ModifyUserPasswordApi(c, password, newPassword);
         doPostRequest(operate, operate.getUser(), USE_HTTP_ONLY, listener);
     }
+
+
 
     /**
      * 增删改行程

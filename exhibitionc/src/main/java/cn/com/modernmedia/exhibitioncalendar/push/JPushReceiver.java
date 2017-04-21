@@ -34,8 +34,7 @@ public class JPushReceiver extends BroadcastReceiver {
             Log.e(TAG + "regid", regId);
             //send the Registration Id to your server...
             // 注册成功 发送给服务器设备token
-            NewPushManager.getInstance(context).sendDeviceToken(context,  regId);
-
+            NewPushManager.getInstance(context).sendDeviceToken(context, regId);
 
 
         } else if (JPushInterface.ACTION_MESSAGE_RECEIVED.equals(intent.getAction())) {
@@ -51,7 +50,7 @@ public class JPushReceiver extends BroadcastReceiver {
             Log.e(TAG, "[MyReceiver] 用户点击打开了通知");
 
             // 跳转文章详情页面
-                NewPushManager.gotoArticle(context, jsonMessage);
+            NewPushManager.gotoArticle(context, jsonMessage);
 
         } else if (JPushInterface.ACTION_RICHPUSH_CALLBACK.equals(intent.getAction())) {
             Log.d(TAG, "[MyReceiver] 用户收到到RICH PUSH CALLBACK: " + bundle.getString(JPushInterface.EXTRA_EXTRA));
@@ -85,8 +84,7 @@ public class JPushReceiver extends BroadcastReceiver {
 
                     while (it.hasNext()) {
                         String myKey = it.next().toString();
-                        sb.append("\nkey:" + key + ", value: [" +
-                                myKey + " - " + json.optString(myKey) + "]");
+                        sb.append("\nkey:" + key + ", value: [" + myKey + " - " + json.optString(myKey) + "]");
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Get message extra JSON error!");

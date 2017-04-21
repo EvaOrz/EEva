@@ -3,20 +3,24 @@ package cn.com.modernmedia.exhibitioncalendar.push;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
-import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import cn.com.modernmedia.corelib.db.DataHelper;
 import cn.com.modernmedia.corelib.listener.FetchEntryListener;
 import cn.com.modernmedia.corelib.model.Entry;
-import cn.com.modernmedia.exhibitioncalendar.activity.CalendarDetailActivity;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
+import cn.com.modernmedia.exhibitioncalendar.util.UriParse;
 import cn.jpush.android.api.JPushInterface;
 
 /**
@@ -118,15 +122,6 @@ public class NewPushManager {
 
     }
 
-    /**
-     * 判断room是否是miui，用于选择推送系统
-     *
-     * @return
-     */
-    public boolean isMiUi() {
-        return !TextUtils.isEmpty(getSystemProperty("ro.miui.ui.version.name"));
-    }
-
     public String getSystemProperty(String propName) {
         String line;
         BufferedReader input = null;
@@ -168,15 +163,28 @@ public class NewPushManager {
         return false;
     }
 
-    //TODO
-    public static void gotoArticle(Context context, String url) {
+    //{"category":"na","na_tag":"-104","uri":"slate%3A%2F%2FdetailCalendar%2F104"}
+    public static void gotoArticle(Context context, String json) {
+        if (TextUtils.isEmpty(json)) return;
+        try {
+            String url = "";
+            JSONObject jsonObject = new JSONObject(json);
+            if (jsonObject == null) return;
 
-        Log.e("推送文章地址", url);
-        if (!TextUtils.isEmpty(url)) {
-            Intent intent = new Intent(context, CalendarDetailActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra("push_url", url);
-            context.startActivity(intent);
+            url = jsonObject.optString("uri");
+            if (!TextUtils.isEmpty(url)) {
+
+                UriParse.clickSlate(context, URLEncoder.encode(url, "UTF-8"), new Entry[]{}, null);
+                //                Intent intent = new Intent(context, CalendarDetailActivity.class);
+                //                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                //                intent.putExtra("push_url", url);
+                //                context.startActivity(intent);
+            }
+
+        } catch (JSONException e) {
+        } catch (UnsupportedEncodingException e) {
         }
+
+
     }
 }
