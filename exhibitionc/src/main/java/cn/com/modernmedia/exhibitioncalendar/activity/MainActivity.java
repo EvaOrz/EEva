@@ -20,9 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.com.modernmedia.corelib.BaseActivity;
+import cn.com.modernmedia.corelib.CommonApplication;
 import cn.com.modernmedia.corelib.db.DataHelper;
 import cn.com.modernmedia.corelib.listener.FetchEntryListener;
 import cn.com.modernmedia.corelib.model.Entry;
+import cn.com.modernmedia.corelib.model.ErrorMsg;
 import cn.com.modernmedia.corelib.model.UserModel;
 import cn.com.modernmedia.corelib.model.WeatherModel;
 import cn.com.modernmedia.corelib.util.ParseUtil;
@@ -45,6 +47,8 @@ import cn.com.modernmedia.exhibitioncalendar.view.ListItemMenuView;
 import cn.com.modernmedia.exhibitioncalendar.view.MainCityListScrollView;
 import cn.com.modernmedia.exhibitioncalendar.view.VerticalViewPager;
 import cn.com.modernmedia.exhibitioncalendar.view.ViewHolder;
+
+import static cn.com.modernmedia.exhibitioncalendar.util.AppValue.myList;
 
 
 /**
@@ -106,15 +110,17 @@ public class MainActivity extends BaseActivity {
                 case 3:// 用户数据
                     myListLayout.removeAllViews();
                     myCalendarList.clear();
-                    myCalendarList.addAll(AppValue.myList.getCalendarModels());
+                    myCalendarList.addAll(myList.getCalendarModels());
                     for (CalendarModel ca : myCalendarList) {
                         myListLayout.addView(getMylistItemView(ca));
                     }
                     myNum.setText(myCalendarList.size() + "个待参观展览");
+                    if (calendarListModel != null && ParseUtil.listNotNull(calendarListModel.getCalendarModels()))
+                        calendarListModel.getCalendarModels().get(coverPager.getCurrentItem()).getItemId();
 
                 case 4:// 头像
                     if (userModel != null)
-                        Tools.setAvatar(MainActivity.this, userModel.getAvatar(), avatar);
+                        Tools.setAvatar(MainActivity.this, userModel.getUserName(), avatar);
                     break;
 
                 case 5:// 取消行程
@@ -179,13 +185,13 @@ public class MainActivity extends BaseActivity {
         initData();
         uploadDeviceInfoForPush();
     }
+
     /**
      * Push需要：上传device信息
      */
     private void uploadDeviceInfoForPush() {
         if (DataHelper.isPushServiceEnable(this)) NewPushManager.getInstance(this).register(this);
     }
-
 
 
     protected void onPause() {
@@ -201,24 +207,26 @@ public class MainActivity extends BaseActivity {
         userModel = DataHelper.getUserLoginInfo(MainActivity.this);
         handler.sendEmptyMessage(4);
 
-        // 正在进行
-        apiController.getMyList(this, "1", 1, new FetchEntryListener() {
-            @Override
-            public void setData(Entry entry) {
-                if (entry != null && entry instanceof CalendarListModel) {
+        if (userModel != null) {
+            // 正在进行
+            apiController.getMyList(this, "1", 1, new FetchEntryListener() {
+                @Override
+                public void setData(Entry entry) {
+                    if (entry != null && entry instanceof CalendarListModel) {
 
-                    handler.sendEmptyMessage(3);
+                        handler.sendEmptyMessage(3);
+                    }
                 }
-            }
-        });
-        //         已经过期
-        apiController.getMyList(this, "1", 2, new FetchEntryListener() {
-            @Override
-            public void setData(Entry entry) {
-                if (entry != null && entry instanceof CalendarListModel) {
+            });
+            //         已经过期
+            apiController.getMyList(this, "1", 2, new FetchEntryListener() {
+                @Override
+                public void setData(Entry entry) {
+                    if (entry != null && entry instanceof CalendarListModel) {
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void initData() {
@@ -256,7 +264,6 @@ public class MainActivity extends BaseActivity {
             @Override
             public void setData(Entry entry) {
                 if (entry != null && entry instanceof CalendarListModel) {
-                    AppValue.allList = (CalendarListModel) entry;
                 }
             }
         });
@@ -377,6 +384,7 @@ public class MainActivity extends BaseActivity {
      */
     private void doAdd(CalendarModel c) {
         Intent i = new Intent(MainActivity.this, AddActivity.class);
+        i.putExtra("add_type", 0);
         i.putExtra("add_detail", c);
         startActivity(i);
 
@@ -387,21 +395,24 @@ public class MainActivity extends BaseActivity {
      * 取消行程
      */
     private void doDelete(CalendarModel c) {
-        apiController.handleFav(MainActivity.this, HandleFavApi.HANDLE_DELETE, c.getItemId(), c.getCoverImg(), c.getStartTime(), new FetchEntryListener() {
-            @Override
-            public void setData(Entry entry) {
-                if (entry != null && entry instanceof CalendarModel) {
-                    CalendarModel a = (CalendarModel) entry;
-                    for (CalendarModel c : AppValue.myList.getCalendarModels()) {
-                        if (c.getItemId().equals(a.getItemId())) {
-                            AppValue.myList.getCalendarModels().remove(c);
+        for (CalendarModel s : AppValue.myList.getCalendarModels()) {
+            if (c.getItemId().equals(s.getItemId())) {
+                apiController.handleFav(MainActivity.this, HandleFavApi.HANDLE_DELETE, s.getEventId(), s.getCoverImg(), s.getStartTime(), new FetchEntryListener() {
+                    @Override
+                    public void setData(Entry entry) {
+                        if (entry != null && entry instanceof ErrorMsg) {
+                            ErrorMsg errorMsg = (ErrorMsg) entry;
+                            showToast(errorMsg.getDesc());
+
+                        } else {
                             handler.sendEmptyMessage(3);
                         }
                     }
-
-                }
+                });
+                break;
             }
-        });
+        }
+
     }
 
 
@@ -431,10 +442,10 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         NewPushManager.getInstance(this).onresume(this);
-        if (MyApplication.loginStatusChange) {
+        if (CommonApplication.loginStatusChange) {
             Log.e("登录状态变化", "登录状态变化");
             initUserData();
-            MyApplication.loginStatusChange = false;
+            CommonApplication.loginStatusChange = false;
 
         }
         // 更新我的展览列表
@@ -465,7 +476,7 @@ public class MainActivity extends BaseActivity {
      * 更新添加按钮状态
      */
     private void checkAdd(String itemId) {
-        List<CalendarModel> ll = AppValue.myList.getCalendarModels();
+        List<CalendarModel> ll = myList.getCalendarModels();
         if (ParseUtil.listNotNull(ll)) {
 
             boolean ifShow = true;

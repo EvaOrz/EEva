@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -33,6 +34,8 @@ public class SearchActivity extends BaseActivity {
     private ListView listView;
     private List<CalendarModel> calendarModels = new ArrayList<>();
     private SearchAdapter searchAdapter;
+
+    private boolean ifcanSearch = true;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -66,6 +69,8 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void doSearch() {
+        if (!ifcanSearch) return;
+        ifcanSearch = false;
         String key = sEdit.getText().toString();
         if (!TextUtils.isEmpty(key)) {
             ApiController.getInstance(SearchActivity.this).search(SearchActivity.this, key, new FetchEntryListener() {
@@ -73,9 +78,11 @@ public class SearchActivity extends BaseActivity {
                 public void setData(Entry entry) {
                     if (entry != null && entry instanceof CalendarListModel) {
                         CalendarListModel c = (CalendarListModel) entry;
+                        Log.e("搜索结果", c.getCalendarModels().size() + "");
                         calendarModels.clear();
                         calendarModels.addAll(c.getCalendarModels());
                         handler.sendEmptyMessage(0);
+                        ifcanSearch = true;
                     }
                 }
             });

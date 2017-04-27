@@ -44,7 +44,6 @@ public class SearchApi extends BaseApi {
     @Override
     protected void handler(JSONObject jsonObject) {
         if (jsonObject == null) return;
-
         calendarListModel = CalendarListModel.parseCalendarListModel(calendarListModel, jsonObject);
     }
 

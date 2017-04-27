@@ -1,5 +1,7 @@
 package cn.com.modernmedia.exhibitioncalendar.api;
 
+import android.util.Log;
+
 import org.json.JSONObject;
 
 import cn.com.modernmedia.corelib.http.BaseApi;
@@ -37,6 +39,7 @@ public class UploadAvaterApi extends BaseApi {
     @Override
     protected void handler(JSONObject jsonObject) {
         if (jsonObject != null) {
+            Log.e("UploadAvaterApi", jsonObject.toString());
             result.setStatus(jsonObject.optString("status", ""));
             result.setMsg(jsonObject.optString("msg", ""));
             result.setImagePath(jsonObject.optString("url", ""));

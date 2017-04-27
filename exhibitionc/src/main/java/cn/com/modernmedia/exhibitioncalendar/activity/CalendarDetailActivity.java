@@ -77,6 +77,7 @@ public class CalendarDetailActivity extends BaseActivity {
             public void setData(Entry entry) {
                 if (entry != null && entry instanceof CalendarModel) {
                     calendarModel = (CalendarModel) entry;
+                    webView.setCalendarModel(calendarModel);
                     handler.sendEmptyMessage(0);
                 }
 
@@ -109,6 +110,7 @@ public class CalendarDetailActivity extends BaseActivity {
 
                 } else {
                     Intent i = new Intent(CalendarDetailActivity.this, AddActivity.class);
+                    i.putExtra("add_type", 0);
                     i.putExtra("add_detail", calendarModel);
                     startActivity(i);
                 }

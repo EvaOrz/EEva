@@ -326,7 +326,7 @@ public class LoginActivity extends BaseActivity {
         // 记录上次登录username
         DataHelper.setLastLoginUsername(this, lastUserName);
         // 返回上一级界面
-
+        CommonApplication.loginStatusChange = true;
         showToast(R.string.msg_login_success);
         finish();
 
@@ -434,10 +434,7 @@ public class LoginActivity extends BaseActivity {
     public void modifyUserInfo(UserModel user, String url) {
         if (user == null) return;
         // 只更新头像
-        mController.modifyUserInfo(this, user.getUid(), user.getToken(),user.getRealname(), user
-                        .getUserName
-                        (),
-                user.getNickName(), url, null, user.getDesc(), false, new FetchEntryListener() {
+        mController.modifyUserInfo(this, user.getUid(), user.getToken(), user.getRealname(), user.getUserName(), user.getNickName(), url, null, user.getDesc(), false, new FetchEntryListener() {
 
             @Override
             public void setData(final Entry entry) {

@@ -30,6 +30,7 @@ public class SearchAdapter extends CheckScrollAdapter<CalendarModel> {
     }
 
     public void setData(List<CalendarModel> mItemList) {
+        clearData();
         isScroll = false;
         synchronized (mItemList) {
             for (CalendarModel item : mItemList) {

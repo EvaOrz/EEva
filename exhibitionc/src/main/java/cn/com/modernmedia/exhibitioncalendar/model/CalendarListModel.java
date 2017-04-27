@@ -19,12 +19,22 @@ import static cn.com.modernmedia.exhibitioncalendar.model.TagListModel.HouseOrCi
 public class CalendarListModel extends Entry {
     private List<CalendarModel> calendarModels = new ArrayList<>();
 
+    private int count;
 
     public CalendarListModel() {
     }
 
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
     public static CalendarListModel parseCalendarListModel(CalendarListModel calendarListModel, JSONObject jsonObject) {
         List<CalendarModel> calendarModels = new ArrayList<>();
+        calendarListModel.setCount(jsonObject.optInt("count"));
         JSONArray jsonArray = jsonObject.optJSONArray("item");
         if (jsonArray == null) return null;
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -85,6 +95,7 @@ public class CalendarListModel extends Entry {
             calendarModel.setContent(jsonObject.optString("content"));
             calendarModel.setBackgroundImg(jsonObject.optString("background_img"));
             calendarModel.setImg(jsonObject.optString("img"));
+            calendarModel.setCoverImg(jsonObject.optString("cover_img"));
             calendarModel.setStatus(jsonObject.optInt("status"));
             calendarModel.setExtension(jsonObject.optString("extension"));
             calendarModel.setCoordinates(parseCoordinateList(jsonObject.optJSONArray("coordinates")));

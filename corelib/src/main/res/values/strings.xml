@@ -211,4 +211,13 @@
     <string name="edit_faild">修改行程失败</string>
     <string name="upload_success">上传成功</string>
     <string name="upload_failed">上传失败</string>
+
+    <string name="ing">正在进行中</string>
+    <string name="inging">%s天后开展</string>
+
+    <string name="baidu_map">百度地图</string>
+    <string name="gaode_map">高德地图</string>
+    <string name="google_map">谷歌地图</string>
+
+
 </resources>

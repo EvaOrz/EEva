@@ -261,7 +261,7 @@ public class Tools {
 
             @Override
             public void run() {
-                Intent intent = new Intent("com.android.activity_camera.action.CROP");
+                Intent intent = new Intent("com.android.camera.action.CROP");
                 intent.setDataAndType(uri, "image/*");
                 intent.putExtra("crop", "true");
                 intent.putExtra("aspectX", 1);
@@ -633,5 +633,24 @@ public class Tools {
         return info.getMacAddress();
     }
 
+    /***
+     * 获取url 指定name的value;
+     * @param url
+     * @param name
+     * @return
+     */
+    public static String getValueByName(String url, String name) {
+        String result = "";
+        int index = url.indexOf("?");
+        String temp = url.substring(index + 1);
+        String[] keyValue = temp.split("&");
+        for (String str : keyValue) {
+            if (str.contains(name)) {
+                result = str.replace(name + "=", "");
+                break;
+            }
+        }
+        return result;
+    }
 
 }

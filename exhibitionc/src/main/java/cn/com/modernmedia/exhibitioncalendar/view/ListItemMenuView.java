@@ -10,6 +10,8 @@ import android.widget.RelativeLayout;
 
 import cn.com.modernmedia.corelib.listener.FetchEntryListener;
 import cn.com.modernmedia.corelib.model.Entry;
+import cn.com.modernmedia.corelib.model.ErrorMsg;
+import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.activity.AddActivity;
 import cn.com.modernmedia.exhibitioncalendar.activity.MainActivity;
@@ -17,7 +19,6 @@ import cn.com.modernmedia.exhibitioncalendar.activity.MyListActivity;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
 import cn.com.modernmedia.exhibitioncalendar.api.HandleFavApi;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
-import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
 
 /**
  * Created by Eva. on 17/4/12.
@@ -59,6 +60,7 @@ public class ListItemMenuView {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(mContext, AddActivity.class);
+                i.putExtra("add_type", 1);
                 i.putExtra("add_detail", calendarModel);
                 mContext.startActivity(i);
             }
@@ -68,23 +70,22 @@ public class ListItemMenuView {
             public void onClick(View view) {
 
 
-                ApiController.getInstance(mContext).handleFav(mContext, HandleFavApi.HANDLE_DELETE, calendarModel.getItemId(), calendarModel.getCoverImg(), calendarModel.getStartTime(), new FetchEntryListener() {
+                ApiController.getInstance(mContext).handleFav(mContext, HandleFavApi.HANDLE_DELETE, calendarModel.getEventId(), calendarModel.getCoverImg(), calendarModel.getStartTime(), new FetchEntryListener() {
                     @Override
                     public void setData(Entry entry) {
-                        if (entry != null && entry instanceof CalendarModel) {
-                            CalendarModel a = (CalendarModel) entry;
-                            for (CalendarModel c : AppValue.myList.getCalendarModels()) {
-                                if (c.getItemId().equals(a.getItemId())) {
-                                    AppValue.myList.getCalendarModels().remove(c);
-                                    if (mContext instanceof MainActivity) {
-                                        ((MainActivity) mContext).handler.sendEmptyMessage(3);
-                                    } else if (mContext instanceof MyListActivity) {
-                                        ((MyListActivity) mContext).handler.sendEmptyMessage(1);
-                                    }
-                                }
-                            }
 
+                        if (entry != null && entry instanceof ErrorMsg) {
+                            ErrorMsg errorMsg = (ErrorMsg) entry;
+                            Tools.showToast(mContext, errorMsg.getDesc());
+
+                        } else {
+                            if (mContext instanceof MainActivity) {
+                                ((MainActivity) mContext).handler.sendEmptyMessage(3);
+                            } else if (mContext instanceof MyListActivity) {
+                                ((MyListActivity) mContext).handler.sendEmptyMessage(1);
+                            }
                         }
+                        window.dismiss();
                     }
                 });
             }

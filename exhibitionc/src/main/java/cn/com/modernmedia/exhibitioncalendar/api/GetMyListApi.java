@@ -1,6 +1,7 @@
 package cn.com.modernmedia.exhibitioncalendar.api;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -54,15 +55,15 @@ public class GetMyListApi extends BaseApi {
     @Override
     protected void handler(JSONObject jsonObject) {
         if (isNull(jsonObject)) return;
-//        Log.e("GetMyListApi", jsonObject.toString());
+        Log.e("GetMyListApi", jsonObject.toString());
         ErrorMsg errorMsg = new ErrorMsg();
         JSONObject errorObject = jsonObject.optJSONObject("error");
         if (!isNull(errorObject)) {
             errorMsg.setNo(errorObject.optInt("no", -1));
             errorMsg.setDesc(errorObject.optString("desc", ""));
-        }
-        if (errorMsg.getNo() == 0) {
+        } else {
             calendarListModel = CalendarListModel.parseCalendarListModel(calendarListModel, jsonObject);
+            if (calendarListModel == null) return;
 
             /**
              * 保存本地数据

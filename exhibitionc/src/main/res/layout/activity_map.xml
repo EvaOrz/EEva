@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/map_bg"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@mipmap/main_bg_lingshi"
+              android:fitsSystemWindows="true"
+              android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+
+        <TextView
+            android:id="@+id/map_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@mipmap/add_title"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_14"/>
+
+
+        <!--<fragment xmlns:android="http://schemas.android.com/apk/res/android"-->
+                  <!--android:id="@+id/mapview"-->
+                  <!--class="com.google.android.gms.maps.MapFragment"-->
+                  <!--android:layout_width="match_parent"-->
+                  <!--android:layout_height="match_parent"-->
+                  <!---->
+                  <!--android:layout_margin="10dp"-->
+                  <!--android:layout_weight="1"-->
+                  <!--android:background="@drawable/white_10radius_corner_bg"/>-->
+
+        <com.baidu.mapapi.map.MapView
+            android:id="@+id/baidu_mapview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/white_10radius_corner_bg"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:paddingTop="10dp">
+
+            <ImageView
+                android:id="@+id/map_back"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@mipmap/back_white"/>
+
+            <ImageView
+                android:id="@+id/map_daohang"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:src="@mipmap/daohang"/>
+
+        </RelativeLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

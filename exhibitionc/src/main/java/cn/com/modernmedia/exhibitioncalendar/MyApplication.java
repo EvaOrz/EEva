@@ -3,6 +3,7 @@ package cn.com.modernmedia.exhibitioncalendar;
 import android.app.ActivityManager;
 import android.content.Context;
 
+import com.baidu.mapapi.SDKInitializer;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
@@ -20,7 +21,7 @@ public class MyApplication extends CommonApplication {
 
     // 展览日历appid
     public static int APPID = 61;
-    public static int DEBUG = 1;
+    public static int DEBUG = 0;
 
     private static int memorySize;
 
@@ -55,6 +56,8 @@ public class MyApplication extends CommonApplication {
         WEIXIN_SECRET = "26628cd60eeaf05037622770";
         SINA_APP_ID = "3608123411";
         SINA_SECRET = "895c3716c902def304f1bf3c5af5900f";
+
+        SDKInitializer.initialize(getApplicationContext());
 
     }
 

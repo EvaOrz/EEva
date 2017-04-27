@@ -3,14 +3,15 @@ package cn.com.modernmedia.exhibitioncalendar.api;
 import android.content.Context;
 import android.util.Log;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import cn.com.modernmedia.corelib.db.DataHelper;
 import cn.com.modernmedia.corelib.http.BaseApi;
+import cn.com.modernmedia.corelib.model.ErrorMsg;
 import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.exhibitioncalendar.MyApplication;
-import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
+import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel;
+import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
 
 
 /**
@@ -23,7 +24,7 @@ public class HandleFavApi extends BaseApi {
     public static int HANDLE_DELETE = 2;
     private int type = 1;
     private String post;
-    private CalendarModel calendarModel = new CalendarModel();
+    private ErrorMsg errorMsg;
 
     /**
      * 'appid':'61',
@@ -45,9 +46,13 @@ public class HandleFavApi extends BaseApi {
             addPostParams(postObject, "version", Tools.getAppVersion(c));
             addPostParams(postObject, "uid", DataHelper.getUid(c));
             addPostParams(postObject, "token", DataHelper.getToken(c));
-            addPostParams(postObject, "item_id", id);
-            addPostParams(postObject, "img", img);
-            addPostParams(postObject, "time", time);
+
+            if (type == HANDLE_ADD) addPostParams(postObject, "item_id", id);
+            else addPostParams(postObject, "event_id", id);
+            if (type != HANDLE_DELETE) {
+                addPostParams(postObject, "img", img);
+                addPostParams(postObject, "time", time);
+            }
             post = postObject.toString();
             setPostParams(post);
         } catch (Exception e) {
@@ -68,11 +73,22 @@ public class HandleFavApi extends BaseApi {
     protected void handler(JSONObject jsonObject) {
         if (jsonObject == null) return;
         Log.e("HandleFavApi", jsonObject.toString());
-        JSONArray jsonArray = jsonObject.optJSONArray("item");
-        if (jsonArray == null || jsonArray.length() == 0) return;
+        errorMsg = new ErrorMsg();
+        JSONObject errorObject = jsonObject.optJSONObject("error");
+        if (!isNull(errorObject)) {
+            errorMsg.setNo(errorObject.optInt("no", -1));
+            errorMsg.setDesc(errorObject.optString("desc", ""));
+        } else {
+            CalendarListModel calendarListModel = new CalendarListModel();
+            CalendarListModel.parseCalendarListModel(calendarListModel, jsonObject);
+            if (calendarListModel == null) return;
 
-
-        calendarModel = CalendarModel.parseCalendarModel(calendarModel, jsonArray.optJSONObject(0));
+            /**
+             * 保存本地数据
+             */
+            AppValue.myList.getCalendarModels().clear();
+            AppValue.myList.getCalendarModels().addAll(calendarListModel.getCalendarModels());
+        }
     }
 
     @Override
@@ -80,15 +96,15 @@ public class HandleFavApi extends BaseApi {
 
     }
 
-    public CalendarModel getData() {
-        return calendarModel;
+    public ErrorMsg getData() {
+        return errorMsg;
     }
 
     @Override
     protected String getUrl() {
         if (type == HANDLE_ADD) return UrlMaker.addUserFav();
-        else if (type == HANDLE_EDIT) UrlMaker.changeUserFav();
-        else if (type == HANDLE_DELETE) UrlMaker.deleteUserFav();
+        else if (type == HANDLE_EDIT) return UrlMaker.changeUserFav();
+        else if (type == HANDLE_DELETE) return UrlMaker.deleteUserFav();
         return "";
     }
 }

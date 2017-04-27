@@ -47,7 +47,7 @@ public class LeftActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (AppValue.allList != null && ParseUtil.listNotNull(AppValue.allList.getCalendarModels())) {
-            allNum.setText("共有 " + AppValue.allList.getCalendarModels().size() + " 个正在进行/即将展开");
+            allNum.setText("共有 " + AppValue.allList.getCount() + " 个正在进行/即将展开");
         }
         String s = "共";
         int ing = 0;

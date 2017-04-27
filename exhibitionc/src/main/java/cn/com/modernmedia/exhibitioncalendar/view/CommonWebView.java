@@ -30,6 +30,7 @@ import java.util.List;
 
 import cn.com.modernmedia.corelib.model.Entry;
 import cn.com.modernmedia.corelib.webridge.WBWebView;
+import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
 import cn.com.modernmedia.exhibitioncalendar.util.UriParse;
 
 /**
@@ -45,7 +46,7 @@ public class CommonWebView extends WBWebView {
     private boolean isChangeStatus = false;
     private WebProcessListener listener;
     private boolean isFetchNull = false;
-    private int x, y;
+    private CalendarModel calendarModel;
     private List<String> urlList = new ArrayList<String>();// 图片列表
     private List<String> descList = new ArrayList<String>();// 描述列表
     private boolean hasLoadFromHttp = false;// 防止无限获取http
@@ -133,8 +134,9 @@ public class CommonWebView extends WBWebView {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 Log.e("内部网页跳转拦截", url);
 
-                if (url.startsWith("slate")) {
-                    UriParse.clickSlate(mContext, url, new Entry[]{}, me);
+                if (url.startsWith("slate") || url.contains("map.html")) {
+                    //                if (url.startsWith("slate")) {
+                    UriParse.clickSlate(mContext, url, new Entry[]{calendarModel}, me);
                     return true;
                 } else if (url.startsWith("http") || url.startsWith("https")) {
                     targetUrl = url;
@@ -366,6 +368,10 @@ public class CommonWebView extends WBWebView {
         } finally {
             if (conn != null) conn.disconnect();
         }
+    }
+
+    public void setCalendarModel(CalendarModel calendarModel) {
+        this.calendarModel = calendarModel;
     }
 
     private String receiveData(InputStream is) throws IOException {

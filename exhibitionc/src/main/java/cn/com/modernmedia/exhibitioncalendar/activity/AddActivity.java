@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -29,6 +30,7 @@ import java.util.TimeZone;
 import cn.com.modernmedia.corelib.BaseActivity;
 import cn.com.modernmedia.corelib.listener.FetchEntryListener;
 import cn.com.modernmedia.corelib.model.Entry;
+import cn.com.modernmedia.corelib.model.ErrorMsg;
 import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.corelib.widget.EvaSwitchBar;
 import cn.com.modernmedia.exhibitioncalendar.MyApplication;
@@ -45,7 +47,7 @@ import cn.com.modernmedia.exhibitioncalendar.view.AddPopView;
  * Created by Eva. on 17/4/5.
  */
 
-public class AddActivity extends BaseActivity {
+public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeListener {
     private TextView title, date, time;
     private EvaSwitchBar notification, tongbu;
     private CalendarModel calendarModel;
@@ -55,6 +57,7 @@ public class AddActivity extends BaseActivity {
     private ApiController apiController;
 
     private int type = 0;// 0:添加；1：编辑
+    private boolean tongbuStatus = true, alarmStatus = false;
 
 
     private static String CALANDER_URL = "content://com.android.calendar/calendars";
@@ -99,7 +102,9 @@ public class AddActivity extends BaseActivity {
         date.setOnClickListener(this);
         time.setOnClickListener(this);
         notification = (EvaSwitchBar) findViewById(R.id.notification_switch);
+        notification.setOnChangeListener(this);
         tongbu = (EvaSwitchBar) findViewById(R.id.tong_switch);
+        tongbu.setOnChangeListener(this);
         viewPager = (ViewPager) findViewById(R.id.add_viewpager);
 
         int width = MyApplication.width - 20;
@@ -108,8 +113,25 @@ public class AddActivity extends BaseActivity {
         params.setMargins(0, 30, 0, 0);
         viewPager.setLayoutParams(params);
         viewPager.setOffscreenPageLimit(3);
-        notification.setChecked(true);
-        tongbu.setChecked(false);
+        notification.setChecked(false);
+        tongbu.setChecked(true);
+    }
+
+
+    @Override
+    public void onChange(EvaSwitchBar sb, boolean state) {
+
+        switch (sb.getId()) {
+            case R.id.notification_switch:
+                if (state) alarmStatus = true;
+                else alarmStatus = false;
+                break;
+            case R.id.tong_switch:
+                if (state) tongbuStatus = true;
+                else tongbuStatus = false;
+                break;
+
+        }
     }
 
     @Override
@@ -128,18 +150,15 @@ public class AddActivity extends BaseActivity {
                         @Override
                         public void setData(Entry entry) {
                             showLoadingDialog(false);
-                            if (entry != null && entry instanceof CalendarModel) {
-                                CalendarModel a = (CalendarModel) entry;
-                                for (CalendarModel c : AppValue.myList.getCalendarModels()) {
-                                    if (c.getItemId().equals(a.getItemId())) {
-                                        AppValue.myList.getCalendarModels().remove(c);
-                                        AppValue.myList.getCalendarModels().add(a);
-                                    }
-                                }
-                                calendarModel = a;
+                            if (entry != null && entry instanceof ErrorMsg) {
+                                ErrorMsg errorMsg = (ErrorMsg) entry;
+                                showToast(errorMsg.getDesc());
+
+                            } else {
+                                getCurrentModel();
                                 handler.sendEmptyMessage(1);
                                 showToast(R.string.edit_success);
-                            } else showToast(R.string.edit_faild);
+                            }
                         }
                     });
                 } else {
@@ -147,13 +166,15 @@ public class AddActivity extends BaseActivity {
                         @Override
                         public void setData(Entry entry) {
                             showLoadingDialog(false);
-                            if (entry != null && entry instanceof CalendarModel) {
-                                CalendarModel a = (CalendarModel) entry;
-                                AppValue.myList.getCalendarModels().add(a);
-                                calendarModel = a;
+                            if (entry != null && entry instanceof ErrorMsg) {
+                                ErrorMsg errorMsg = (ErrorMsg) entry;
+                                showToast(errorMsg.getDesc());
+
+                            } else {
+                                getCurrentModel();
                                 handler.sendEmptyMessage(1);
                                 showToast(R.string.add_success);
-                            } else showToast(R.string.add_faild);
+                            }
 
                         }
                     });
@@ -168,6 +189,14 @@ public class AddActivity extends BaseActivity {
                 AddPopView datePop = new AddPopView(AddActivity.this, 2, calendarModel.getStartTime());
                 break;
 
+        }
+    }
+
+    private void getCurrentModel() {
+        for (CalendarModel c : AppValue.myList.getCalendarModels()) {
+            if (c.getItemId().equals(calendarModel.getItemId())) {
+                calendarModel = c;
+            }
         }
     }
 
@@ -338,7 +367,10 @@ public class AddActivity extends BaseActivity {
     public void addCalendarEvent(Context context, String title, String description, long beginTime, long endTime) {
         // 获取日历账户的id
         int calId = checkAndAddCalendarAccount(context);
+        Log.e("日历账户id：", calId + "");
         if (calId < 0) {
+
+
             // 获取账户id失败直接返回，添加日历事件失败
             return;
         }
@@ -368,8 +400,8 @@ public class AddActivity extends BaseActivity {
         //事件提醒的设定
         ContentValues values = new ContentValues();
         values.put(CalendarContract.Reminders.EVENT_ID, ContentUris.parseId(newEvent));
-        // 提前10分钟有提醒
-        values.put(CalendarContract.Reminders.MINUTES, 10);
+        // 提前一小时有提醒
+        values.put(CalendarContract.Reminders.MINUTES, 60);
         values.put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT);
         Uri uri = context.getContentResolver().insert(Uri.parse(CALANDER_REMIDER_URL), values);
         if (uri == null) {

@@ -149,7 +149,7 @@ public class MyListActivity extends BaseActivity {
             handler.sendEmptyMessage(1);
             return;
         }
-        Tools.setAvatar(this, userModel.getAvatar(), avatar);
+        Tools.setAvatar(this, userModel.getUserName(), avatar);
         nickname.setText(userModel.getNickName());
         if (isLoginStatusChange) {
             getIngData();

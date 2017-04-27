@@ -61,7 +61,7 @@ public class DataHelper {
     public static final String ADV_TIME = "adv_time";//入版广告时间
     public static final String UUID = "uuid";
 
-    public static final String  LAST_LOGIN_USERNAME = "last_login_username";// 上次登录账号
+    public static final String LAST_LOGIN_USERNAME = "last_login_username";// 上次登录账号
     public static final String NEW_LOGIN = "new_login";//整合第三方
     public static final String NEW_LOGIN_TIME = "new_login_time";//整合第三方取消时间
     private static final String INDEX_HEAD_AUTO_LOOP = "index_head_auto_loop";// 首页自动轮播开关
@@ -91,6 +91,7 @@ public class DataHelper {
      */
     public static void saveUserLoginInfo(Context context, UserModel user) {
         Editor editor = getPref(context).edit();
+        editor.putString(user.getUserName(), user.getAvatar());
         editor.putString(USER_NAME, user.getUserName());
         editor.putString(PHONE, user.getPhone());
         editor.putString(EMAIL, user.getEmail());
@@ -175,6 +176,7 @@ public class DataHelper {
      */
     public static void clearLoginInfo(Context context) {
         Editor editor = getPref(context).edit();
+
         editor.putString(USER_NAME, "");
         editor.putString(PASSWORD, "");
         editor.putString(PHONE, "");
@@ -306,13 +308,14 @@ public class DataHelper {
         editor.putLong(ADV_TIME, time);
         editor.commit();
     }
+
     /**
      * 获取UUID
      *
      * @return
      */
-    public static String  getUUID(Context context) {
-        return getPref(context).getString(UUID,"");
+    public static String getUUID(Context context) {
+        return getPref(context).getString(UUID, "");
     }
 
     /**
@@ -329,10 +332,11 @@ public class DataHelper {
 
     /**
      * 存上次登录账号
+     *
      * @param context
      * @param name
      */
-    public static void setLastLoginUsername(Context context,String name){
+    public static void setLastLoginUsername(Context context, String name) {
         Editor editor = getPref(context).edit();
         editor.putString(LAST_LOGIN_USERNAME, name);
         editor.commit();
@@ -340,6 +344,7 @@ public class DataHelper {
 
     /**
      * 取上次登录账号
+     *
      * @param context
      * @return
      */
@@ -373,8 +378,6 @@ public class DataHelper {
         editor.putBoolean(NEW_LOGIN, false);
         editor.commit();
     }
-
-
 
 
     /**

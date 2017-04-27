@@ -8,6 +8,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +19,7 @@ import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.activity.AboutActivity;
 import cn.com.modernmedia.exhibitioncalendar.activity.CalendarDetailActivity;
 import cn.com.modernmedia.exhibitioncalendar.activity.CalendarListActivity;
+import cn.com.modernmedia.exhibitioncalendar.activity.MapActivity;
 
 /**
  * 自定义协议解析类
@@ -125,6 +128,8 @@ public class UriParse {
     public static void clickSlate(Context context, String link, Entry[] entries, View view, Class<?>... cls) {
         if (TextUtils.isEmpty(link)) {
             //            doLinkNull(context, entries, cls);
+        } else if (link.contains("map.html")) {
+            goMapActivity(context, link, entries[0]);
         } else if (link.toLowerCase().startsWith("http://") || link.toLowerCase().startsWith("https://")) {
             doLinkHttp(context, link);
         } else if (link.toLowerCase().startsWith("slate://")) {
@@ -132,8 +137,8 @@ public class UriParse {
             String key = list.size() > 0 ? list.get(0) : "";
             if (key.equals(CATEGORY)) {
                 Intent i = new Intent(context, CalendarListActivity.class);
-//                i.putExtra("list_tagid", "13");
-//                i.putExtra("list_tagname", "热门");
+                //                i.putExtra("list_tagid", "13");
+                //                i.putExtra("list_tagname", "热门");
                 context.startActivity(i);
             } else if (key.equals(DETAILCALENDAR)) {
                 Intent i = new Intent(context, CalendarDetailActivity.class);
@@ -143,6 +148,28 @@ public class UriParse {
         } else if (link.startsWith("tel://")) {
             String arr[] = link.split("tel://");
             if (arr.length == 2) doCall(context, arr[1]);
+        }
+
+    }
+
+    /**
+     * 跳转mapActivity
+     *
+     * @param context
+     * @param link    https://artcalendar-test.bbwc.cn/html/artCalendar/map.html?address=%25E7%25BA%25BD%25E7%25BA%25A6%25E5%25A4%25A7%25E9%2583%25BD%25E4%25BC%259A%25E8%2589%25BA%25E6%259C%25AF%25E5%258D%259A%25E7%2589%25A9%25E9%25A6%2586%25EF%25BC%258C1000%2520Fifth%2520Avenue%2520New%2520York,%2520NY%252010028&latitude=40.7793090&longitude=-73.9630000
+     */
+    private static void goMapActivity(Context context, String link, Entry entry) {
+        try {
+            Log.e("跳转mapActivity", link);
+
+            Intent i = new Intent(context, MapActivity.class);
+            i.putExtra("map_calendar", entry);
+            i.putExtra("latitude", Tools.getValueByName(link, "latitude"));
+            i.putExtra("longitude", Tools.getValueByName(link, "longitude"));
+            i.putExtra("map_address", URLEncoder.encode(Tools.getValueByName(link, "address"), "UTF-8"));
+            context.startActivity(i);
+        } catch (UnsupportedEncodingException e) {
+
         }
 
     }
