@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -20,7 +22,9 @@ import cn.com.modernmedia.exhibitioncalendar.view.CommonWebView;
 public class CalendarListActivity extends BaseActivity {
 
     private CommonWebView wbWebView;
-    private String tagId, tagName;
+    private String tagId, tagName, titleTxt;
+    private ImageView back;
+    private TextView tilte;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,21 +32,29 @@ public class CalendarListActivity extends BaseActivity {
         setContentView(R.layout.activity_calendar_list);
         tagId = getIntent().getStringExtra("list_tagid");
         tagName = getIntent().getStringExtra("list_tagname");
+        titleTxt = getIntent().getStringExtra("list_title");
         initView();
     }
 
     private void initView() {
+        back = (ImageView) findViewById(R.id.calendar_list_back);
+        back.setOnClickListener(this);
+        tilte = (TextView) findViewById(R.id.calendar_list_title);
         wbWebView = (CommonWebView) findViewById(R.id.list_webview);
-        String url = UrlMaker.getHomePage();
-        if (!TextUtils.isEmpty(tagId) && !TextUtils.isEmpty(tagName)) {
-            try {
-                url = url + "?tagid=" + tagId + "&tagname=" + URLEncoder.encode(URLEncoder.encode(tagName, "UTF-8"), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
+        String url = "";
+        try {
+            if (!TextUtils.isEmpty(titleTxt)) {
+                tilte.setText(titleTxt);
+                back.setImageResource(R.mipmap.finish_white);
+                url = UrlMaker.getTagPage() + "?tagid=" + tagId + "&sharetitle=" + URLEncoder.encode(URLEncoder.encode(titleTxt, "UTF-8"), "UTF-8");
+            } else
+                url = UrlMaker.getHomePage() + "?tagid=" + tagId + "&tagname=" + URLEncoder.encode(URLEncoder.encode(tagName, "UTF-8"), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
 
-            }
         }
         wbWebView.loadUrl(url);
-        findViewById(R.id.calendar_list_back).setOnClickListener(this);
+
+
     }
 
     @Override

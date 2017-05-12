@@ -85,7 +85,7 @@ public class SimpleDownloader implements Downloader {
 		try {
 			final URL url = new URL(urlString);
 			urlConnection = (HttpURLConnection) url.openConnection();
-			Log.e("流量bug查询**", "SimpleDownloader:getFromHttp()" + "-----" + url);
+//			Log.e("流量bug查询**", "SimpleDownloader:getFromHttp()" + "-----" + url);
 			in = new FlushedInputStream(new BufferedInputStream(urlConnection.getInputStream(), IO_BUFFER_SIZE));
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			int b;

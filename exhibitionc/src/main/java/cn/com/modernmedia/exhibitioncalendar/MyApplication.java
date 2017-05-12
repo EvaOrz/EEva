@@ -3,6 +3,9 @@ package cn.com.modernmedia.exhibitioncalendar;
 import android.app.ActivityManager;
 import android.content.Context;
 
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
 import com.baidu.mapapi.SDKInitializer;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -12,6 +15,7 @@ import afinal.FinalBitmap;
 import cn.com.modernmedia.corelib.CommonApplication;
 import cn.com.modernmedia.corelib.util.ConstData;
 import cn.com.modernmedia.exhibitioncalendar.api.UrlMaker;
+import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
 
 /**
  * Created by Eva. on 17/3/14.
@@ -24,6 +28,7 @@ public class MyApplication extends CommonApplication {
     public static int DEBUG = 0;
 
     private static int memorySize;
+    public static LocationClient mLocationClient;//定位SDK的核心类
 
     /**
      * 初始化整个app的配置
@@ -43,7 +48,7 @@ public class MyApplication extends CommonApplication {
 
     @Override
     public void onCreate() {
-        super.onCreate();
+
         mContext = this;
         drawCls = R.drawable.class;
         stringCls = R.string.class;
@@ -52,13 +57,19 @@ public class MyApplication extends CommonApplication {
         initMemorySize();
 
         ConstData.setAppId(APPID);
-        WEIXIN_APP_ID = "b682346e1e6b28dba3a47079";
-        WEIXIN_SECRET = "26628cd60eeaf05037622770";
+        WEIXIN_APP_ID = "wx9320801de5f7e77a";
+        WEIXIN_SECRET = "f23486b3fa95b337be103cd5edbf92b7";
         SINA_APP_ID = "3608123411";
         SINA_SECRET = "895c3716c902def304f1bf3c5af5900f";
 
         SDKInitializer.initialize(getApplicationContext());
 
+        /**
+         * 百度定位client
+         */
+        mLocationClient = new LocationClient(this.getApplicationContext());
+
+        super.onCreate();
     }
 
     private void initMemorySize() {
@@ -66,6 +77,21 @@ public class MyApplication extends CommonApplication {
         memorySize = memoryClass * 1024 * 1024 / 8;
         initImageLoader(mContext);
     }
+
+    /**
+     * 实现实位回调监听
+     */
+    public static BDLocationListener locationListener = new BDLocationListener() {
+
+        @Override
+        public void onReceiveLocation(BDLocation bdLocation) {
+            AppValue.currentLocation = bdLocation.getCity();
+        }
+
+        @Override
+        public void onConnectHotSpotMessage(String s, int i) {
+        }
+    };
 
 
 }

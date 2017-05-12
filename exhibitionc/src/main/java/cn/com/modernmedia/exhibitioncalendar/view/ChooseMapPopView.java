@@ -73,7 +73,7 @@ public class ChooseMapPopView {
         view.findViewById(R.id.map_cancle).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startNative_Baidu();
+                window.dismiss();
             }
         });
 

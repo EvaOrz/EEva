@@ -142,7 +142,7 @@ public class HttpRequestController {
             HttpURLConnection conn = null;
             try {
                 conn = (HttpURLConnection) mUrl.openConnection();
-                Log.e("流量bug查询**", "HttpRequestController:doGet()" + "-----" + url);
+//                Log.e("流量bug查询**", "HttpRequestController:doGet()" + "-----" + url);
                 if (!TextUtils.isEmpty(userAgent)) {
                     conn.addRequestProperty("User-Agent", userAgent);
                 }

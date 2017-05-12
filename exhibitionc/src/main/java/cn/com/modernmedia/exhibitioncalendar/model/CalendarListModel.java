@@ -78,6 +78,7 @@ public class CalendarListModel extends Entry {
         private String eventId = "";
         private String addTime = "";
         private String coverImg = "";
+        private int type;//   0图文样式,1展览链接样式,2外部链接样式,3专题样式,4直播链接样式
         private String weburl = "";
         private int category;
 
@@ -96,6 +97,8 @@ public class CalendarListModel extends Entry {
             calendarModel.setBackgroundImg(jsonObject.optString("background_img"));
             calendarModel.setImg(jsonObject.optString("img"));
             calendarModel.setCoverImg(jsonObject.optString("cover_img"));
+            calendarModel.setType(jsonObject.optInt("type"));
+            calendarModel.setWeburl(jsonObject.optString("weburl"));
             calendarModel.setStatus(jsonObject.optInt("status"));
             calendarModel.setExtension(jsonObject.optString("extension"));
             calendarModel.setCoordinates(parseCoordinateList(jsonObject.optJSONArray("coordinates")));
@@ -311,6 +314,14 @@ public class CalendarListModel extends Entry {
 
         public void setHotlist(List<HouseOrCity> hotlist) {
             this.hotlist = hotlist;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public void setType(int type) {
+            this.type = type;
         }
 
         public static class Coordinate extends Entry {

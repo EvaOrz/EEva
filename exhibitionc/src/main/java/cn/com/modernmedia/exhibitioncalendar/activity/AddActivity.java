@@ -78,8 +78,8 @@ public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeLi
         } else {
             showToast("获取展览信息失败");
         }
-        askPermission(Manifest.permission.READ_CALENDAR, 101);
-        askPermission(Manifest.permission.WRITE_CALENDAR, 102);
+        askPermission(Manifest.permission.READ_CALENDAR, 102);
+        askPermission(Manifest.permission.WRITE_CALENDAR, 103);
 
     }
 
@@ -126,9 +126,13 @@ public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeLi
                 if (state) alarmStatus = true;
                 else alarmStatus = false;
                 break;
-            case R.id.tong_switch:
-                if (state) tongbuStatus = true;
-                else tongbuStatus = false;
+            case R.id.tong_switch:// 同步到系统日历
+                if (state) {
+                    tongbuStatus = true;
+                    handler.sendEmptyMessage(1);
+                } else tongbuStatus = false;
+
+
                 break;
 
         }
@@ -156,7 +160,7 @@ public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeLi
 
                             } else {
                                 getCurrentModel();
-                                handler.sendEmptyMessage(1);
+                                //                                handler.sendEmptyMessage(1);
                                 showToast(R.string.edit_success);
                             }
                         }
@@ -172,7 +176,7 @@ public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeLi
 
                             } else {
                                 getCurrentModel();
-                                handler.sendEmptyMessage(1);
+                                //                                handler.sendEmptyMessage(1);
                                 showToast(R.string.add_success);
                             }
 
@@ -383,9 +387,11 @@ public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeLi
 
         Calendar mCalendar = Calendar.getInstance();
         mCalendar.setTimeInMillis(beginTime);//设置开始时间
-        long start = mCalendar.getTime().getTime();
+        long start = mCalendar.getTime().getTime() * 1000;
         mCalendar.setTimeInMillis(endTime);//设置终止时间
-        long end = mCalendar.getTime().getTime();
+        long end = mCalendar.getTime().getTime() * 1000;
+
+        Log.e("start & end ", Tools.format(start, "yyyy-MM-dd") + " ________  " + Tools.format(end, "yyyy-MM-dd"));
 
         event.put(CalendarContract.Events.DTSTART, start);
         event.put(CalendarContract.Events.DTEND, end);

@@ -58,8 +58,8 @@ import static cn.com.modernmedia.exhibitioncalendar.util.AppValue.myList;
 public class MainActivity extends BaseActivity {
     private ImageView weatherImg, avatar;
     private TextView weatherTxt, actionButton, myNum;
-    private ApiController apiController;
-    private WeatherModel weatherModel;
+    public ApiController apiController;
+    public WeatherModel weatherModel;
     private TagListModel tagListModel;
     private MainCityListScrollView mainCityListScrollView;
     private CalendarListModel calendarListModel;// 首页推荐数据
@@ -78,6 +78,7 @@ public class MainActivity extends BaseActivity {
     private UserModel userModel;
 
     private long lastClickTime = 0;// 上次点击返回按钮时间
+
 
     public Handler handler = new Handler() {
         @Override
@@ -103,14 +104,14 @@ public class MainActivity extends BaseActivity {
 
                         initDots(calendarListModel.getCalendarModels());
                         if (ParseUtil.listNotNull(calendarListModel.getCalendarModels()))
-                            checkAdd(calendarListModel.getCalendarModels().get(0).getItemId());
+                            checkAdd(calendarListModel.getCalendarModels().get(0));
                     }
                     break;
 
                 case 3:// 用户数据
                     myListLayout.removeAllViews();
                     myCalendarList.clear();
-                    myCalendarList.addAll(myList.getCalendarModels());
+                    myCalendarList.addAll(AppValue.myList.getCalendarModels());
                     for (CalendarModel ca : myCalendarList) {
                         myListLayout.addView(getMylistItemView(ca));
                     }
@@ -119,19 +120,27 @@ public class MainActivity extends BaseActivity {
                         calendarListModel.getCalendarModels().get(coverPager.getCurrentItem()).getItemId();
 
                 case 4:// 头像
-                    if (userModel != null)
-                        Tools.setAvatar(MainActivity.this, userModel.getUserName(), avatar);
+                    if (userModel != null) {
+                        Tools.setAvatar(MainActivity.this, DataHelper.getAvatarUrl(MainActivity
+                                .this, userModel.getUserName()), avatar);
+                    }
                     break;
 
                 case 5:// 取消行程
+                    actionButton.setVisibility(View.VISIBLE);
                     actionButton.setTag("delete");
                     actionButton.setText(R.string.menu_cancle);
                     actionButton.setBackgroundResource(R.drawable.green_3radius_corner_bg);
                     break;
                 case 6:// 添加行程
+                    actionButton.setVisibility(View.VISIBLE);
                     actionButton.setTag("add");
                     actionButton.setText(R.string.add_to_calendar);
                     actionButton.setBackgroundResource(R.drawable.red_3radius_corner_bg);
+                    break;
+                case 7://不显示
+                    actionButton.setVisibility(View.GONE);
+
                     break;
             }
         }
@@ -184,7 +193,9 @@ public class MainActivity extends BaseActivity {
         initView();
         initData();
         uploadDeviceInfoForPush();
+
     }
+
 
     /**
      * Push需要：上传device信息
@@ -231,7 +242,8 @@ public class MainActivity extends BaseActivity {
 
     private void initData() {
         apiController = ApiController.getInstance(this);
-        apiController.getWeather(this, "beijing", new FetchEntryListener() {
+
+        apiController.getWeather(MainActivity.this, AppValue.currentLocation, new FetchEntryListener() {
             @Override
             public void setData(Entry entry) {
                 if (entry != null && entry instanceof WeatherModel) {
@@ -240,7 +252,6 @@ public class MainActivity extends BaseActivity {
                 }
             }
         });
-
         apiController.getCitys(this, new FetchEntryListener() {
             @Override
             public void setData(Entry entry) {
@@ -311,7 +322,7 @@ public class MainActivity extends BaseActivity {
                 //滑动外部Viewpager
                 coverPager.scrollTo((int) (width * position + width * positionOffset), 0);
                 updateDots(position);
-                checkAdd(calendarListModel.getCalendarModels().get(detailPager.getCurrentItem()).getItemId());
+                checkAdd(calendarListModel.getCalendarModels().get(detailPager.getCurrentItem()));
             }
 
             @Override
@@ -333,7 +344,7 @@ public class MainActivity extends BaseActivity {
                 //滑动外部Viewpager
                 detailPager.scrollTo((int) (width * position + width * positionOffset), 0);
                 updateDots(position);
-                checkAdd(calendarListModel.getCalendarModels().get(coverPager.getCurrentItem()).getItemId());
+                checkAdd(calendarListModel.getCalendarModels().get(coverPager.getCurrentItem()));
             }
 
             @Override
@@ -395,7 +406,7 @@ public class MainActivity extends BaseActivity {
      * 取消行程
      */
     private void doDelete(CalendarModel c) {
-        for (CalendarModel s : AppValue.myList.getCalendarModels()) {
+        for (CalendarModel s : myList.getCalendarModels()) {
             if (c.getItemId().equals(s.getItemId())) {
                 apiController.handleFav(MainActivity.this, HandleFavApi.HANDLE_DELETE, s.getEventId(), s.getCoverImg(), s.getStartTime(), new FetchEntryListener() {
                     @Override
@@ -406,6 +417,7 @@ public class MainActivity extends BaseActivity {
 
                         } else {
                             handler.sendEmptyMessage(3);
+                            handler.sendEmptyMessage(6);// 显示添加
                         }
                     }
                 });
@@ -475,13 +487,15 @@ public class MainActivity extends BaseActivity {
     /**
      * 更新添加按钮状态
      */
-    private void checkAdd(String itemId) {
+    private void checkAdd(CalendarModel model) {
         List<CalendarModel> ll = myList.getCalendarModels();
-        if (ParseUtil.listNotNull(ll)) {
+        if (model.getType() == 3) {// gone
+            handler.sendEmptyMessage(7);
+        } else if (ParseUtil.listNotNull(ll)) {
 
             boolean ifShow = true;
             for (int i = 0; i < ll.size(); i++) {
-                if (ll.get(i).getItemId().equals(itemId)) {
+                if (ll.get(i).getItemId().equals(model.getItemId())) {
                     ifShow = false;
                 }
             }
@@ -507,5 +521,6 @@ public class MainActivity extends BaseActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
 
 }

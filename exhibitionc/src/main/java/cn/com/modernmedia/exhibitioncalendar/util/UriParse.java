@@ -55,7 +55,7 @@ public class UriParse {
     public static String DETAILCALENDAR = "detailCalendar";
     public static String CATEGORY = "category";
     public static String SEARCH = "search";
-    public static String APECIALSEARCH = "specialSearch";
+    public static String SPECIALSEARCH = "specialSearch";
     public static String DETAILLIVECALENDAR = "detailLiveCalendar";
 
 
@@ -141,6 +141,10 @@ public class UriParse {
                 //                i.putExtra("list_tagname", "热门");
                 context.startActivity(i);
             } else if (key.equals(DETAILCALENDAR)) {
+                Intent i = new Intent(context, CalendarDetailActivity.class);
+                i.putExtra(DETAILCALENDAR, detailCalendar(link));
+                context.startActivity(i);
+            }else if (key.equals(SPECIALSEARCH)) {
                 Intent i = new Intent(context, CalendarDetailActivity.class);
                 i.putExtra(DETAILCALENDAR, detailCalendar(link));
                 context.startActivity(i);

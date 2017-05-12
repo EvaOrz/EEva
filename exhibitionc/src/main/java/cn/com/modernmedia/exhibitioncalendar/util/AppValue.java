@@ -12,4 +12,8 @@ public class AppValue {
 
     public static CalendarListModel myList = new CalendarListModel();
     public static CalendarListModel edList = new CalendarListModel();
+    /**
+     * 当前经纬度
+     */
+    public static String currentLocation = "北京市";
 }

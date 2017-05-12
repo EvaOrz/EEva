@@ -177,10 +177,22 @@ public class BaseActivity extends Activity implements View.OnClickListener, Acti
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case 100:
+            case 100: // 读设备id权限
                 if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     DataHelper.setUUID(mContext, Tools.getMyUUID(mContext));
                 }
+                break;
+            case 101:// 定位权限
+
+                break;
+            case 102:// 读系统日历权限
+
+                break;
+            case 103:// 写系统日历权限
+
+                break;
+
+
         }
     }
 }

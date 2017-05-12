@@ -15,6 +15,7 @@ import cn.com.modernmedia.corelib.util.ParseUtil;
 import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.activity.CalendarDetailActivity;
+import cn.com.modernmedia.exhibitioncalendar.activity.CalendarListActivity;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
 import cn.com.modernmedia.exhibitioncalendar.util.UriParse;
 
@@ -81,9 +82,23 @@ public class DetailVPAdapter extends PagerAdapter {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(mContext, CalendarDetailActivity.class);
-                i.putExtra(UriParse.DETAILCALENDAR, detail.getItemId());
-                mContext.startActivity(i);
+                if (detail.getType() == 0) {// 展览详情
+
+                    Intent i = new Intent(mContext, CalendarDetailActivity.class);
+                    i.putExtra(UriParse.DETAILCALENDAR, detail.getItemId());
+                    mContext.startActivity(i);
+                } else if (detail.getType() == 3) {// 专题样式
+                    String weburl = detail.getWeburl();
+                    String[] ss = weburl.split(",");
+                    if (ss.length == 2) {
+                        Intent i = new Intent(mContext, CalendarListActivity.class);
+                        i.putExtra("list_tagid", ss[0]);
+                        i.putExtra("list_tagname", ss[1]);
+                        i.putExtra("list_title", ss[1]);
+                        i.putExtra(UriParse.DETAILCALENDAR, detail.getItemId());
+                        mContext.startActivity(i);
+                    }
+                }
             }
         });
         return view;

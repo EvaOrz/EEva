@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">ArtCalendar展览日历</string>
     <string name="google_map_key">AIzaSyAAaI4A7s98Pxy-Ug6q93xfLIJM_6pBkWk</string>
+    <string name="baidu_map_key">fTqpx6EforIt5GwsXbF6QlwlIQefEVmZ</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

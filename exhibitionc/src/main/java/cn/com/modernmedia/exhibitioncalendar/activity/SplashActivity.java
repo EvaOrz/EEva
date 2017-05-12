@@ -2,10 +2,14 @@ package cn.com.modernmedia.exhibitioncalendar.activity;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
+import com.baidu.location.LocationClientOption;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +30,9 @@ import cn.com.modernmedia.exhibitioncalendar.model.AdvListModel.AdvItem;
 import cn.com.modernmedia.exhibitioncalendar.model.AdvListModel.AdvItem.AdvSource;
 import cn.com.modernmedia.exhibitioncalendar.util.AdvTools;
 
+import static cn.com.modernmedia.exhibitioncalendar.MyApplication.locationListener;
+import static cn.com.modernmedia.exhibitioncalendar.MyApplication.mLocationClient;
+
 
 /**
  * 入版页面
@@ -42,7 +49,15 @@ public class SplashActivity extends BaseActivity {
         mContext = this;
         getAdvList(FetchApiType.USE_HTTP_ONLY);
         askPermission(Manifest.permission.READ_PHONE_STATE, 100);
+        InitLocation();
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (SplashActivity.this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                InitLocation();
+            } else {
+                askPermission(Manifest.permission.ACCESS_FINE_LOCATION, 101);
+            }
+        }
 
     }
 
@@ -190,5 +205,45 @@ public class SplashActivity extends BaseActivity {
         });
     }
 
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 101:
+                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    InitLocation();
+                }
+
+                break;
+        }
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private void InitLocation() {
+        LocationClientOption option = new LocationClientOption();
+        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);//设置高精度定位定位模式
+        option.setCoorType("bd09ll");//设置百度经纬度坐标系格式
+        option.setScanSpan(5000);//设置发起定位请求的间隔时间为1000ms
+        option.setAddrType("all");
+        option.setIsNeedAddress(true);//反编译获得具体位置，只有网络定位才可以
+        if (mLocationClient != null) {
+            mLocationClient.setLocOption(option);
+            mLocationClient.registerLocationListener(locationListener);
+            mLocationClient.start();
+        }
+    }
+
+
+
+    @Override
+    protected void onStop() {
+        if (locationListener != null) {
+            mLocationClient.unRegisterLocationListener(locationListener);
+            mLocationClient.stop();
+        }
+
+        super.onStop();
+    }
 
 }

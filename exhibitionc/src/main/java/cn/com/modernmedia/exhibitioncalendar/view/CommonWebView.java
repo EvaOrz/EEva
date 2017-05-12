@@ -337,7 +337,7 @@ public class CommonWebView extends WBWebView {
         URL mUrl = null;
         try {
             mUrl = new URL(uri);
-            Log.e("流量bug查询**", "CommonWebView:getHtmlIfNull()" + "-----" + url);
+//            Log.e("流量bug查询**", "CommonWebView:getHtmlIfNull()" + "-----" + url);
             conn = (HttpURLConnection) mUrl.openConnection();
             conn.setConnectTimeout(10 * 10000);
             conn.setReadTimeout(10 * 10000);

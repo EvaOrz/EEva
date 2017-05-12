@@ -157,7 +157,7 @@ public class BreakPointUtil {
             @Override
             public void run() {
                 HttpURLConnection connection = null;
-                Log.e("流量bug查询**", "BreakPointUtil:init()" + "-----" + breakPoint.getUrl());
+//                Log.e("流量bug查询**", "BreakPointUtil:init()" + "-----" + breakPoint.getUrl());
                 try {
                     URL url = new URL(breakPoint.getUrl());
                     connection = (HttpURLConnection) url.openConnection();
@@ -286,7 +286,7 @@ public class BreakPointUtil {
 
         private boolean downZip() {
             HttpURLConnection connection = null;
-            Log.e("流量bug查询**", "BreakPointUtil:downZip()" + "-----" + breakPoint.getUrl());
+//            Log.e("流量bug查询**", "BreakPointUtil:downZip()" + "-----" + breakPoint.getUrl());
             RandomAccessFile randomAccessFile = null;
             InputStream is = null;
             try {

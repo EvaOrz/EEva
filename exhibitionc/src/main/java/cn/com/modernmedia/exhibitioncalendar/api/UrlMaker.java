@@ -20,9 +20,11 @@ public class UrlMaker {
     private static String calendarHomePage = "https://artcalendar.bbwc.cn/html/artCalendar/index.html";
     private static String calendarDetailPage = "https://artcalendar.bbwc.cn/html/artCalendar/detail.html";
     public static String calendarAboutPage = "https://artcalendar.bbwc.cn/html/artCalendar/about.html";
+    private static String calendarTagPage = "https://artcalendar.bbwc.cn/html/editartCalendar/index.html";
 
     private static String calendarHomePageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/index.html";
     private static String calendarDetailPageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/detail.html";
+    private static String calendarTagPageDev = "https://artcalendar-test.bbwc.cn/html/editartCalendar/index.html";
     private static String API_URL;
     private static String USER_MODEL_URL;
 
@@ -57,6 +59,15 @@ public class UrlMaker {
             return calendarHomePageDev;
         }
         return calendarHomePage;
+    }
+
+    public static String getTagPage() {
+        if (MyApplication.DEBUG == 0) {
+            return calendarTagPage;
+        } else if (MyApplication.DEBUG == 1) {
+            return calendarTagPageDev;
+        }
+        return calendarTagPage;
     }
 
     /**

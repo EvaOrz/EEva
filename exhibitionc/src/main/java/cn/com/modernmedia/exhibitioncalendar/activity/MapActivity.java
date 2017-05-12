@@ -1,25 +1,27 @@
 package cn.com.modernmedia.exhibitioncalendar.activity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
-import com.baidu.mapapi.SDKInitializer;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapStatus;
+import com.baidu.mapapi.map.MapStatusUpdate;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.map.MyLocationConfiguration;
+import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
-import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.TextOptions;
+import com.baidu.mapapi.model.LatLng;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 
@@ -40,11 +42,12 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
     private View mapBg;
     private TextView title;
     private CalendarModel calendarModel;
-    private String address;
 
     private MapView baiduMapView;
-    private MyLocationConfiguration.LocationMode mCurrentMode;
+    private LocationMode mCurrentMode;
     private BitmapDescriptor mCurrentMarker;
+    private LocationClient mLocationClient;
+    private BaiduMap mBaiduMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,24 +59,15 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
             latitude = Double.valueOf(getIntent().getStringExtra("latitude"));
         if (!TextUtils.isEmpty(getIntent().getStringExtra("longitude")))
             longitude = Double.valueOf(getIntent().getStringExtra("longitude"));
-        address = getIntent().getStringExtra("map_address");
+        //        address = getIntent().getStringExtra("map_address");
+
+
         initView();
-
-
-        // 注册 SDK 广播监听者
-        IntentFilter iFilter = new IntentFilter();
-        iFilter.addAction(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_OK);
-        iFilter.addAction(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR);
-        iFilter.addAction(SDKInitializer.SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR);
-        mReceiver = new SDKReceiver();
-        registerReceiver(mReceiver, iFilter);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // 取消监听 SDK 广播
-        unregisterReceiver(mReceiver);
         //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
         baiduMapView.onDestroy();
     }
@@ -112,25 +106,53 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
         /**
          * baidu
          */
-
         baiduMapView = (MapView) findViewById(R.id.baidu_mapview);
-        BaiduMap mBaiduMap = baiduMapView.getMap();
-        // 开启定位图层
-        mBaiduMap.setMyLocationEnabled(true);
-        BDLocation location = new BDLocation();
-        // 构造定位数据
-        MyLocationData locData = new MyLocationData.Builder().accuracy(location.getRadius())
-                // 此处设置开发者获取到的方向信息，顺时针0-360
-                .direction(100).latitude(latitude).longitude(longitude).build();
-        // 设置定位数据
-        mBaiduMap.setMyLocationData(locData);
+        mBaiduMap = baiduMapView.getMap();
 
-        mCurrentMode = LocationMode.NORMAL;
-        // 设置定位图层的配置（定位模式，是否允许方向信息，用户自定义定位图标）
-        MyLocationConfiguration config = new MyLocationConfiguration(mCurrentMode, true, mCurrentMarker);
-        mBaiduMap.setMyLocationConfiguration(config);
-        // 当不需要定位图层时关闭定位图层
-        mBaiduMap.setMyLocationEnabled(false);
+        mLocationClient = new LocationClient(getApplicationContext()); // 声明LocationClient类
+        mLocationClient.registerLocationListener(new BDLocationListener() {
+            @Override
+            public void onReceiveLocation(BDLocation location) {
+                LatLng cenpt = new LatLng(latitude, longitude);
+                // 定义地图状态zoom表示缩放级别3-18
+                MapStatus mMapStatus = new MapStatus.Builder().target(cenpt).zoom(14).build();
+                // 定义MapStatusUpdate对象，以便描述地图状态将要发生的变化
+                MapStatusUpdate mMapStatusUpdate = MapStatusUpdateFactory.newMapStatus(mMapStatus);
+                // 改变地图状态
+                // 开启定位图层
+
+                mBaiduMap.setMapStatus(mMapStatusUpdate);
+
+
+                // 定义Maker坐标点
+                // 构建Marker图标
+                BitmapDescriptor bitmap = BitmapDescriptorFactory.fromResource(R.drawable.location);
+                // 构建MarkerOption，用于在地图上添加Marker
+                OverlayOptions option = new MarkerOptions().position(cenpt).icon(bitmap);
+                // 在地图上添加Marker，并显示
+                mBaiduMap.clear();
+                mBaiduMap.addOverlay(option);
+
+
+                //文字，在地图中也是一种覆盖物，开发者可利用相关的接口，快速实现在地图上书写文字的需求。实现方式如下：
+                //定义文字所显示的坐标点
+                LatLng llText = new LatLng(latitude, longitude);
+                //构建文字Option对象，用于在地图上添加文字
+                OverlayOptions textOption = new TextOptions().bgColor(0x00000000).fontSize(28).fontColor(0xFF000000).text(calendarModel.getAddress()).rotate(0).position(llText);
+                //在地图上添加该文字对象并显示
+                mBaiduMap.addOverlay(textOption);
+
+                mLocationClient.stop();
+            }
+
+            @Override
+            public void onConnectHotSpotMessage(String s, int i) {
+
+            }
+        });
+        // 注册监听函数
+        mLocationClient.start();
+
 
     }
 
@@ -159,27 +181,6 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
                 break;
         }
     }
-
-
-    /**
-     * 构造广播监听类，监听 SDK key 验证以及网络异常广播
-     */
-    public class SDKReceiver extends BroadcastReceiver {
-
-        public void onReceive(Context context, Intent intent) {
-            String s = intent.getAction();
-            Log.e("Baidu_map", "action: " + s);
-            if (s.equals(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_ERROR)) {
-                Log.e("Baidu_map", "key 验证出错! 错误码 :" + intent.getIntExtra(SDKInitializer.SDK_BROADTCAST_INTENT_EXTRA_INFO_KEY_ERROR_CODE, 0) + " ; 请在 AndroidManifest.xml 文件中检查 key 设置");
-            } else if (s.equals(SDKInitializer.SDK_BROADTCAST_ACTION_STRING_PERMISSION_CHECK_OK)) {
-                Log.e("Baidu_map", "key 验证成功! 功能可以正常使用");
-            } else if (s.equals(SDKInitializer.SDK_BROADCAST_ACTION_STRING_NETWORK_ERROR)) {
-                Log.e("Baidu_map", "网络出错");
-            }
-        }
-    }
-
-    private SDKReceiver mReceiver;
 
 
     @Override
