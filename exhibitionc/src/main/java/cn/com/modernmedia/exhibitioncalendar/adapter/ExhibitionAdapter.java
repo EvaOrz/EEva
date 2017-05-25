@@ -2,6 +2,7 @@ package cn.com.modernmedia.exhibitioncalendar.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -57,7 +58,12 @@ public class ExhibitionAdapter extends CheckScrollAdapter<CalendarModel> {
         int height = width * 9 / 16;
         img.setLayoutParams(new RelativeLayout.LayoutParams(width, height));
         title.setText(item.getTitle());
-        date.setText(Tools.getStringToDate(item.getStartTime()) + "-" + Tools.getStringToDate(item.getEndTime()));
+        // 显示用户自己设置的时间
+        if (!TextUtils.isEmpty(item.getTime())) {
+            date.setText(Tools.format(Long.parseLong(item.getTime()) * 1000, "yyyy-MM-dd HH:mm"));
+        } else
+            date.setText(Tools.getStringToDate(item.getStartTime()) + "-" + Tools.getStringToDate(item.getEndTime()));
+
         if (ParseUtil.listNotNull(item.getCitylist())) {
             city.setText(item.getCitylist().get(0).getTagName());
         }

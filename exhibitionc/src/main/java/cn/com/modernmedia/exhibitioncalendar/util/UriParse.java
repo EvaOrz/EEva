@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +48,8 @@ import cn.com.modernmedia.exhibitioncalendar.activity.MapActivity;
  * 打开直播展览详情页
  * <p>
  * slate://detailLiveCalendar/{itemid}
+ * <p>
+ * slate://safari/
  */
 
 public class UriParse {
@@ -57,6 +58,7 @@ public class UriParse {
     public static String SEARCH = "search";
     public static String SPECIALSEARCH = "specialSearch";
     public static String DETAILLIVECALENDAR = "detailLiveCalendar";
+    public static String SAFARI = "safari";
 
 
     /**
@@ -144,10 +146,13 @@ public class UriParse {
                 Intent i = new Intent(context, CalendarDetailActivity.class);
                 i.putExtra(DETAILCALENDAR, detailCalendar(link));
                 context.startActivity(i);
-            }else if (key.equals(SPECIALSEARCH)) {
+            } else if (key.equals(SPECIALSEARCH)) {
                 Intent i = new Intent(context, CalendarDetailActivity.class);
                 i.putExtra(DETAILCALENDAR, detailCalendar(link));
                 context.startActivity(i);
+            } else if (key.equals(SAFARI)) {
+
+                doLinkHttp(context, safari(link));
             }
         } else if (link.startsWith("tel://")) {
             String arr[] = link.split("tel://");
@@ -163,24 +168,33 @@ public class UriParse {
      * @param link    https://artcalendar-test.bbwc.cn/html/artCalendar/map.html?address=%25E7%25BA%25BD%25E7%25BA%25A6%25E5%25A4%25A7%25E9%2583%25BD%25E4%25BC%259A%25E8%2589%25BA%25E6%259C%25AF%25E5%258D%259A%25E7%2589%25A9%25E9%25A6%2586%25EF%25BC%258C1000%2520Fifth%2520Avenue%2520New%2520York,%2520NY%252010028&latitude=40.7793090&longitude=-73.9630000
      */
     private static void goMapActivity(Context context, String link, Entry entry) {
-        try {
-            Log.e("跳转mapActivity", link);
+        //        try {
+        Log.e("跳转mapActivity", link);
 
-            Intent i = new Intent(context, MapActivity.class);
-            i.putExtra("map_calendar", entry);
-            i.putExtra("latitude", Tools.getValueByName(link, "latitude"));
-            i.putExtra("longitude", Tools.getValueByName(link, "longitude"));
-            i.putExtra("map_address", URLEncoder.encode(Tools.getValueByName(link, "address"), "UTF-8"));
-            context.startActivity(i);
-        } catch (UnsupportedEncodingException e) {
+        Intent i = new Intent(context, MapActivity.class);
+        i.putExtra("map_calendar", entry);
+        i.putExtra("latitude", Tools.getValueByName(link, "latitude"));
+        i.putExtra("longitude", Tools.getValueByName(link, "longitude"));
+        i.putExtra("map_address", URLEncoder.encode(URLEncoder.encode(Tools.getValueByName(link, "address"))));
+        context.startActivity(i);
+        //        } catch (UnsupportedEncodingException e) {
 
-        }
+        //        }
 
     }
 
     // slate://detailCalendar/1075
     private static String detailCalendar(String uri) {
         String[] array = uri.split("detailCalendar/");
+        if (array.length == 2) {
+            return array[1];
+        }
+        return "";
+    }
+
+    // slate://safari/http://www.minshengart.com
+    private static String safari(String uri) {
+        String[] array = uri.split("safari/");
         if (array.length == 2) {
             return array[1];
         }

@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
@@ -27,13 +26,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import cn.com.modernmedia.corelib.listener.ImageDownloadStateListener;
-import cn.com.modernmedia.corelib.listener.OpenAuthListener;
 import cn.com.modernmedia.corelib.util.Tools;
-import cn.com.modernmedia.corelib.util.sina.SinaAPI;
-import cn.com.modernmedia.corelib.util.sina.SinaAuth;
-import cn.com.modernmedia.corelib.util.sina.SinaRequestListener;
 import cn.com.modernmedia.exhibitioncalendar.MyApplication;
 import cn.com.modernmedia.exhibitioncalendar.R;
+import cn.com.modernmedia.exhibitioncalendar.WBShareActivity;
 
 /**
  * 微信分享类
@@ -85,7 +81,7 @@ public class ShareTools {
         try {
             Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
             intent.putExtra(Intent.EXTRA_CC, email); // 抄送人
-            intent.putExtra(Intent.EXTRA_SUBJECT, Tools.parseString(mContext, R.string.share_by_email_title, R.string.app_name));
+            intent.putExtra(Intent.EXTRA_SUBJECT, Tools.parseString(mContext, R.string.share_by_email_title, mContext.getResources().getString(R.string.app_name)));
             intent.putExtra(Intent.EXTRA_TEXT, getWeiBoContent(title, desc, url));
 
             mContext.startActivity(intent);
@@ -96,29 +92,27 @@ public class ShareTools {
     }
 
 
-    public void shareToWeiBo(String content) {
-        Bitmap bitmap = serverBitmap == null ? iconBitmap : serverBitmap;
-        shareWithSina(content, bitmap);
-    }
 
-    private void shareWithSina(String extraText, Bitmap bitmap) {
+
+    public void shareWithSina(String extraText, Bitmap bitmap) {
         String path = "";
-        File file = createShareBitmap(bitmap, null, false);
-        if (file != null && file.exists()) path = file.getAbsolutePath();
-        shareWidthSina(extraText, path);
-    }
-
-    private String createName(long dateTaken) {
-        dateTaken = dateTaken == 0 ? System.currentTimeMillis() : dateTaken;
-        return DateFormat.format("yyyy-MM-dd_kk.mm.ss", dateTaken).toString() + ".jpg";
+        File file = createShareBitmap(bitmap);
+        if (file != null && file.exists())
+            path = file.getAbsolutePath();
+        Intent intent = new Intent(mContext, WBShareActivity.class);
+        intent.putExtra("SINA_CONTENT", extraText);
+        intent.putExtra("SINA_BITMAP", path);
+        mContext.startActivity(intent);
     }
 
     private File createShareBitmap(Bitmap bitmap, String fileName, boolean save) {
-        if (bitmap == null) return null;
+        if (bitmap == null)
+            return null;
         if (TextUtils.isEmpty(fileName)) {
             fileName = createName(0);
         }
-        String imagePath = defaultPath + (save ? SAVE_IMAGE_PATH_NAME : SHARE_IMAGE_PATH_NAME);
+        String imagePath = defaultPath
+                + (save ? SAVE_IMAGE_PATH_NAME : SHARE_IMAGE_PATH_NAME);
         File file = new File(imagePath);
         if (!file.exists()) {
             file.mkdirs();
@@ -144,34 +138,14 @@ public class ShareTools {
         return picPath;
     }
 
-    private void shareWidthSina(final String content, final String path) {
-        SinaAuth auth = new SinaAuth(mContext);
-        if (auth.checkIsOAuthed()) {
-            SinaAPI.getInstance(mContext).sendTextAndImage(content, path, new SinaRequestListener() {
+    private File createShareBitmap(Bitmap bitmap) {
+        return createShareBitmap(bitmap, null, false);
+    }
 
-                @Override
-                public void onSuccess(String response) {
-                    Log.e("微博分享", response);
-                    Tools.showToast(mContext, R.string.share_success);
-                }
-
-                @Override
-                public void onFailed(String error) {
-                    Tools.showToast(mContext, R.string.share_failed);
-                }
-            });
-        } else {
-            auth.oAuth();
-            auth.setWeiboAuthListener(new OpenAuthListener() {
-
-                @Override
-                public void onCallBack(boolean isSuccess, String uid, String token) {
-                    if (isSuccess) {
-                        shareWidthSina(content, path);
-                    }
-                }
-            });
-        }
+    private String createName(long dateTaken) {
+        dateTaken = dateTaken == 0 ? System.currentTimeMillis() : dateTaken;
+        return DateFormat.format("yyyy-MM-dd_kk.mm.ss", dateTaken).toString()
+                + ".jpg";
     }
 
 

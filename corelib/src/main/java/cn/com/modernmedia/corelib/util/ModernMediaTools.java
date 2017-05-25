@@ -1,10 +1,8 @@
 package cn.com.modernmedia.corelib.util;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.text.format.Time;
 
@@ -13,9 +11,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import cn.com.modernmedia.corelib.BaseActivity;
-import cn.com.modernmedia.corelib.R;
-import cn.com.modernmedia.corelib.util.sina.SinaAPI;
-import cn.com.modernmedia.corelib.util.sina.SinaRequestListener;
 
 
 public class ModernMediaTools {
@@ -248,22 +243,7 @@ public class ModernMediaTools {
     }
 
     private static void doAfterIsOAuthed(int  sinaUid ,final Context context) {
-        SinaAPI sinaApi = SinaAPI.getInstance(context);
-        sinaApi.followUser(sinaUid, new SinaRequestListener() {
 
-            @Override
-            public void onFailed(String error) {
-                Tools.showToast(context, R.string.follow_failed);
-            }
-
-            @Override
-            public void onSuccess(String response) {
-                Looper.prepare();
-                new AlertDialog.Builder(context).setMessage(R.string.follow_success).setPositiveButton(R.string.msg_ok, null).create().show();
-                Looper.myLooper();
-                Looper.loop();
-            }
-        });
     }
 
     /**

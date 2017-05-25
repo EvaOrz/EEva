@@ -32,6 +32,7 @@ public class AddPopView {
     private TimePicker timePicker;
     private int aa, bb, cc, dd, ee;
     private TextView cancle, save;
+    private View view;
 
 
     public AddPopView(Context context, int type, String time) {
@@ -54,18 +55,25 @@ public class AddPopView {
         init();
     }
 
+
+    public boolean ifShow() {
+        return window.isShowing();
+    }
+
+    public void show() {
+        window.showAtLocation(view, Gravity.BOTTOM, 0, 0);
+    }
+
     private void init() {
 
-        View view = LayoutInflater.from(mContext).inflate(R.layout.view_add_pop, null);
+        view = LayoutInflater.from(mContext).inflate(R.layout.view_add_pop, null);
         window = new PopupWindow(view, RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         window.setFocusable(true);
         window.setOutsideTouchable(true);
         window.setAnimationStyle(R.style.fetch_image_popup_anim);
         window.update();
-        window.setBackgroundDrawable(new
+        window.setBackgroundDrawable(new BitmapDrawable());
 
-                BitmapDrawable());
-        window.showAtLocation(view, Gravity.BOTTOM, 0, 0);
 
         datePicker = (DatePicker) view.findViewById(R.id.datePicker);
         timePicker = (TimePicker) view.findViewById(R.id.timePicker);

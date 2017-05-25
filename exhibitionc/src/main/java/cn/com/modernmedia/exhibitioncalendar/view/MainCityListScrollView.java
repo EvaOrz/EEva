@@ -2,7 +2,9 @@ package cn.com.modernmedia.exhibitioncalendar.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -34,6 +36,7 @@ public class MainCityListScrollView extends RelativeLayout {
     private Context mContext;
     private HorizontalScrollView scrollView;
     private LinearLayout layout;
+    private int[] bgs = {R.drawable.yanse1, R.drawable.yanse2, R.drawable.yanse3, R.drawable.yanse4, R.drawable.yanse5, R.drawable.yanse6, R.drawable.yanse7, R.drawable.yanse8, R.drawable.yanse9, R.drawable.yanse10, R.drawable.yanse11, R.drawable.yanse12, R.drawable.yanse13};
 
 
     public MainCityListScrollView(Context context) {
@@ -81,7 +84,12 @@ public class MainCityListScrollView extends RelativeLayout {
             } else {
                 tian.setImageResource(R.mipmap.baitian);
             }
-            MyApplication.finalBitmap.display(icon, UrlMaker.HOST + tagInfo.getBackImg().getSourceV6PlusImg());
+            if (TextUtils.isEmpty(tagInfo.getBackImg().getSourceV6PlusImg())) {
+                int j = (int) (Math.random() * 12);
+                icon.setBackgroundResource(bgs[j]);
+            } else
+                MyApplication.finalBitmap.display(icon, UrlMaker.HOST + tagInfo.getBackImg().getSourceV6PlusImg());
+
             viewHolder.getConvertView().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -94,8 +102,7 @@ public class MainCityListScrollView extends RelativeLayout {
 
 
             layout.addView(viewHolder.getConvertView());
-        }
-        scrollView.addView(layout);
+        } scrollView.addView(layout);
 
     }
 

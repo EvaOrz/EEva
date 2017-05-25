@@ -27,17 +27,17 @@ public class SinaAuth {
     /**
      * 授权认证所需要的信息
      */
-    private AuthInfo mAuthInfo;
+    public AuthInfo mAuthInfo;
     /**
      * SSO 授权认证实例
      */
-    private SsoHandler mSsoHandler;
+    public SsoHandler mSsoHandler;
     /**
      * 微博授权认证回调
      */
     private OpenAuthListener openAuthListener;
     private Context mContext;
-    private Oauth2AccessToken mAccessToken;
+    public Oauth2AccessToken mAccessToken;
 
 
     public SinaAuth(Context context) {
@@ -105,11 +105,11 @@ public class SinaAuth {
     private class AuthListener implements WeiboAuthListener {
         @Override
         public void onComplete(Bundle values) {
-            Oauth2AccessToken accessToken = Oauth2AccessToken.parseAccessToken(values);
-            if (accessToken != null && accessToken.isSessionValid()) {
+            mAccessToken = Oauth2AccessToken.parseAccessToken(values);
+            if (mAccessToken != null && mAccessToken.isSessionValid()) {
                 String date = Tools.format(mAccessToken.getExpiresTime(), "yyyy/MM/dd HH:mm:ss");
                 String text = String.format("Token：%1$s \n有效期：%2$s", mAccessToken.getToken(), date);
-                AccessTokenKeeper.writeAccessToken(mContext, accessToken);
+                AccessTokenKeeper.writeAccessToken(mContext, mAccessToken);
                 if (openAuthListener != null)
                     openAuthListener.onCallBack(true, mAccessToken.getUid(), mAccessToken.getToken());
             }

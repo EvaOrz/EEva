@@ -28,14 +28,13 @@ public class ChooseMapPopView {
 
     private Context mContext;
     private PopupWindow window;
-    private String ll, lll;
+    private String ll, lll, address;
 
-    public ChooseMapPopView(Context context, String ll, String lll) {
+    public ChooseMapPopView(Context context, String ll, String lll, String address) {
         this.mContext = context;
         this.ll = ll;
         this.lll = lll;
-
-
+        this.address = address;
         init();
     }
 
@@ -92,7 +91,7 @@ public class ChooseMapPopView {
                 //                          intent = Intent.getIntent("intent://map/direction?origin=latlng:34.264642646862,108.95108518068|name:我家&destination=大雁塔&mode=driving®ion=西安&src=yourCompanyName|yourAppName#Intent;scheme=bdapp;package=com.baidu.BaiduMap;end");
                 intent = Intent.getIntent("intent://map/direction?" +
                         //"origin=latlng:"+"34.264642646862,108.95108518068&" +   //起点  此处不传值默认选择当前位置
-                        "destination=latlng:" + ll + "," + lll + "|name:我的目的地" +        //终点
+                        "destination=latlng:" + ll + "," + lll + "|name:" + address +       //终点
                         "&mode=driving&" +          //导航路线方式
                         "region=北京" +           //
                         "&src=" + "展览日历" + "#Intent;scheme=bdapp;package=com.baidu.BaiduMap;end");
@@ -120,7 +119,7 @@ public class ChooseMapPopView {
         Intent intent;
         if (isAvilible(mContext, "com.autonavi.minimap")) {
             try {
-                intent = Intent.getIntent("androidamap://navi?sourceApplication=" + "展览日历" + "&poiname=我的目的地&lat=" + ll + "&lon" + "=" + lll + "&dev=0");
+                intent = Intent.getIntent("androidamap://navi?sourceApplication=" + "展览日历" + "&poiname=" + address + "&lat=" + lll + "&lon" + "=" + ll + "&dev=0");
                 mContext.startActivity(intent);
             } catch (URISyntaxException e) {
                 e.printStackTrace();

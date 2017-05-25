@@ -66,9 +66,16 @@ public class CalendarDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar_detail);
         id = getIntent().getStringExtra(UriParse.DETAILCALENDAR);
+
         apiController = ApiController.getInstance(this);
         initView();
-        initData();
+        if (getIntent().getSerializableExtra("calendar_detail") != null) {
+            calendarModel = (CalendarModel) getIntent().getSerializableExtra("calendar_detail");
+            id = calendarModel.getItemId();
+            webView.setCalendarModel(calendarModel);
+            webView.loadUrl(UrlMaker.getDetailPage() + "?itemid=" + id);
+            handler.sendEmptyMessage(0);
+        } else initData();
     }
 
     private void initData() {

@@ -9,6 +9,7 @@ import cn.com.modernmedia.corelib.listener.DataCallBack;
 import cn.com.modernmedia.corelib.listener.FetchEntryListener;
 import cn.com.modernmedia.corelib.model.Entry;
 import cn.com.modernmedia.corelib.model.UserModel;
+import cn.com.modernmedia.exhibitioncalendar.api.GetSomeListApi.TAG_TYPE;
 
 import static cn.com.modernmedia.corelib.http.BaseApi.FetchApiType.USE_CACHE_FIRST;
 import static cn.com.modernmedia.corelib.http.BaseApi.FetchApiType.USE_HTTP_ONLY;
@@ -229,10 +230,8 @@ public class ApiController {
      * @param desc     用户登录密码
      * @param listener view数据回调接口
      */
-    public void modifyUserInfo(Context context, String uid, String token, String realName,String
-            userName, String nickName, String url, String password, String desc, boolean pushEmail, FetchEntryListener listener) {
-        ModifyUserInfoApi operate = new ModifyUserInfoApi(context, uid, token, realName,userName,
-                nickName, url, password, desc, pushEmail);
+    public void modifyUserInfo(Context context, String uid, String token, String realName, String userName, String nickName, String url, String password, String desc, boolean pushEmail, FetchEntryListener listener) {
+        ModifyUserInfoApi operate = new ModifyUserInfoApi(context, uid, token, realName, userName, nickName, url, password, desc, pushEmail);
         doPostRequest(operate, operate.getUser(), USE_HTTP_ONLY, listener);
     }
 
@@ -280,7 +279,19 @@ public class ApiController {
      * @param listener
      */
     public void getRecommondList(Context c, FetchEntryListener listener) {
-        GetRecommendedListApi getRecommendedListApi = new GetRecommendedListApi(c);
+        GetSomeListApi getRecommendedListApi = new GetSomeListApi(c, TAG_TYPE.RECOMMEND, "", "");
+        doPostRequest(getRecommendedListApi, getRecommendedListApi.getCalendarListModel(), USE_CACHE_FIRST, listener);
+    }
+
+
+    /**
+     * 获取周边列表
+     *
+     * @param c
+     * @param listener
+     */
+    public void getNearList(Context c, String latitude, String longitude, FetchEntryListener listener) {
+        GetSomeListApi getRecommendedListApi = new GetSomeListApi(c, TAG_TYPE.NEAR, latitude, longitude);
         doPostRequest(getRecommendedListApi, getRecommendedListApi.getCalendarListModel(), USE_CACHE_FIRST, listener);
     }
 
@@ -306,7 +317,6 @@ public class ApiController {
         ModifyUserPasswordApi operate = new ModifyUserPasswordApi(c, password, newPassword);
         doPostRequest(operate, operate.getUser(), USE_HTTP_ONLY, listener);
     }
-
 
 
     /**

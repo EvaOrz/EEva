@@ -46,9 +46,21 @@ public class CalendarListActivity extends BaseActivity {
             if (!TextUtils.isEmpty(titleTxt)) {
                 tilte.setText(titleTxt);
                 back.setImageResource(R.mipmap.finish_white);
-                url = UrlMaker.getTagPage() + "?tagid=" + tagId + "&sharetitle=" + URLEncoder.encode(URLEncoder.encode(titleTxt, "UTF-8"), "UTF-8");
-            } else
-                url = UrlMaker.getHomePage() + "?tagid=" + tagId + "&tagname=" + URLEncoder.encode(URLEncoder.encode(tagName, "UTF-8"), "UTF-8");
+                url = UrlMaker.getTagPage();
+                if (!TextUtils.isEmpty(tagId)) url += "?tagid=" + tagId;
+                if (!TextUtils.isEmpty(titleTxt)) {
+                    url += url.contains("?") ? "&" : "?";
+                    url = url + "sharetitle=" + URLEncoder.encode(URLEncoder.encode(titleTxt, "UTF-8"), "UTF-8");
+                }
+
+            } else {
+                url = UrlMaker.getHomePage();
+                if (!TextUtils.isEmpty(tagId)) url += "?tagid=" + tagId;
+                if (!TextUtils.isEmpty(tagName)) {
+                    url += url.contains("?") ? "&" : "?";
+                    url = url + "tagname=" + URLEncoder.encode(URLEncoder.encode(tagName, "UTF-8"), "UTF-8");
+                }
+            }
         } catch (UnsupportedEncodingException e) {
 
         }

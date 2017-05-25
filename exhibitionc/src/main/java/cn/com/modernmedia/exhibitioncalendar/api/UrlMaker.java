@@ -197,6 +197,15 @@ public class UrlMaker {
     }
 
     /**
+     * 获取周边列表
+     *
+     * @return
+     */
+    public static String getNearList() {
+        return API_URL + "getnearitem?datatype=" + ConstData.DATA_TYPE;
+    }
+
+    /**
      * 用户添加城市标签
      *
      * @return

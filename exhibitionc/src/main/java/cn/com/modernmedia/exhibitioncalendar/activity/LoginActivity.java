@@ -19,7 +19,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.sina.weibo.sdk.exception.WeiboException;
+import com.sina.weibo.sdk.net.RequestListener;
 import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
@@ -39,9 +42,9 @@ import cn.com.modernmedia.corelib.model.ErrorMsg;
 import cn.com.modernmedia.corelib.model.UserModel;
 import cn.com.modernmedia.corelib.model.VerifyCode;
 import cn.com.modernmedia.corelib.util.Tools;
-import cn.com.modernmedia.corelib.util.sina.SinaAPI;
 import cn.com.modernmedia.corelib.util.sina.SinaAuth;
-import cn.com.modernmedia.corelib.util.sina.SinaRequestListener;
+import cn.com.modernmedia.corelib.util.sina.SinaConstants;
+import cn.com.modernmedia.corelib.util.sina.UsersAPI;
 import cn.com.modernmedia.exhibitioncalendar.MyApplication;
 import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
@@ -55,11 +58,16 @@ import cn.com.modernmedia.exhibitioncalendar.view.OpenLoginPopwindow;
  */
 public class LoginActivity extends BaseActivity {
     public static OnWXLoginCallback sWXLoginCallback;
+
+    public interface OnWXLoginCallback {
+        void onLogin(boolean isFirstLogin, UserModel user);
+    }
+
     public static int weixin_login = 0;
     private Context mContext;
     private ApiController mController;
     private Animation shakeAnim;
-    private SinaAuth weiboAuth;
+    private SinaAuth sinaAuth;
     private Button mLoginBtn;
     private EditText mAcountEdit, mPasswordEdit, mPhoneEdit, mCodeEdit;
     private LinearLayout nomalLoginLayout, phoneLoginLayout;
@@ -102,6 +110,7 @@ public class LoginActivity extends BaseActivity {
         }, 500);
 
         fromSplashBundle = getIntent().getStringExtra("pid");
+
     }
 
     @Override
@@ -467,34 +476,24 @@ public class LoginActivity extends BaseActivity {
 
     public void doSinaLogin() {
         // 新浪微博认证
-        weiboAuth = new SinaAuth(mContext);
-        if (!weiboAuth.checkIsOAuthed()) {
-            weiboAuth.oAuth();
+        sinaAuth = new SinaAuth(mContext);
+        if (!sinaAuth.checkIsOAuthed()) {
+            sinaAuth.oAuth();
         } else {
-            doAfterSinaIsOAuthed();
+            getSinaUserInfo();
         }
-        weiboAuth.setWeiboAuthListener(new OpenAuthListener() {
+        sinaAuth.setWeiboAuthListener(new OpenAuthListener() {
+
             @Override
             public void onCallBack(boolean isSuccess, String uid, String token) {
-                if (isSuccess) doAfterSinaIsOAuthed();
+
+                getSinaUserInfo();
             }
+
+
         });
 
-    }
 
-    /**
-     * 简化登陆，授权之后不判定是否登陆过，直接获取用户信息
-     */
-    private void doAfterSinaIsOAuthed() {
-        String sinaId = SinaAPI.getInstance(mContext).getSinaId();
-        if (TextUtils.isEmpty(sinaId)) showToast(R.string.msg_login_fail);
-        else {
-            UserModel user = DataHelper.getUserLoginInfo(this);
-            if (user != null && !TextUtils.isEmpty(user.getSinaId()) && user.getSinaId().equals(sinaId)) { // 已经用新浪微博账号在本应用上登录
-                lastUserName = "sina";
-                afterLogin(user);
-            } else getSinaUserInfo();
-        }
     }
 
     /**
@@ -502,39 +501,40 @@ public class LoginActivity extends BaseActivity {
      */
     public void getSinaUserInfo() {
         showLoadingDialog(true);
-        final SinaAPI sinaAPI = SinaAPI.getInstance(mContext);
-        sinaAPI.fetchUserInfo(new SinaRequestListener() {
-
+        final UsersAPI mUsersAPI = new UsersAPI(this, SinaConstants.APP_KEY, sinaAuth.mAccessToken);
+        long uid = Long.parseLong(sinaAuth.mAccessToken.getUid());
+        mUsersAPI.show(uid, new RequestListener() {
             @Override
-            public void onSuccess(String response) {
+            public void onComplete(String response) {
                 showLoadingDialog(false);
-                JSONObject object;
                 try {
-                    Log.i("sina get user", response);
-                    object = new JSONObject(response);
-                    UserModel mUser = new UserModel();
-                    mUser.setSinaId(object.optString("idstr", "")); // 新浪ID
-                    mUser.setNickName(object.optString("screen_name")); // 昵称
-                    mUser.setUserName(object.optString("idstr", ""));
-                    mUser.setAvatar(object.optString("profile_image_url"));// 用户头像地址（中图），50×50像素
-                    mUser.setOpenLoginJson(response);
-                    DataHelper.saveHasSync(mContext, true);
-                    openLogin(mUser, 1, null);
+                    if (!TextUtils.isEmpty(response)) {
+                        // 调用 User#parse 将JSON串解析成User对象
+                        Log.i("sina get user", response);
+                        JSONObject object = new JSONObject(response);
+                        UserModel mUser = new UserModel();
+                        mUser.setSinaId(object.optString("idstr", "")); // 新浪ID
+                        mUser.setNickName(object.optString("screen_name")); // 昵称
+                        mUser.setUserName(object.optString("idstr", ""));
+                        mUser.setAvatar(object.optString("profile_image_url"));// 用户头像地址（中图），50×50像素
+                        mUser.setOpenLoginJson(response);
+                        DataHelper.saveHasSync(LoginActivity.this, true);
+                        openLogin(mUser, 1, null);
+                    } else {
+                        Toast.makeText(LoginActivity.this, response, Toast.LENGTH_LONG).show();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
 
             @Override
-            public void onFailed(String error) {
-                showLoadingDialog(false);
+            public void onWeiboException(WeiboException e) {
+                Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    private void doAfterQQIsAuthed() {
-
-    }
 
     /**
      * 用户登录
@@ -608,9 +608,11 @@ public class LoginActivity extends BaseActivity {
         super.onPause();
     }
 
-    public interface OnWXLoginCallback {
-        void onLogin(boolean isFirstLogin, UserModel user);
-    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (sinaAuth != null) sinaAuth.onActivityResult(requestCode, resultCode, data);
+    }
 
 }

@@ -19,30 +19,52 @@
             android:id="@+id/map_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:background="@mipmap/add_title"
             android:gravity="center"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="@dimen/text_size_14"/>
 
 
         <!--<fragment xmlns:android="http://schemas.android.com/apk/res/android"-->
-                  <!--android:id="@+id/mapview"-->
-                  <!--class="com.google.android.gms.maps.MapFragment"-->
-                  <!--android:layout_width="match_parent"-->
-                  <!--android:layout_height="match_parent"-->
-                  <!---->
-                  <!--android:layout_margin="10dp"-->
-                  <!--android:layout_weight="1"-->
-                  <!--android:background="@drawable/white_10radius_corner_bg"/>-->
+        <!--android:id="@+id/mapview"-->
+        <!--class="com.google.android.gms.maps.MapFragment"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!---->
+        <!--android:layout_margin="10dp"-->
+        <!--android:layout_weight="1"-->
+        <!--android:background="@drawable/white_10radius_corner_bg"/>-->
 
-        <com.baidu.mapapi.map.MapView
-            android:id="@+id/baidu_mapview"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:layout_weight="1"
-            android:background="@drawable/white_10radius_corner_bg"/>
+            android:layout_weight="1">
+
+            <com.baidu.mapapi.map.MapView
+                android:id="@+id/baidu_mapview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/white_10radius_corner_bg"/>
+
+            <TextView
+                android:id="@+id/look_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="5dp"
+                android:background="@drawable/transbleack_10radius_corner_bg"
+                android:padding="5dp"
+                android:text="@string/look_detail1"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_12"
+                android:visibility="gone"/>
+        </RelativeLayout>
+
 
         <RelativeLayout
             android:layout_width="match_parent"

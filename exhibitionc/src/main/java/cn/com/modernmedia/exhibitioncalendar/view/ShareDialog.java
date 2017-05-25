@@ -95,7 +95,8 @@ public class ShareDialog extends PopupWindow
         conentView.findViewById(R.id.share_sina).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                shareTools.shareToWeiBo(shareTools.getWeiBoContent(calendarModel.getTitle(), calendarModel.getContent(), calendarModel.getWeburl()));
+                String cc = shareTools.getWeiBoContent(calendarModel.getTitle(), calendarModel.getContent(), calendarModel.getWeburl());
+                shareTools.shareWithSina(cc, MyApplication.finalBitmap.getBitmapFromCache(calendarModel.getBackgroundImg()));
             }
         });
         //qq分享
@@ -146,7 +147,7 @@ public class ShareDialog extends PopupWindow
         conentView.findViewById(R.id.share_sina).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                shareTools.shareToWeiBo(shareTools.getWeiBoContent(title, content, webUrl));
+                shareTools.shareWithSina(shareTools.getWeiBoContent(title, content, webUrl), MyApplication.finalBitmap.getBitmapFromCache(avatar));
             }
         });
         //qq分享

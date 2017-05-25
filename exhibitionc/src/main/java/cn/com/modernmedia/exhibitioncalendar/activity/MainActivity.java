@@ -63,8 +63,8 @@ public class MainActivity extends BaseActivity {
     private TagListModel tagListModel;
     private MainCityListScrollView mainCityListScrollView;
     private CalendarListModel calendarListModel;// 首页推荐数据
-    private ViewPager coverPager, detailPager;
-    private CoverVPAdapter coverVPAdapter;
+    private ViewPager coverPager, detailPager, toumingPager;
+    private CoverVPAdapter coverVPAdapter, toumingAdapter;
     private DetailVPAdapter detailVPAdapter;
 
     private LinearLayout dotLayout, myListLayout;
@@ -94,13 +94,18 @@ public class MainActivity extends BaseActivity {
                     break;
                 case 2:// 初始化首页推荐数据
                     if (calendarListModel != null) {
-                        coverVPAdapter = new CoverVPAdapter(MainActivity.this, calendarListModel.getCalendarModels());
+                        coverVPAdapter = new CoverVPAdapter(MainActivity.this, calendarListModel.getCalendarModels(), 0);
                         coverPager.setAdapter(coverVPAdapter);
                         coverVPAdapter.notifyDataSetChanged();
 
                         detailVPAdapter = new DetailVPAdapter(MainActivity.this, calendarListModel.getCalendarModels());
                         detailPager.setAdapter(detailVPAdapter);
                         detailVPAdapter.notifyDataSetChanged();
+
+
+                        toumingAdapter = new CoverVPAdapter(MainActivity.this, calendarListModel.getCalendarModels(), 1);
+                        toumingPager.setAdapter(toumingAdapter);
+                        toumingAdapter.notifyDataSetChanged();
 
                         initDots(calendarListModel.getCalendarModels());
                         if (ParseUtil.listNotNull(calendarListModel.getCalendarModels()))
@@ -163,7 +168,12 @@ public class MainActivity extends BaseActivity {
         int height = width * 9 / 16;
         img.setLayoutParams(new RelativeLayout.LayoutParams(width, height));
         title.setText(item.getTitle());
-        date.setText(Tools.getStringToDate(item.getStartTime()) + "-" + Tools.getStringToDate(item.getEndTime()));
+        // 显示用户自己设置的时间
+        if (!TextUtils.isEmpty(item.getTime())) {
+            date.setText(Tools.format(Long.parseLong(item.getTime()) * 1000, "yyyy-MM-dd HH:mm"));
+        } else
+            date.setText(Tools.getStringToDate(item.getStartTime()) + "-" + Tools.getStringToDate(item.getEndTime()));
+
         if (ParseUtil.listNotNull(item.getCitylist())) {
             city.setText(item.getCitylist().get(0).getTagName());
         }
@@ -308,6 +318,24 @@ public class MainActivity extends BaseActivity {
         weatherTxt = (TextView) page1.findViewById(R.id.main_weather_txt);
         coverPager = (ViewPager) findViewById(R.id.main_viewpager_cover);
         coverPager.setOffscreenPageLimit(5);
+        toumingPager = (ViewPager) page1.findViewById(R.id.touming);
+
+        toumingPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         dotLayout = (LinearLayout) page1.findViewById(R.id.main_dot_layout);
         actionButton = (TextView) page1.findViewById(R.id.main_action);
         actionButton.setOnClickListener(this);
@@ -521,6 +549,5 @@ public class MainActivity extends BaseActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
-
 
 }

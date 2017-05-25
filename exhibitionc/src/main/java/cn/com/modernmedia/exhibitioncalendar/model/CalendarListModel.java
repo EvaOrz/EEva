@@ -69,7 +69,7 @@ public class CalendarListModel extends Entry {
         private String img = "";
         private int status;
         private String extension = "";
-        private List<Coordinate> coordinates;
+        private Coordinate coordinates;
         private List<HouseOrCity> typelist;
         private List<HouseOrCity> houselist;
         private List<HouseOrCity> citylist;
@@ -78,6 +78,7 @@ public class CalendarListModel extends Entry {
         private String eventId = "";
         private String addTime = "";
         private String coverImg = "";
+        private String time = "";
         private int type;//   0图文样式,1展览链接样式,2外部链接样式,3专题样式,4直播链接样式
         private String weburl = "";
         private int category;
@@ -101,25 +102,16 @@ public class CalendarListModel extends Entry {
             calendarModel.setWeburl(jsonObject.optString("weburl"));
             calendarModel.setStatus(jsonObject.optInt("status"));
             calendarModel.setExtension(jsonObject.optString("extension"));
-            calendarModel.setCoordinates(parseCoordinateList(jsonObject.optJSONArray("coordinates")));
+            calendarModel.setCoordinates(parseCoordinate(jsonObject.optJSONObject("coordinates")));
             calendarModel.setAddress(jsonObject.optString("address"));
             calendarModel.setEventId(jsonObject.optString("event_id"));
             calendarModel.setAddTime(jsonObject.optString("add_time"));
+            calendarModel.setTime(jsonObject.optString("time"));
             calendarModel.setTypelist(parseHouseOrCityList(jsonObject.optJSONArray("typelist")));
             calendarModel.setHouselist(parseHouseOrCityList(jsonObject.optJSONArray("houselist")));
             calendarModel.setCitylist(parseHouseOrCityList(jsonObject.optJSONArray("cityOneList")));
             calendarModel.setHotlist(parseHouseOrCityList(jsonObject.optJSONArray("hotlist")));
             return calendarModel;
-        }
-
-        public static List<Coordinate> parseCoordinateList(JSONArray array) {
-
-            List<Coordinate> list = new ArrayList<>();
-            if (array == null || array.length() == 0) return list;
-            for (int i = 0; i < array.length(); i++) {
-                list.add(parseCoordinate(array.optJSONObject(i)));
-            }
-            return list;
         }
 
         public String getEventId() {
@@ -276,11 +268,11 @@ public class CalendarListModel extends Entry {
             this.category = category;
         }
 
-        public List<Coordinate> getCoordinates() {
+        public Coordinate getCoordinates() {
             return coordinates;
         }
 
-        public void setCoordinates(List<Coordinate> coordinates) {
+        public void setCoordinates(Coordinate coordinates) {
             this.coordinates = coordinates;
         }
 
@@ -312,6 +304,14 @@ public class CalendarListModel extends Entry {
             return hotlist;
         }
 
+        public String getTime() {
+            return time;
+        }
+
+        public void setTime(String time) {
+            this.time = time;
+        }
+
         public void setHotlist(List<HouseOrCity> hotlist) {
             this.hotlist = hotlist;
         }
@@ -340,13 +340,13 @@ public class CalendarListModel extends Entry {
             public static Coordinate parseCoordinate(JSONObject jsonObject) {
                 Coordinate coordinate = new Coordinate();
 
-                coordinate.setCoId(jsonObject.optString("co_id"));
-                coordinate.setLongitude(jsonObject.optString("co_id"));
-                coordinate.setLatitude(jsonObject.optString(""));
+                coordinate.setCoId(jsonObject.optString("item_id"));
+                coordinate.setLongitude(jsonObject.optString("longitude"));
+                coordinate.setLatitude(jsonObject.optString("latitude"));
                 coordinate.setItemId(jsonObject.optString(""));
-                coordinate.setAppid(jsonObject.optInt(""));
+                coordinate.setAppid(jsonObject.optInt("appid"));
                 coordinate.setAddTime(jsonObject.optString(""));
-                coordinate.setExtension(jsonObject.optString(""));
+                coordinate.setExtension(jsonObject.optString("extension"));
                 coordinate.setShape(jsonObject.optString(""));
                 return coordinate;
             }

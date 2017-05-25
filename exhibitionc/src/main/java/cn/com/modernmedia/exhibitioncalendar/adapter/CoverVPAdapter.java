@@ -19,11 +19,12 @@ import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarMod
 public class CoverVPAdapter extends PagerAdapter {
     protected List<CalendarModel> list = new ArrayList<CalendarModel>();
     protected Context mContext;
+    private int type;// 0:cover ,1:touming
 
-    public CoverVPAdapter(Context context, List<CalendarModel> list) {
+    public CoverVPAdapter(Context context, List<CalendarModel> list, int type) {
         this.mContext = context;
         this.list = list;
-
+        this.type = type;
     }
 
 
@@ -44,8 +45,13 @@ public class CoverVPAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
-        final View view = fetchView(list.get(position));
-        container.addView(view);
+        View view = null;
+        if (type == 0) {
+            view = fetchView(list.get(position));
+            container.addView(view);
+        } else {
+            view = new View(mContext);
+        }
         return view;
     }
 

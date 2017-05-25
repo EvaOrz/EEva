@@ -129,7 +129,33 @@
         <!--展览详情页面-->
         <activity
             android:name=".activity.CalendarDetailActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait">
+
+
+        </activity>
+
+
+        <!--sina-->
+        <activity
+            android:name="com.sina.weibo.sdk.component.WeiboSdkBrowser"
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize">
+        </activity>
+        <service
+            android:name="com.sina.weibo.sdk.net.DownloadService"
+            android:exported="false"/>
+
+        <activity
+            android:name=".WBShareActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter>
+                <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".activity.RegisterActivity"
@@ -150,6 +176,13 @@
         <activity
             android:name=".activity.MapActivity"
             android:screenOrientation="portrait"/>
+        <!--微信回调页面-->
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.NoDisplay"/>
+
         <!-- 极光推送 -->
         <meta-data
             android:name="JPUSH_CHANNEL"

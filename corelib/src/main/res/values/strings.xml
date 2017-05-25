@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">coreLib</string>
-
+    <string name="app_name">core</string>
 
     <string name="sure">确认</string>
     <!-- take photo -->
@@ -49,7 +48,7 @@
     <string name="cover_share_message">%1$s - %2$s %3$s --分享来自@iWeekly周末画报 Android 版</string>
     <string name="entry_share_url">阅读全文:\u0020</string>
     <string name="share_wp_content">【%1$s】%2$s %3$s</string>
-    <string name="share_by_email_title">我在%1$s看到了一篇文章，想要分享给你</string>
+    <string name="share_by_email_title">我在【%1$s】看到了一篇文章，想要分享给你</string>
     <string name="fecthing_http">正在更新数据</string>
     <string name="fecthing_ok">更新成功</string>
     <string name="weixin_friend">微信好友</string>
@@ -174,6 +173,7 @@
     <string name="list_hint">暂无规划中的展览行程\n 点击添加</string>
     <string name="click_add"></string>
     <string name="look_detail">查看详情</string>
+    <string name="look_detail1">查看展览详情</string>
     <string name="notification">提醒</string>
     <string name="notification_desc">提前一个小时</string>
     <string name="tongbu">同步</string>
@@ -218,6 +218,8 @@
     <string name="baidu_map">百度地图</string>
     <string name="gaode_map">高德地图</string>
     <string name="google_map">谷歌地图</string>
+    <string name="alarm_1">提前1小时</string>
+    <string name="alarm_2">提前一天</string>
 
 
 </resources>

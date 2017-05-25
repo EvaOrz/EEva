@@ -40,6 +40,7 @@ import cn.com.modernmedia.exhibitioncalendar.api.HandleFavApi;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
 import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
 import cn.com.modernmedia.exhibitioncalendar.view.AddPopView;
+import cn.com.modernmedia.exhibitioncalendar.view.ChooseAlarmPopView;
 
 
 /**
@@ -48,7 +49,7 @@ import cn.com.modernmedia.exhibitioncalendar.view.AddPopView;
  */
 
 public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeListener {
-    private TextView title, date, time;
+    private TextView title, date, time, alarmText;
     private EvaSwitchBar notification, tongbu;
     private CalendarModel calendarModel;
     private ViewPager viewPager;
@@ -56,14 +57,16 @@ public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeLi
     private List<String> pics = new ArrayList<>();
     private ApiController apiController;
 
+
     private int type = 0;// 0:添加；1：编辑
     private boolean tongbuStatus = true, alarmStatus = false;
-
-
+    private AddPopView datePop, timePop;
+    private int alarmType = 0;// 0:1小时；1：一天
     private static String CALANDER_URL = "content://com.android.calendar/calendars";
     private static String CALANDER_EVENT_URL = "content://com.android.calendar/events";
     private static String CALANDER_REMIDER_URL = "content://com.android.calendar/reminders";
 
+    private int ifOncreate = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,6 +94,16 @@ public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeLi
         adapter = new AddAdapter(this, pics);
         viewPager.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+        datePop = new AddPopView(AddActivity.this, 2, calendarModel.getStartTime());
+        timePop = new AddPopView(AddActivity.this, 1, calendarModel.getStartTime());
+
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        if (hasFocus && ifOncreate == 0) {
+            datePop.show();
+        } else ifOncreate++;
     }
 
     private void initView() {
@@ -99,6 +112,8 @@ public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeLi
         title = (TextView) findViewById(R.id.add_title);
         date = (TextView) findViewById(R.id.add_date);
         time = (TextView) findViewById(R.id.add_time);
+        alarmText = (TextView) findViewById(R.id.alarm_textview);
+
         date.setOnClickListener(this);
         time.setOnClickListener(this);
         notification = (EvaSwitchBar) findViewById(R.id.notification_switch);
@@ -106,6 +121,7 @@ public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeLi
         tongbu = (EvaSwitchBar) findViewById(R.id.tong_switch);
         tongbu.setOnChangeListener(this);
         viewPager = (ViewPager) findViewById(R.id.add_viewpager);
+
 
         int width = MyApplication.width - 20;
         int height = width * 9 / 16;
@@ -123,19 +139,26 @@ public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeLi
 
         switch (sb.getId()) {
             case R.id.notification_switch:
-                if (state) alarmStatus = true;
-                else alarmStatus = false;
+                if (state) {
+                    new ChooseAlarmPopView(AddActivity.this);
+                    alarmStatus = true;
+                } else {
+                    alarmStatus = false;
+                }
                 break;
             case R.id.tong_switch:// 同步到系统日历
                 if (state) {
                     tongbuStatus = true;
-                    handler.sendEmptyMessage(1);
+
                 } else tongbuStatus = false;
-
-
                 break;
 
         }
+    }
+
+    public void changeAlarm(int alarmType) {
+        this.alarmType = alarmType;
+        handler.sendEmptyMessage(2);
     }
 
     @Override
@@ -160,7 +183,7 @@ public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeLi
 
                             } else {
                                 getCurrentModel();
-                                //                                handler.sendEmptyMessage(1);
+                                handler.sendEmptyMessage(0);
                                 showToast(R.string.edit_success);
                             }
                         }
@@ -176,7 +199,7 @@ public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeLi
 
                             } else {
                                 getCurrentModel();
-                                //                                handler.sendEmptyMessage(1);
+                                handler.sendEmptyMessage(0);
                                 showToast(R.string.add_success);
                             }
 
@@ -185,12 +208,11 @@ public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeLi
                 }
                 break;
             case R.id.add_time:
-
-                AddPopView timePop = new AddPopView(AddActivity.this, 1, calendarModel.getStartTime());
+                timePop.show();
                 break;
             case R.id.add_date:
+                datePop.show();
 
-                AddPopView datePop = new AddPopView(AddActivity.this, 2, calendarModel.getStartTime());
                 break;
 
         }
@@ -209,12 +231,32 @@ public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeLi
 
         @Override
         public void handleMessage(Message msg) {
-            String sta = calendarModel.getStartTime();
-            String end = calendarModel.getEndTime();
-            Long ss = 0L, ee = 0L;
-            if (!TextUtils.isEmpty(sta)) ss = Long.valueOf(sta);
-            if (!TextUtils.isEmpty(end)) ee = Long.valueOf(end);
-            addCalendarEvent(AddActivity.this, calendarModel.getTitle(), calendarModel.getContent(), ss, ee);
+
+            switch (msg.what) {
+                case 0:// 添加日历和提醒
+                    if (tongbuStatus) {
+                        String time = calendarModel.getTime();
+                        Long ss = 0L, ee = 0L;
+
+                        if (!TextUtils.isEmpty(time)) ss = Long.valueOf(time);
+                        addCalendarEvent(AddActivity.this, calendarModel.getTitle(), calendarModel.getContent(), ss, ee);
+                    }
+                    break;
+
+                case 1:
+                    // 初始化弹出时间选项
+                    timePop.show();
+                    break;
+                case 2:
+                    if (alarmType == 0) {
+                        alarmText.setText(R.string.alarm_1);
+                    } else if (alarmType == 1) {
+                        alarmText.setText(R.string.alarm_2);
+                    }
+
+                    break;
+
+            }
         }
     };
 
@@ -275,8 +317,10 @@ public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeLi
             if (minute < 10) m = "0" + m;
 
             time.setText(h + ":" + m);
+
         } else if (type == 2) {
             date.setText(year + "-" + month + "-" + day);
+            handler.sendEmptyMessage(1);
         }
 
 
@@ -394,25 +438,40 @@ public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeLi
         Log.e("start & end ", Tools.format(start, "yyyy-MM-dd") + " ________  " + Tools.format(end, "yyyy-MM-dd"));
 
         event.put(CalendarContract.Events.DTSTART, start);
-        event.put(CalendarContract.Events.DTEND, end);
-        event.put(CalendarContract.Events.HAS_ALARM, 1);//设置有闹钟提醒
+        event.put(CalendarContract.Events.DTEND, start);
+
+        if (alarmStatus) {
+            event.put(CalendarContract.Events.HAS_ALARM, 1);//设置有闹钟提醒
+        } else {
+            event.put(CalendarContract.Events.HAS_ALARM, 0);//设置有闹钟提醒
+        }
         event.put(CalendarContract.Events.EVENT_TIMEZONE, "Asia/Beijing");  //这个是时区，必须有，
         //添加事件
         Uri newEvent = context.getContentResolver().insert(Uri.parse(CALANDER_EVENT_URL), event);
         if (newEvent == null) {
+
+            Log.e("添加日历失败", "添加日历失败");
             // 添加日历事件失败直接返回
             return;
         }
-        //事件提醒的设定
-        ContentValues values = new ContentValues();
-        values.put(CalendarContract.Reminders.EVENT_ID, ContentUris.parseId(newEvent));
-        // 提前一小时有提醒
-        values.put(CalendarContract.Reminders.MINUTES, 60);
-        values.put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT);
-        Uri uri = context.getContentResolver().insert(Uri.parse(CALANDER_REMIDER_URL), values);
-        if (uri == null) {
-            // 添加闹钟提醒失败直接返回
-            return;
+
+        if (alarmStatus) {
+            //事件提醒的设定
+            ContentValues values = new ContentValues();
+            values.put(CalendarContract.Reminders.EVENT_ID, ContentUris.parseId(newEvent));
+            if (alarmType == 0) {
+                // 提前一小时有提醒
+                values.put(CalendarContract.Reminders.MINUTES, 60);
+            } else if (alarmType == 1) {
+                values.put(CalendarContract.Reminders.MINUTES, 60 * 24);
+            }
+            values.put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT);
+            Uri uri = context.getContentResolver().insert(Uri.parse(CALANDER_REMIDER_URL), values);
+            if (uri == null) {
+                // 添加闹钟提醒失败直接返回
+                Log.e("闹钟添加失败", "闹钟添加失败");
+                return;
+            }
         }
     }
 }
