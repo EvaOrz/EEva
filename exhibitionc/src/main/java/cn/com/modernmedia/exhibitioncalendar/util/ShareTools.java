@@ -92,13 +92,10 @@ public class ShareTools {
     }
 
 
-
-
     public void shareWithSina(String extraText, Bitmap bitmap) {
         String path = "";
         File file = createShareBitmap(bitmap);
-        if (file != null && file.exists())
-            path = file.getAbsolutePath();
+        if (file != null && file.exists()) path = file.getAbsolutePath();
         Intent intent = new Intent(mContext, WBShareActivity.class);
         intent.putExtra("SINA_CONTENT", extraText);
         intent.putExtra("SINA_BITMAP", path);
@@ -106,22 +103,18 @@ public class ShareTools {
     }
 
     private File createShareBitmap(Bitmap bitmap, String fileName, boolean save) {
-        if (bitmap == null)
-            return null;
+        if (bitmap == null) return null;
         if (TextUtils.isEmpty(fileName)) {
             fileName = createName(0);
         }
-        String imagePath = defaultPath
-                + (save ? SAVE_IMAGE_PATH_NAME : SHARE_IMAGE_PATH_NAME);
-        File file = new File(imagePath);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
+        String imagePath = defaultPath + (save ? SAVE_IMAGE_PATH_NAME : SHARE_IMAGE_PATH_NAME);
         File picPath = new File(imagePath + fileName);
         BufferedOutputStream bos = null;
         try {
             bos = new BufferedOutputStream(new FileOutputStream(picPath), 1024);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, bos);
+            //            while (bitmap.getByteCount() > 1024 * 32) {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 32, bos);
+            //            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return null;
@@ -144,8 +137,7 @@ public class ShareTools {
 
     private String createName(long dateTaken) {
         dateTaken = dateTaken == 0 ? System.currentTimeMillis() : dateTaken;
-        return DateFormat.format("yyyy-MM-dd_kk.mm.ss", dateTaken).toString()
-                + ".jpg";
+        return DateFormat.format("yyyy-MM-dd_kk.mm.ss", dateTaken).toString() + ".jpg";
     }
 
 

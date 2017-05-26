@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.sina.weibo.sdk.api.ImageObject;
@@ -23,9 +24,6 @@ import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.constant.WBConstants;
 import com.sina.weibo.sdk.exception.WeiboException;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
 import cn.com.modernmedia.corelib.BaseActivity;
 import cn.com.modernmedia.corelib.listener.OpenAuthListener;
 import cn.com.modernmedia.corelib.util.Tools;
@@ -38,8 +36,7 @@ import cn.com.modernmedia.corelib.util.sina.SinaConstants;
  * Created by Eva. on 17/5/25.
  */
 
-public class WBShareActivity extends BaseActivity implements IWeiboHandler.Response,
-        WeiboAuthListener {
+public class WBShareActivity extends BaseActivity implements IWeiboHandler.Response, WeiboAuthListener {
 
 
     /**
@@ -52,6 +49,8 @@ public class WBShareActivity extends BaseActivity implements IWeiboHandler.Respo
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setContentView(new View(this));
         // 创建微博分享接口实例
         mWeiboShareAPI = WeiboShareSDK.createWeiboAPI(this, SinaConstants.APP_KEY);
 
@@ -74,24 +73,26 @@ public class WBShareActivity extends BaseActivity implements IWeiboHandler.Respo
         final String path = getIntent().getStringExtra("SINA_BITMAP");
         Log.e("ssssssssss", path + content);
 
-        try {
-            FileInputStream fis = new FileInputStream(path);
+        //        try {
+        //            FileInputStream fis = new FileInputStream(path);
 
-            final Bitmap bitmap = BitmapFactory.decodeStream(fis);
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (mWeiboShareAPI.isWeiboAppSupportAPI()) {
-                        showLoading();
-                        sendMultiMessage(content, bitmap);
+        final Bitmap bitmap = BitmapFactory.decodeFile(path);
+        Log.e("ssssssssss", bitmap.getByteCount() / 1024 / 1024 + "M");
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mWeiboShareAPI.isWeiboAppSupportAPI()) {
+                    showLoading();
+                    sendMultiMessage(content, bitmap);
 
-                    } else {
-                        Toast.makeText(WBShareActivity.this, "api too low", Toast.LENGTH_SHORT).show();
-                    }
+                } else {
+                    Toast.makeText(WBShareActivity.this, "api too low", Toast.LENGTH_SHORT).show();
                 }
-            });
-        } catch (FileNotFoundException e) {
-        }
+            }
+        });
+        //        } catch (FileNotFoundException e) {
+        //            Log.e("FileNotFoundException", e.toString());
+        //        }
 
 
     }
