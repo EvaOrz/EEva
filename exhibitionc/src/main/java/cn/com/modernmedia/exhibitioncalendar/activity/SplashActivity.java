@@ -42,6 +42,7 @@ import static cn.com.modernmedia.exhibitioncalendar.MyApplication.mLocationClien
 
 public class SplashActivity extends BaseActivity {
     protected AdvListModel advList;
+    private boolean ifWaitPermission = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,22 +66,32 @@ public class SplashActivity extends BaseActivity {
             } else {
                 askPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE,}, 101);
             }
-        } else InitLocation();
+        } else {
+            InitLocation();
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    gotoMainActivity();
+                }
+            }, ConstData.SPLASH_DELAY_TIME);
+        }
         super.onResume();
     }
 
     public void gotoMainActivity() {
-        new Handler().postDelayed(new Runnable() {
+        if (ifWaitPermission) return;
+        //        new Handler().postDelayed(new Runnable() {
+        //
+        //            @Override
+        //            public void run() {
+        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+        startActivity(intent);
 
-            @Override
-            public void run() {
-                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                startActivity(intent);
-
-                finish();
-                overridePendingTransition(R.anim.alpha_out, R.anim.hold);
-            }
-        }, ConstData.SPLASH_DELAY_TIME);
+        finish();
+        overridePendingTransition(R.anim.alpha_out, R.anim.hold);
+        //            }
+        //        }, ConstData.SPLASH_DELAY_TIME);
 
     }
 
@@ -227,8 +238,10 @@ public class SplashActivity extends BaseActivity {
                 }
 
                 break;
-        }
 
+        }
+        ifWaitPermission = false;// 可以不用等了
+        gotoMainActivity();
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
