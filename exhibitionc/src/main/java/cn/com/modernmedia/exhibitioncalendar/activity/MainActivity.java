@@ -45,6 +45,7 @@ import cn.com.modernmedia.exhibitioncalendar.util.UriParse;
 import cn.com.modernmedia.exhibitioncalendar.view.ChildHeightViewpager;
 import cn.com.modernmedia.exhibitioncalendar.view.ListItemMenuView;
 import cn.com.modernmedia.exhibitioncalendar.view.MainCityListScrollView;
+import cn.com.modernmedia.exhibitioncalendar.view.MainToumingView;
 import cn.com.modernmedia.exhibitioncalendar.view.VerticalViewPager;
 import cn.com.modernmedia.exhibitioncalendar.view.ViewHolder;
 
@@ -63,21 +64,25 @@ public class MainActivity extends BaseActivity {
     private TagListModel tagListModel;
     private MainCityListScrollView mainCityListScrollView;
     private CalendarListModel calendarListModel;// 首页推荐数据
-    private ViewPager coverPager, detailPager, toumingPager;
-    private CoverVPAdapter coverVPAdapter, toumingAdapter;
+    private ViewPager coverPager, detailPager;
+    private CoverVPAdapter coverVPAdapter;
     private DetailVPAdapter detailVPAdapter;
+
+    private MainToumingView toumingView;
 
     private LinearLayout dotLayout, myListLayout;
     private List<ImageView> dots = new ArrayList<>();
 
     private List<CalendarModel> myCalendarList = new ArrayList<>();
 
-    private VerticalViewPager verticalViewPager;
+    private VerticalViewPager verticalViewPager;// 两个page的viewpager
     private VerticleVPAdapter verticleVPAdapter;
     private View page1, page2;
     private UserModel userModel;
 
     private long lastClickTime = 0;// 上次点击返回按钮时间
+
+    //    private int currentPosition = 0;// 当前滑动到的页面
 
 
     public Handler handler = new Handler() {
@@ -101,11 +106,6 @@ public class MainActivity extends BaseActivity {
                         detailVPAdapter = new DetailVPAdapter(MainActivity.this, calendarListModel.getCalendarModels());
                         detailPager.setAdapter(detailVPAdapter);
                         detailVPAdapter.notifyDataSetChanged();
-
-
-                        toumingAdapter = new CoverVPAdapter(MainActivity.this, calendarListModel.getCalendarModels(), 1);
-                        toumingPager.setAdapter(toumingAdapter);
-                        toumingAdapter.notifyDataSetChanged();
 
                         initDots(calendarListModel.getCalendarModels());
                         if (ParseUtil.listNotNull(calendarListModel.getCalendarModels()))
@@ -309,6 +309,7 @@ public class MainActivity extends BaseActivity {
 
         myListLayout = (LinearLayout) page2.findViewById(R.id.ceshi);
         page2.findViewById(R.id.main_add).setOnClickListener(this);
+        page1.findViewById(R.id.main_godown).setOnClickListener(this);
         ((TextView) page1.findViewById(R.id.main_date)).setText(Tools.format(System.currentTimeMillis(), "dd"));
         ((TextView) page1.findViewById(R.id.main_month)).setText(Tools.getEnDate());
         ((TextView) page1.findViewById(R.id.main_week)).setText(Tools.getChinaDate());
@@ -318,24 +319,30 @@ public class MainActivity extends BaseActivity {
         weatherTxt = (TextView) page1.findViewById(R.id.main_weather_txt);
         coverPager = (ViewPager) findViewById(R.id.main_viewpager_cover);
         coverPager.setOffscreenPageLimit(5);
-        toumingPager = (ViewPager) page1.findViewById(R.id.touming);
 
-        toumingPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        toumingView = (MainToumingView) page1.findViewById(R.id.touming);
+        toumingView.setCallBack(new MainToumingView.MyLayoutCallBack() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            public void scrollByX(boolean ifLeft) {
+                int currentPosition = coverPager.getCurrentItem();
+                if (ifLeft) {
 
+                    if (currentPosition > 0) {
+                        coverPager.setCurrentItem(currentPosition - 1);
+                    }
+                    Log.e("lllllllll", "zuo");
+                } else {
+                    if (currentPosition < 4) coverPager.setCurrentItem(currentPosition + 1);
+                    Log.e("lllllllll", "you");
+                }
             }
 
             @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
+            public void scrollByY(int i) {
 
             }
         });
+
         dotLayout = (LinearLayout) page1.findViewById(R.id.main_dot_layout);
         actionButton = (TextView) page1.findViewById(R.id.main_action);
         actionButton.setOnClickListener(this);
@@ -345,7 +352,6 @@ public class MainActivity extends BaseActivity {
         detailPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
                 int width = coverPager.getWidth();
                 //滑动外部Viewpager
                 coverPager.scrollTo((int) (width * position + width * positionOffset), 0);
@@ -367,7 +373,6 @@ public class MainActivity extends BaseActivity {
         coverPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
                 int width = detailPager.getWidth();
                 //滑动外部Viewpager
                 detailPager.scrollTo((int) (width * position + width * positionOffset), 0);
@@ -413,6 +418,10 @@ public class MainActivity extends BaseActivity {
 
             case R.id.main_add:// 添加红按钮
                 startActivity(new Intent(MainActivity.this, CalendarListActivity.class));
+                break;
+
+            case R.id.main_godown://
+                verticalViewPager.setCurrentItem(1);
                 break;
         }
 

@@ -96,7 +96,8 @@ public class ShareDialog extends PopupWindow
             @Override
             public void onClick(View view) {
                 String cc = shareTools.getWeiBoContent(calendarModel.getTitle(), calendarModel.getContent(), calendarModel.getWeburl());
-                shareTools.shareWithSina(cc, MyApplication.finalBitmap.getBitmapFromCache(calendarModel.getBackgroundImg()));
+                shareTools.shareWithSina(cc, MyApplication.finalBitmap.getBitmapFromCache(calendarModel
+                        .getBackgroundImg()));
             }
         });
         //qq分享

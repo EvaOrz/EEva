@@ -23,6 +23,7 @@ import cn.com.modernmedia.corelib.model.Entry;
 import cn.com.modernmedia.corelib.util.ConstData;
 import cn.com.modernmedia.corelib.util.FileManager;
 import cn.com.modernmedia.corelib.util.ParseUtil;
+import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
 import cn.com.modernmedia.exhibitioncalendar.model.AdvListModel;
@@ -48,19 +49,25 @@ public class SplashActivity extends BaseActivity {
         setContentView(R.layout.activity_splash);
         mContext = this;
         getAdvList(FetchApiType.USE_HTTP_ONLY);
-        askPermission(Manifest.permission.READ_PHONE_STATE, 100);
-        InitLocation();
+
+
+    }
+
+
+    @Override
+    protected void onResume() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (SplashActivity.this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 InitLocation();
+                askPermission(new String[]{Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE,}, 103);
+
             } else {
-                askPermission(Manifest.permission.ACCESS_FINE_LOCATION, 101);
+                askPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE,}, 101);
             }
-        }
-
+        } else InitLocation();
+        super.onResume();
     }
-
 
     public void gotoMainActivity() {
         new Handler().postDelayed(new Runnable() {
@@ -210,8 +217,13 @@ public class SplashActivity extends BaseActivity {
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case 101:
+                // 101的第一个权限 是读定位
                 if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     InitLocation();
+                }
+                // 101的第二个权限 是读设备id
+                if ((grantResults.length > 1) && (grantResults[1] == PackageManager.PERMISSION_GRANTED)) {
+                    DataHelper.setUUID(mContext, Tools.getMyUUID(mContext));
                 }
 
                 break;
@@ -233,7 +245,6 @@ public class SplashActivity extends BaseActivity {
             mLocationClient.start();
         }
     }
-
 
 
     @Override

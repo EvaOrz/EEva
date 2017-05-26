@@ -1,6 +1,5 @@
 package cn.com.modernmedia.exhibitioncalendar.activity;
 
-import android.Manifest;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -129,8 +128,7 @@ public class UserCenterActivity extends BaseActivity {
                 logout();
                 break;
             case R.id.avatar:
-                askPermission(Manifest.permission.READ_EXTERNAL_STORAGE, 103);
-                askPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, 104);
+
                 FetchPhotoManager fetchPhotoManager = new FetchPhotoManager(this, picturePath);
                 fetchPhotoManager.doFecthPicture();
 

@@ -81,8 +81,8 @@ public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeLi
         } else {
             showToast("获取展览信息失败");
         }
-        askPermission(Manifest.permission.READ_CALENDAR, 102);
-        askPermission(Manifest.permission.WRITE_CALENDAR, 103);
+        askPermission(new String[]{Manifest.permission.READ_CALENDAR,Manifest.permission
+                .WRITE_CALENDAR}, 102);
 
     }
 

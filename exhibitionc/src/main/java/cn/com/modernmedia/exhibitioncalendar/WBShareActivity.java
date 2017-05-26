@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
@@ -45,6 +46,8 @@ public class WBShareActivity extends BaseActivity implements IWeiboHandler.Respo
     private IWeiboShareAPI mWeiboShareAPI = null;
 
     private SinaAuth sinaAuth;
+    private String content, path;
+    private Bitmap bitmap;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,35 +72,41 @@ public class WBShareActivity extends BaseActivity implements IWeiboHandler.Respo
 
 
         sinaAuth = new SinaAuth(this);
-        final String content = getIntent().getStringExtra("SINA_CONTENT");
-        final String path = getIntent().getStringExtra("SINA_BITMAP");
+        content = getIntent().getStringExtra("SINA_CONTENT");
+        path = getIntent().getStringExtra("SINA_BITMAP");
         Log.e("ssssssssss", path + content);
 
         //        try {
         //            FileInputStream fis = new FileInputStream(path);
 
-        final Bitmap bitmap = BitmapFactory.decodeFile(path);
-        Log.e("ssssssssss", bitmap.getByteCount() / 1024 / 1024 + "M");
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mWeiboShareAPI.isWeiboAppSupportAPI()) {
-                    showLoading();
-                    sendMultiMessage(content, bitmap);
-
-                } else {
-                    Toast.makeText(WBShareActivity.this, "api too low", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        //        } catch (FileNotFoundException e) {
-        //            Log.e("FileNotFoundException", e.toString());
-        //        }
+        bitmap = BitmapFactory.decodeFile(path);
+        if (bitmap == null) {
+            handler.sendEmptyMessage(1);
+        }
+        handler.sendEmptyMessage(0);
 
 
     }
 
-    private Handler handler = new Handler();
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    if (mWeiboShareAPI.isWeiboAppSupportAPI()) {
+                        showLoading();
+                        sendMultiMessage(content, bitmap);
+
+                    } else {
+                        Toast.makeText(WBShareActivity.this, "api too low", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case 1:
+                    showToast("获取分享图片失败");
+                    break;
+            }
+        }
+    };
 
     @Override
     public void onResponse(BaseResponse baseResp) {

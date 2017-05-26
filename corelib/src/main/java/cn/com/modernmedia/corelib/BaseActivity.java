@@ -17,8 +17,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import cn.com.modernmedia.corelib.db.DataHelper;
-import cn.com.modernmedia.corelib.util.Tools;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Eva. on 17/3/17.
@@ -163,35 +163,31 @@ public class BaseActivity extends Activity implements View.OnClickListener, Acti
 
     }
 
-    public void askPermission(String permission, int requestCode) {
+    public void askPermission(String[] permissions, int requestCode) {
+        List<String> ll = new ArrayList<>();
+        for (int i = 0; i < permissions.length; i++) {
+            int permissionCheck = ContextCompat.checkSelfPermission(this, permissions[i]);
 
-        int permissionCheck = ContextCompat.checkSelfPermission(this, permission);
-
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
-        } else {
-            //TODO
+            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                ll.add(permissions[i]);
+            }
         }
+        if (ll.size() > 0)
+            ActivityCompat.requestPermissions(this, (String[]) ll.toArray(new String[ll.size()]), requestCode);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case 100: // 读设备id权限
-                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    DataHelper.setUUID(mContext, Tools.getMyUUID(mContext));
-                }
-                break;
-            case 101:// 定位权限
+            case 101:// 定位权限 + 设备id权限 + 读/写系统存储权限
 
                 break;
-            case 102:// 读系统日历权限
+            case 102:// 读/写系统日历权限
 
                 break;
-            case 103:// 写系统日历权限
+            case 103:// 读/写系统存储权限
 
                 break;
-
 
         }
     }

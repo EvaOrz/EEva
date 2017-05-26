@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
@@ -96,6 +97,7 @@ public class ShareTools {
         String path = "";
         File file = createShareBitmap(bitmap);
         if (file != null && file.exists()) path = file.getAbsolutePath();
+        Log.e("yyyyyyy", path + ";");
         Intent intent = new Intent(mContext, WBShareActivity.class);
         intent.putExtra("SINA_CONTENT", extraText);
         intent.putExtra("SINA_BITMAP", path);
@@ -109,6 +111,9 @@ public class ShareTools {
         }
         String imagePath = defaultPath + (save ? SAVE_IMAGE_PATH_NAME : SHARE_IMAGE_PATH_NAME);
         File picPath = new File(imagePath + fileName);
+//        if (!picPath.exists()) {
+//            picPath.mkdir();
+//        }
         BufferedOutputStream bos = null;
         try {
             bos = new BufferedOutputStream(new FileOutputStream(picPath), 1024);
