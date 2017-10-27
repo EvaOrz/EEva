@@ -59,6 +59,8 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
     private LocationClient mLocationClient;
     private BaiduMap mBaiduMap;
 
+    private boolean ifMapReady = false;
+
     private CalendarListModel nearListModel;// 周边展览列表
     private BitmapDescriptor markerIcon;
 
@@ -69,7 +71,10 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
 
         markerIcon = BitmapDescriptorFactory.fromResource(R.mipmap.location);
 
-        calendarModel = (CalendarModel) getIntent().getSerializableExtra("map_calendar");
+        if (getIntent().getSerializableExtra("map_calendar") != null &&getIntent()
+                .getSerializableExtra("map_calendar") instanceof CalendarModel ) {
+            calendarModel = (CalendarModel) getIntent().getSerializableExtra("map_calendar");
+        }
         if (!TextUtils.isEmpty(getIntent().getStringExtra("latitude")))
             latitude = Double.valueOf(getIntent().getStringExtra("latitude"));
         if (!TextUtils.isEmpty(getIntent().getStringExtra("longitude")))
@@ -77,8 +82,9 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
 
         //        if (!TextUtils.isEmpty(getIntent().getStringExtra("map_address")))
         //            address = getIntent().getStringExtra("map_address");
-        initAllMarker();
         initView();
+        initAllMarker();
+
     }
 
     /**
@@ -141,6 +147,22 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
          */
         baiduMapView = (MapView) findViewById(R.id.baidu_mapview);
         mBaiduMap = baiduMapView.getMap();
+        mBaiduMap.setOnMapStatusChangeListener(new BaiduMap.OnMapStatusChangeListener() {
+            @Override
+            public void onMapStatusChangeStart(MapStatus mapStatus) {
+                ifMapReady = false;// map在变化
+            }
+
+            @Override
+            public void onMapStatusChange(MapStatus mapStatus) {
+
+            }
+
+            @Override
+            public void onMapStatusChangeFinish(MapStatus mapStatus) {
+                ifMapReady = true;//map 加载完成
+            }
+        });
         initClick();
 
         mLocationClient = new LocationClient(getApplicationContext()); // 声明LocationClient类
@@ -167,6 +189,7 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
      * @param ifCenter
      */
     private void addOne(CalendarModel calendarModel, boolean ifCenter) {
+        if (calendarModel == null) return;
         CalendarModel.Coordinate cc = calendarModel.getCoordinates();
         if (cc != null && !TextUtils.isEmpty(cc.getLatitude()) && !TextUtils.isEmpty(cc.getLongitude()))
             addOne(calendarModel, Double.valueOf(cc.getLatitude()), Double.valueOf(cc.getLongitude()), ifCenter);
@@ -240,7 +263,9 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
                     break;
 
                 case 3:
+
                     Marker m = (Marker) msg.obj;
+
                     initPop(m, calendarModel.getAddress());
                     break;
             }
@@ -300,6 +325,7 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
 
 
     private void initPop(Marker marker, String cc) {
+//        if (!ifMapReady) return;
         // 创建InfoWindow展示的view
         View popup = View.inflate(this, R.layout.view_marker_pop, null);
         TextView title = (TextView) popup.findViewById(R.id.marker_pop);

@@ -60,14 +60,14 @@ public class ExhibitionAdapter extends CheckScrollAdapter<CalendarModel> {
         title.setText(item.getTitle());
         // 显示用户自己设置的时间
         if (!TextUtils.isEmpty(item.getTime())) {
-            date.setText(Tools.format(Long.parseLong(item.getTime()) * 1000, "yyyy-MM-dd HH:mm"));
+            date.setText(item.getTime());
         } else
             date.setText(Tools.getStringToDate(item.getStartTime()) + "-" + Tools.getStringToDate(item.getEndTime()));
 
         if (ParseUtil.listNotNull(item.getCitylist())) {
             city.setText(item.getCitylist().get(0).getTagName());
         }
-        MyApplication.finalBitmap.display(img, item.getImg());
+        MyApplication.finalBitmap.display(img, item.getCoverImg());
         final ImageView sandian = viewHolder.getView(R.id.sandian);
         sandian.setOnClickListener(new View.OnClickListener() {
             @Override

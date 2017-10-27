@@ -32,7 +32,7 @@ public class GetWeatherApi extends BaseApi {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        setIsNeedBaseEncode(true);
+//        setIsNeedBaseEncode(true);
     }
 
     @Override
@@ -43,7 +43,6 @@ public class GetWeatherApi extends BaseApi {
     @Override
     protected void handler(JSONObject jsonObject) {
         if (jsonObject == null) return;
-        Log.e("GetWeatherApi", jsonObject.toString());
         weatherModel.setIcon(jsonObject.optString("icon_url"));
         weatherModel.setAlarm(jsonObject.optString("alarms"));
         JSONArray array = jsonObject.optJSONArray("desc");

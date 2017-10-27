@@ -34,10 +34,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="10dp"
-                android:paddingLeft="15dp"
+                android:paddingLeft="5dp"
                 android:paddingRight="15dp"
                 android:paddingTop="10dp"
-                android:src="@mipmap/finish_white"/>
+                android:src="@mipmap/back_white"/>
 
             <TextView
                 android:layout_width="wrap_content"

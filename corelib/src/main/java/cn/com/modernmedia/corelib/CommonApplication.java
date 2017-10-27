@@ -21,6 +21,7 @@ import java.util.Map;
 import afinal.FinalBitmap;
 import cn.com.modernmedia.corelib.breakpoint.BreakPointUtil;
 import cn.com.modernmedia.corelib.breakpoint.DownloadPackageCallBack;
+import cn.com.modernmedia.corelib.webridge.WBWebridge;
 
 /**
  * /**
@@ -30,6 +31,9 @@ import cn.com.modernmedia.corelib.breakpoint.DownloadPackageCallBack;
 public class CommonApplication extends Application {
 
     public static int APP_ID;
+    // 展览日历appid
+    public static int APPID = 0;
+    public static int DEBUG = 0;
 
     /**
      * 文件夹名
@@ -39,6 +43,7 @@ public class CommonApplication extends Application {
     // weixin id / secret
     public static String WEIXIN_APP_ID = "";
     public static String WEIXIN_SECRET = "";
+    public static String WEIXIN_PARTNER_ID = "";
     // sina id / secret
     public static String SINA_APP_ID;
     public static String SINA_SECRET = "";
@@ -58,8 +63,12 @@ public class CommonApplication extends Application {
     public static FinalBitmap finalBitmap;
     /**
      * 登录状态是否改变
+     * 0: 没改变
+     * 1: 我的展览数据改变
+     * 2: 登录状态改变
+     * 3: 我的城市列表数据改变
      */
-    public static boolean loginStatusChange = false;
+    public static int loginStatusChange = 0;
     public static String installationId;
     private static int memorySize;
 
@@ -74,7 +83,10 @@ public class CommonApplication extends Application {
     public static DownloadPackageCallBack downBack;
     @SuppressLint("UseSparseArrays")
     private static Map<String, BreakPointUtil> breakMap = new HashMap<String, BreakPointUtil>();
-
+    /**
+     * 网页回调listener
+     */
+    public static WBWebridge.AsynExecuteCommandListener asynExecuteCommandListener;
 
     @Override
     public void onCreate() {

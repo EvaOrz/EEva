@@ -17,7 +17,7 @@ import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
 
 public class LeftActivity extends BaseActivity {
 
-    private TextView allNum, myNum;
+    private TextView allNum, myNum, allNum1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,12 +31,13 @@ public class LeftActivity extends BaseActivity {
         findViewById(R.id.left_setting).setOnClickListener(this);
         findViewById(R.id.left_sousuo).setOnClickListener(this);
         findViewById(R.id.all_zhanlan).setOnClickListener(this);
-        findViewById(R.id.hot_zhanlan).setOnClickListener(this);
+        findViewById(R.id.all_zhanguan).setOnClickListener(this);
+        findViewById(R.id.choose_city).setOnClickListener(this);
         findViewById(R.id.my_zhanlan).setOnClickListener(this);
         findViewById(R.id.about_us).setOnClickListener(this);
 
         allNum = (TextView) findViewById(R.id.all_num);
-
+        allNum1 = (TextView) findViewById(R.id.all_num1);
         myNum = (TextView) findViewById(R.id.my_num);
 
 
@@ -49,6 +50,7 @@ public class LeftActivity extends BaseActivity {
         if (AppValue.allList != null && ParseUtil.listNotNull(AppValue.allList.getCalendarModels())) {
             allNum.setText("共有 " + AppValue.allList.getCount() + " 个正在进行/即将展开");
         }
+        allNum1.setText("共" + AppValue.museumList.getCount() + "个展馆");
         String s = "共";
         int ing = 0;
         if (AppValue.myList != null && ParseUtil.listNotNull(AppValue.myList.getCalendarModels())) {
@@ -56,7 +58,6 @@ public class LeftActivity extends BaseActivity {
             s = s + ing + "个展览";
 
         }
-
         if (AppValue.edList != null && ParseUtil.listNotNull(AppValue.edList.getCalendarModels())) {
             ing = AppValue.myList.getCalendarModels().size() - AppValue.edList.getCalendarModels().size();
         }
@@ -79,11 +80,16 @@ public class LeftActivity extends BaseActivity {
                 break;
             case R.id.all_zhanlan:
                 startActivity(new Intent(LeftActivity.this, CalendarListActivity.class));
+
+                // 热门展览
+                //                Intent i = new Intent(LeftActivity.this, CalendarListActivity.class);
+                //                i.putExtra("list_tagid", "13");
+                //                i.putExtra("list_tagname", "热门");
+                //                startActivity(i);
                 break;
-            case R.id.hot_zhanlan:
-                Intent i = new Intent(LeftActivity.this, CalendarListActivity.class);
-                i.putExtra("list_tagid", "13");
-                i.putExtra("list_tagname", "热门");
+            case R.id.all_zhanguan:
+                Intent i = new Intent(LeftActivity.this, AboutActivity.class);
+                i.putExtra("browser_type", 2);
                 startActivity(i);
                 break;
             case R.id.my_zhanlan:
@@ -91,6 +97,9 @@ public class LeftActivity extends BaseActivity {
                 break;
             case R.id.about_us:
                 startActivity(new Intent(LeftActivity.this, AboutActivity.class));
+                break;
+            case R.id.choose_city:
+                startActivity(new Intent(LeftActivity.this, CityPickActivity.class));
                 break;
 
 

@@ -35,7 +35,9 @@ public class WBWebView extends WebView {
     @JavascriptInterface
     private void init() {
         mWbUri = new WBUri(mContext, new WebUriImplement(mContext));
+        setWebContentsDebuggingEnabled(true);
         WebSettings s = getSettings();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
@@ -45,6 +47,7 @@ public class WBWebView extends WebView {
         s.setAppCacheEnabled(true);
         s.setUseWideViewPort(true);
         s.setJavaScriptEnabled(true);
+
         s.setLoadWithOverviewMode(true);
         s.setRenderPriority(WebSettings.RenderPriority.HIGH);// 提高渲染优先级
         s.setBlockNetworkImage(true);// 图片加载放在最后来加载渲染(onPageFinished)

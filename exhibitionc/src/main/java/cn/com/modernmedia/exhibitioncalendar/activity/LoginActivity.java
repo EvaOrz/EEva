@@ -335,7 +335,7 @@ public class LoginActivity extends BaseActivity {
         // 记录上次登录username
         DataHelper.setLastLoginUsername(this, lastUserName);
         // 返回上一级界面
-        CommonApplication.loginStatusChange = true;
+        CommonApplication.loginStatusChange = 2;
         showToast(R.string.msg_login_success);
         finish();
 

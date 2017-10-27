@@ -64,7 +64,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_margin="3dp"
-                android:src="@mipmap/search_tag"/>
+                android:src="@drawable/search_tag"/>
 
         </RelativeLayout>
 

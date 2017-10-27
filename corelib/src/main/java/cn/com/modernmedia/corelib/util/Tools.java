@@ -29,13 +29,14 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.squareup.okhttp.Headers;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -335,20 +336,6 @@ public class Tools {
         return false;
     }
 
-    /**
-     * 返回手机唯一标识
-     *
-     * @return
-     */
-    public static String getMyUUID(Context context) {
-        final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        String imie = "" + tm.getDeviceId();
-        String tmSerial = "" + tm.getSimSerialNumber();
-        String androidId = "" + android.provider.Settings.Secure.getString(context.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-
-        UUID deviceUuid = new UUID(androidId.hashCode(), ((long) imie.hashCode() << 32) | tmSerial.hashCode());
-        return MD5.MD5Encode(deviceUuid.toString());
-    }
 
     /**
      * 判断当前手机是否有ROOT权限
@@ -412,15 +399,30 @@ public class Tools {
      *
      * @return
      */
-    public static Map<String, String> getRequastHeader(Context context) {
+    public static Headers getRequastHeader(Context context) {
+
+        Headers headers = Headers.of(getRequastHeaderMap(context));
+        return headers;
+    }
+
+    /**
+     * 获取要添加的头部信息
+     *
+     * @return
+     */
+    public static HashMap<String, String> getRequastHeaderMap(Context context) {
         HashMap<String, String> headerMap = new HashMap<String, String>();
         headerMap.put("X-Slate-UserId", DataHelper.getUid(context));
-        headerMap.put("X-Slate-DeviceId", DataHelper.getUUID(context));
+        headerMap.put("X-Slate-DeviceId", getDeviceId(context));
         headerMap.put("X-Slate-AppId", CommonApplication.APP_ID + "");
-        headerMap.put("X-SLATE-JAILBROKEN", Tools.isRooted() ? "11" : "10");//是否root（如果可以获取就获取）
+        headerMap.put("X-Slate-UUID", getMyUUID(context));
+        headerMap.put("X-Slate-AndroidToken", Tools.getDeviceToken(context));
+        headerMap.put("X-SLATE-CLIENTVERSION", Tools.getAppVersionName(context));
+        // 支付新增
+        headerMap.put("X-SLATE-DEVICETYPE", android.os.Build.MODEL);//设备信息
+        // 未root:10  已root:11
+        headerMap.put("X-SLATE-JAILBROKEN", isRooted() ? "11" : "10");//是否root（如果可以获取就获取）
 
-        headerMap.put("X-SLATE-CLIENTTYPE", "android");
-        headerMap.put("X-SLATE-CLIENTVERSION", Tools.getAppVersion(context));
         return headerMap;
     }
 
@@ -653,4 +655,93 @@ public class Tools {
         return result;
     }
 
+
+    /**
+     * 转换jsParmas
+     *
+     * @param jsParmas
+     * @return
+     */
+    public static Object convertJsParmas(Object jsParmas) {
+        if (jsParmas == null) {
+            return "\"\"";
+        }
+        if (jsParmas instanceof String) {
+            return "'" + jsParmas.toString() + "'";
+        }
+        if (jsParmas.getClass().isArray()) {
+            return arrayToString((Object[]) jsParmas);
+        }
+        return jsParmas;
+    }
+
+    /**
+     * 数组转为string
+     *
+     * @param array
+     * @return
+     */
+    private static String arrayToString(Object[] array) {
+        if (array == null) {
+            return "[]";
+        }
+        if (array.length == 0) {
+            return "[]";
+        }
+        StringBuilder sb = new StringBuilder(array.length * 7);
+        sb.append('[');
+        sb.append(arrayItemToString(array[0]));
+        for (int i = 1; i < array.length; i++) {
+            sb.append(", ");
+            sb.append(arrayItemToString(array[i]));
+        }
+        sb.append(']');
+        return sb.toString();
+    }
+
+    private static Object arrayItemToString(Object item) {
+        if (item instanceof String) {
+            return "'" + item + "'";
+        }
+        return item;
+    }
+
+    /**
+     * 返回手机唯一标识
+     *
+     * @return
+     */
+    public static String getMyUUID(Context mContext) {
+        final TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+        String imie = "" + tm.getDeviceId();
+        String tmSerial = "" + tm.getSimSerialNumber();
+
+
+        UUID deviceUuid = new UUID(getDeviceToken(mContext).hashCode(), ((long) imie.hashCode() << 32) | tmSerial.hashCode());
+        return MD5.MD5Encode(deviceUuid.toString());
+    }
+
+    /**
+     * The Android ID
+     * 通常被认为不可信，因为它有时为null。开发文档中说明了：这个ID会改变如果进行了出厂设置。并且，如果某个Andorid手机被Root过的话，这个ID也可以被任意改变
+     *
+     * @return
+     */
+    public static String getDeviceToken(Context mContext) {
+        return "" + android.provider.Settings.Secure.getString(mContext.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+    }
+
+    /**
+     * 获取版本号
+     */
+    public static String getAppVersionName(Context context) {
+        try {
+            PackageManager packageManager = context.getPackageManager();
+            PackageInfo info = packageManager.getPackageInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            return info.versionName;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 }

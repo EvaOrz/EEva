@@ -19,6 +19,7 @@ import cn.com.modernmedia.exhibitioncalendar.activity.AboutActivity;
 import cn.com.modernmedia.exhibitioncalendar.activity.CalendarDetailActivity;
 import cn.com.modernmedia.exhibitioncalendar.activity.CalendarListActivity;
 import cn.com.modernmedia.exhibitioncalendar.activity.MapActivity;
+import cn.com.modernmedia.exhibitioncalendar.activity.MuseumDetailActivity;
 
 /**
  * 自定义协议解析类
@@ -59,6 +60,7 @@ public class UriParse {
     public static String SPECIALSEARCH = "specialSearch";
     public static String DETAILLIVECALENDAR = "detailLiveCalendar";
     public static String SAFARI = "safari";
+    public static String DETAILMUSEUM = "detailMuseum";
 
 
     /**
@@ -153,6 +155,10 @@ public class UriParse {
             } else if (key.equals(SAFARI)) {
 
                 doLinkHttp(context, safari(link));
+            }else  if (key.equals(DETAILMUSEUM)){
+                Intent i = new Intent(context, MuseumDetailActivity.class);
+                i.putExtra(DETAILMUSEUM, detailMuseum(link));
+                context.startActivity(i);
             }
         } else if (link.startsWith("tel://")) {
             String arr[] = link.split("tel://");
@@ -160,6 +166,8 @@ public class UriParse {
         }
 
     }
+
+
 
     /**
      * 跳转mapActivity
@@ -192,6 +200,15 @@ public class UriParse {
         return "";
     }
 
+
+    // slate://detailMuseum/1075
+    private static String detailMuseum(String uri) {
+        String[] array = uri.split("detailMuseum/");
+        if (array.length == 2) {
+            return array[1];
+        }
+        return "";
+    }
     // slate://safari/http://www.minshengart.com
     private static String safari(String uri) {
         String[] array = uri.split("safari/");
@@ -244,6 +261,7 @@ public class UriParse {
 
         Intent intent = new Intent(context, AboutActivity.class);
         intent.putExtra("inapp_webview_url", link);
+        intent.putExtra("browser_type",1);
         context.startActivity(intent);
         if (context instanceof Activity)
             ((Activity) context).overridePendingTransition(R.anim.down_in, R.anim.hold);

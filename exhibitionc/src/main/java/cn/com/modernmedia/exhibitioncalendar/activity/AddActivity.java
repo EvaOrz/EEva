@@ -36,7 +36,7 @@ import cn.com.modernmedia.corelib.widget.EvaSwitchBar;
 import cn.com.modernmedia.exhibitioncalendar.MyApplication;
 import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
-import cn.com.modernmedia.exhibitioncalendar.api.HandleFavApi;
+import cn.com.modernmedia.exhibitioncalendar.api.user.HandleFavApi;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
 import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
 import cn.com.modernmedia.exhibitioncalendar.view.AddPopView;

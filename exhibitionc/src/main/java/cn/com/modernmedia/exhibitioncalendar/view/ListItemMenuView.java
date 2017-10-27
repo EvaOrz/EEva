@@ -17,7 +17,7 @@ import cn.com.modernmedia.exhibitioncalendar.activity.AddActivity;
 import cn.com.modernmedia.exhibitioncalendar.activity.MainActivity;
 import cn.com.modernmedia.exhibitioncalendar.activity.MyListActivity;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
-import cn.com.modernmedia.exhibitioncalendar.api.HandleFavApi;
+import cn.com.modernmedia.exhibitioncalendar.api.user.HandleFavApi;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
 
 /**

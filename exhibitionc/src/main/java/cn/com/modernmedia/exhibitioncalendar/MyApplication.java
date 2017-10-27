@@ -14,6 +14,7 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import afinal.FinalBitmap;
 import cn.com.modernmedia.corelib.CommonApplication;
 import cn.com.modernmedia.corelib.util.ConstData;
+import cn.com.modernmedia.exhibitioncalendar.activity.MuseumDetailActivity;
 import cn.com.modernmedia.exhibitioncalendar.api.UrlMaker;
 import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
 
@@ -23,12 +24,11 @@ import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
 
 public class MyApplication extends CommonApplication {
 
-    // 展览日历appid
-    public static int APPID = 61;
-    public static int DEBUG = 0;
 
     private static int memorySize;
     public static LocationClient mLocationClient;//定位SDK的核心类
+
+    public static MuseumDetailActivity museumDetailActivity;
 
     /**
      * 初始化整个app的配置
@@ -55,10 +55,13 @@ public class MyApplication extends CommonApplication {
 
         UrlMaker.setHost();
         initMemorySize();
-
+        APPID = 61;
+        DEBUG = 0;
         ConstData.setAppId(APPID);
         WEIXIN_APP_ID = "wx9320801de5f7e77a";
         WEIXIN_SECRET = "f23486b3fa95b337be103cd5edbf92b7";
+        WEIXIN_PARTNER_ID = "1459768302";
+
         SINA_APP_ID = "3608123411";
         SINA_SECRET = "895c3716c902def304f1bf3c5af5900f";
 

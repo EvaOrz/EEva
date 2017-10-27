@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/body_bg"
+              android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/nav_bar_height"
+        android:background="@color/title_bar">
+
+        <ImageView
+            android:id="@+id/pay_back"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginLeft="5dp"
+            android:contentDescription="@null"
+            android:scaleType="center"
+            android:src="@mipmap/ic_back"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/vip_pay_title"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_18"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/line_height"
+            android:layout_alignParentBottom="true"
+            android:background="@color/gray_line"/>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:paddingRight="15dp">
+
+        <TextView
+            android:id="@+id/vip_pay_name_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            android:text="@string/vip_pay_name_title"
+            android:textColor="@color/gray_dark"
+            android:textSize="@dimen/text_size_14"/>
+
+        <TextView
+            android:id="@+id/pay_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/vip_pay_name_title"
+            android:padding="10dp"
+            android:textColor="@color/gray_dark"
+            android:textSize="@dimen/text_size_14"/>
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line_height"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/gray_line"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:paddingRight="15dp">
+
+        <TextView
+            android:id="@+id/vip_pay_time_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            android:text="@string/vip_pay_time_title"
+            android:textColor="@color/gray_dark"
+            android:textSize="@dimen/text_size_14"/>
+
+        <TextView
+            android:id="@+id/pay_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/vip_pay_time_title"
+            android:padding="10dp"
+            android:textColor="@color/gray_dark"
+            android:textSize="@dimen/text_size_14"/>
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line_height"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/gray_line"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:paddingRight="15dp">
+
+        <TextView
+            android:id="@+id/vip_pay_money_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:background="@color/white"
+            android:padding="10dp"
+            android:text="@string/vip_pay_money_title"
+            android:textColor="@color/gray_dark"
+            android:textSize="@dimen/text_size_14"/>
+
+        <TextView
+            android:id="@+id/pay_money"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/vip_pay_money_title"
+            android:background="@color/white"
+            android:padding="10dp"
+            android:textColor="@color/gray_dark"
+            android:textSize="@dimen/text_size_14"/>
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/peisong_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:paddingRight="15dp">
+
+        <TextView
+            android:id="@+id/vip_pay_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:background="@color/white"
+            android:padding="10dp"
+            android:text="@string/peisong_style"
+            android:textColor="@color/gray_dark"
+            android:textSize="@dimen/text_size_14"/>
+
+        <TextView
+            android:id="@+id/vip_address_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/vip_pay_detail"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_14"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:padding="5dp"
+            android:src="@drawable/index_item_arrow"/>
+    </RelativeLayout>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="@string/vip_pay_style"
+        android:textColor="@color/gray_light"
+        android:textSize="@dimen/text_size_14"/>
+
+
+    <RelativeLayout
+        android:id="@+id/vip_pay_weixin_relative"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        >
+
+        <ImageView
+            android:id="@+id/vip_pay_weixin_img"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:scaleType="centerInside"
+            android:src="@drawable/weixinpay"/>
+
+        <TextView
+            android:id="@+id/vip_pay_weiixn_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/vip_pay_weixin_img"
+            android:background="@color/white"
+            android:padding="5dp"
+            android:text="@string/weixin"
+            android:textColor="@color/gray_dark"
+            android:textSize="@dimen/text_size_14"/>
+
+        <ImageView
+            android:id="@+id/vip_pay_weixin_recommend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/vip_pay_weiixn_text"
+            android:contentDescription="@null"
+            android:padding="5dp"
+            android:scaleType="centerInside"/>
+
+        <RadioButton
+            android:id="@+id/vip_pay_weixin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:button="@drawable/pay_style_selector"
+            android:padding="10dp"/>
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line_height"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/gray_line"/>
+
+    <RelativeLayout
+        android:id="@+id/vip_pay_zhifubao_relative"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        >
+
+        <ImageView
+            android:id="@+id/vip_pay_zhifubao_img"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:scaleType="centerInside"
+            android:src="@drawable/zhifubaopay"/>
+
+        <TextView
+            android:id="@+id/vip_pay_zhifubao_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/vip_pay_zhifubao_img"
+            android:background="@color/white"
+            android:padding="5dp"
+            android:text="@string/zhifubaopay"
+            android:textColor="@color/gray_dark"
+            android:textSize="@dimen/text_size_14"/>
+
+        <ImageView
+            android:id="@+id/vip_pay_zhifubao_recommend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/vip_pay_zhifubao_text"
+            android:contentDescription="@null"
+            android:padding="10dp"
+            android:scaleType="centerInside"/>
+
+        <RadioButton
+            android:id="@+id/vip_pay_zhifubao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:button="@drawable/pay_style_selector"
+            android:padding="10dp"/>
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
+
+    <Button
+        android:id="@+id/pay_btn"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="15dp"
+        android:background="@drawable/black_10radius_corner_bg"
+        android:text="@string/vip_pay_btn"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_14"/>
+
+
+</LinearLayout>

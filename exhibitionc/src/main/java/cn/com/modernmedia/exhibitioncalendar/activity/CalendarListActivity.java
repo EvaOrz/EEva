@@ -16,6 +16,7 @@ import cn.com.modernmedia.exhibitioncalendar.api.UrlMaker;
 import cn.com.modernmedia.exhibitioncalendar.view.CommonWebView;
 
 /**
+ * 全部展览列表 页面
  * Created by Eva. on 17/4/4.
  */
 
@@ -43,16 +44,11 @@ public class CalendarListActivity extends BaseActivity {
         wbWebView = (CommonWebView) findViewById(R.id.list_webview);
         String url = "";
         try {
+            // 专题样式
             if (!TextUtils.isEmpty(titleTxt)) {
                 tilte.setText(titleTxt);
-                back.setImageResource(R.mipmap.finish_white);
-                url = UrlMaker.getTagPage();
-                if (!TextUtils.isEmpty(tagId)) url += "?tagid=" + tagId;
-                if (!TextUtils.isEmpty(titleTxt)) {
-                    url += url.contains("?") ? "&" : "?";
-                    url = url + "sharetitle=" + URLEncoder.encode(URLEncoder.encode(titleTxt, "UTF-8"), "UTF-8");
-                }
-
+                back.setImageResource(R.mipmap.left_back);
+                url = UrlMaker.getTagPage(tagId);
             } else {
                 url = UrlMaker.getHomePage();
                 if (!TextUtils.isEmpty(tagId)) url += "?tagid=" + tagId;

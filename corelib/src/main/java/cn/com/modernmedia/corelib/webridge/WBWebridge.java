@@ -9,6 +9,8 @@ import android.webkit.JavascriptInterface;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import cn.com.modernmedia.corelib.util.Tools;
+
 public class WBWebridge {
 	public static final int CALL_JS = 0;
 	public static final String COMMAND_ERROR = "WebridgeDelegate doesn't know method: ";

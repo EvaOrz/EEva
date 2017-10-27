@@ -240,7 +240,7 @@ public class RegisterActivity extends BaseActivity {
      */
     protected void afterRegister(UserModel user) {
         showToast(R.string.msg_register_success);
-        CommonApplication.loginStatusChange = true;
+        CommonApplication.loginStatusChange = 2;
         finish();
     }
 

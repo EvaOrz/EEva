@@ -234,7 +234,7 @@ public class UserCenterActivity extends BaseActivity {
         DataHelper.clearLoginInfo(this);
         AppValue.myList = new CalendarListModel();
         AppValue.edList = new CalendarListModel();
-        CommonApplication.loginStatusChange = true;
+        CommonApplication.loginStatusChange = 2;
         finish();
     }
 

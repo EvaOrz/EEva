@@ -2,14 +2,36 @@ package cn.com.modernmedia.exhibitioncalendar.api;
 
 import android.content.Context;
 import android.os.Handler;
+import android.text.TextUtils;
+import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import cn.com.modernmedia.corelib.CommonApplication;
+import cn.com.modernmedia.corelib.db.DataHelper;
 import cn.com.modernmedia.corelib.http.BaseApi;
 import cn.com.modernmedia.corelib.http.BaseApi.FetchApiType;
+import cn.com.modernmedia.corelib.http.HttpsController;
 import cn.com.modernmedia.corelib.listener.DataCallBack;
+import cn.com.modernmedia.corelib.listener.FetchDataListener;
 import cn.com.modernmedia.corelib.listener.FetchEntryListener;
 import cn.com.modernmedia.corelib.model.Entry;
 import cn.com.modernmedia.corelib.model.UserModel;
+import cn.com.modernmedia.corelib.util.DESCoder;
 import cn.com.modernmedia.exhibitioncalendar.api.GetSomeListApi.TAG_TYPE;
+import cn.com.modernmedia.exhibitioncalendar.api.user.BandAccountApi;
+import cn.com.modernmedia.exhibitioncalendar.api.user.FindPasswordApi;
+import cn.com.modernmedia.exhibitioncalendar.api.user.GetBandStatusApi;
+import cn.com.modernmedia.exhibitioncalendar.api.user.HandleFavApi;
+import cn.com.modernmedia.exhibitioncalendar.api.user.LoginApi;
+import cn.com.modernmedia.exhibitioncalendar.api.user.ModifyUserInfoApi;
+import cn.com.modernmedia.exhibitioncalendar.api.user.ModifyUserPasswordApi;
+import cn.com.modernmedia.exhibitioncalendar.api.user.OpenLoginApi;
+import cn.com.modernmedia.exhibitioncalendar.api.user.PushDeviceInfoApi;
+import cn.com.modernmedia.exhibitioncalendar.api.user.RegisterApi;
+import cn.com.modernmedia.exhibitioncalendar.api.user.SearchApi;
+import cn.com.modernmedia.exhibitioncalendar.api.user.UploadAvaterApi;
 
 import static cn.com.modernmedia.corelib.http.BaseApi.FetchApiType.USE_CACHE_FIRST;
 import static cn.com.modernmedia.corelib.http.BaseApi.FetchApiType.USE_HTTP_ONLY;
@@ -21,6 +43,15 @@ import static cn.com.modernmedia.corelib.http.BaseApi.FetchApiType.USE_HTTP_ONLY
 public class ApiController {
     private static ApiController instance;
     private static Context mContext;
+    public static String SUCCESS = "SUCCESS";
+    public static String ERROR = "ERROR";
+    public static String CANCEL = "CANCEL";
+    public static String PAYING = "PAYING";
+    /**
+     * DB存储订单的key
+     */
+    public static String NEW_WEIXIN_KEY = "NEW_WEIXIN";
+    public static String NEW_ALI_KEY = "NEW_ALI";
 
     private Handler mHandler = new Handler();
 
@@ -92,9 +123,15 @@ public class ApiController {
      * @param id
      * @param fetchEntryListener
      */
-    public void getDetail(Context c, String id, FetchEntryListener fetchEntryListener) {
-        GetDetailApi getDetailApi = new GetDetailApi(c, id);
-        doPostRequest(getDetailApi, getDetailApi.getDetail(), USE_HTTP_ONLY, fetchEntryListener);
+    public void getCalendarDetail(Context c, String id, FetchEntryListener fetchEntryListener) {
+        GetDetailApi getDetailApi = new GetDetailApi(c, id, 0);
+        doPostRequest(getDetailApi, getDetailApi.getCalendarDetail(), USE_HTTP_ONLY, fetchEntryListener);
+    }
+
+
+    public void getMuseumDetail(Context c, String id, FetchEntryListener fetchEntryListener) {
+        GetDetailApi getDetailApi = new GetDetailApi(c, id, 1);
+        doPostRequest(getDetailApi, getDetailApi.getMuseumDetail(), USE_HTTP_ONLY, fetchEntryListener);
     }
 
     /**
@@ -260,7 +297,7 @@ public class ApiController {
      * @param c
      */
     public void getAllList(Context c, FetchEntryListener listener) {
-        GetAllListApi getAllListApi = new GetAllListApi(c);
+        GetAllCalenderListApi getAllListApi = new GetAllCalenderListApi(c);
         doPostRequest(getAllListApi, getAllListApi.getData(), USE_HTTP_ONLY, listener);
     }
 
@@ -268,7 +305,7 @@ public class ApiController {
      * @param c
      */
     public void getCitys(Context c, FetchEntryListener listener) {
-        GetUserCitysApi getUserCitysApi = new GetUserCitysApi(c);
+        GetCityListApi getUserCitysApi = new GetCityListApi(c);
         doPostRequest(getUserCitysApi, getUserCitysApi.getData(), USE_HTTP_ONLY, listener);
     }
 
@@ -306,6 +343,17 @@ public class ApiController {
         doPostRequest(getShareIdApi, getShareIdApi.getData(), USE_HTTP_ONLY, listener);
     }
 
+    public void getMuseumList(Context c, FetchEntryListener listener) {
+        GetAllMuseumApi getAllMuseumApi = new GetAllMuseumApi(c);
+        doPostRequest(getAllMuseumApi, getAllMuseumApi.getData(), USE_HTTP_ONLY, listener);
+    }
+
+
+    public void saveMyCitys(Context c, String sss, FetchEntryListener listener) {
+        SaveMyCitysApi addCitysApi = new SaveMyCitysApi(c, sss);
+        doPostRequest(addCitysApi, addCitysApi.getData(), USE_HTTP_ONLY, listener);
+    }
+
     /**
      * 修改用户密码
      *
@@ -317,6 +365,171 @@ public class ApiController {
         ModifyUserPasswordApi operate = new ModifyUserPasswordApi(c, password, newPassword);
         doPostRequest(operate, operate.getUser(), USE_HTTP_ONLY, listener);
     }
+
+    /**
+     * 支付之后更新服务器订单状态
+     */
+
+    public static void notifyServer(final String statuStr, final String type, FetchDataListener listener) {
+        String data = DataHelper.getOrder(mContext, type);
+        if (TextUtils.isEmpty(data)) return;
+
+        try {
+            JSONObject jsonObject = new JSONObject(data);
+            // 如果状态为空，则是入版更新，取本地订单状态更新
+            if (!TextUtils.isEmpty(statuStr)) jsonObject.put("status", statuStr);
+            jsonObject.put("appid", CommonApplication.APP_ID);
+            jsonObject.put("marketkey", CommonApplication.CHANNEL);
+
+            DataHelper.setOrder(mContext, type, jsonObject.toString());// 更新本地订单状态
+            int urltype = type.equals(NEW_WEIXIN_KEY) ? 1 : 2;
+            HttpsController.getInstance(mContext).requestHttpAsycle(true, UrlMaker.newUpdateOrderStatus(urltype), jsonObject.toString(), listener);
+
+        } catch (JSONException e) {
+
+        }
+    }
+
+    /**
+     * 支付之后更新服务器订单状态
+     */
+
+    public static void notifyServer(final String statuStr, final String type) {
+        String data = DataHelper.getOrder(mContext, type);
+        if (TextUtils.isEmpty(data)) return;
+
+        try {
+            JSONObject jsonObject = new JSONObject(data);
+            // 如果状态为空，则是入版更新，取本地订单状态更新
+            if (!TextUtils.isEmpty(statuStr)) jsonObject.put("status", statuStr);
+            jsonObject.put("appid", CommonApplication.APP_ID);
+            jsonObject.put("marketkey", CommonApplication.CHANNEL);
+
+            DataHelper.setOrder(mContext, type, jsonObject.toString());// 更新本地订单状态
+
+
+            int urltype = type.equals(NEW_WEIXIN_KEY) ? 1 : 2;
+
+            HttpsController.getInstance(mContext).requestHttpAsycle(true, UrlMaker.newUpdateOrderStatus(urltype), jsonObject.toString(), new FetchDataListener() {
+                @Override
+                public void fetchData(boolean isSuccess, String data, boolean fromHttp) {
+                    if (isSuccess) {
+                        DataHelper.clearOrder(mContext, type);
+                        if (TextUtils.isEmpty(statuStr) || statuStr.equals(SUCCESS))
+                            saveLevel(data);
+                    }
+                }
+            });
+
+        } catch (JSONException e) {
+
+        }
+
+    }
+
+
+    /**
+     * 修改vip邮寄地址
+     */
+    public static void addressEdit(String name, String phone, String city, String address, String code, String id, FetchDataListener listener) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("uid", DataHelper.getUid(mContext));
+            object.put("token", DataHelper.getToken(mContext));
+            object.put("appid", CommonApplication.APP_ID);
+            object.put("name", name);
+            object.put("phone", phone);
+            object.put("city", city);
+            object.put("address", address);
+            object.put("code", code);
+            object.put("id", Integer.parseInt(id));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        HttpsController.getInstance(mContext).requestHttpAsycle(true, UrlMaker.editAddress(), object.toString(), listener);
+    }
+
+
+    /**
+     * 添加vip邮寄地址
+     */
+    public static void addressAdd(String name, String phone, String city, String address, String code, FetchDataListener listener) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("uid", DataHelper.getUid(mContext));
+            object.put("token", DataHelper.getToken(mContext));
+            object.put("appid", CommonApplication.APP_ID);
+            object.put("name", name);
+            object.put("phone", phone);
+            object.put("city", city);
+            object.put("address", address);
+            object.put("code", code);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        HttpsController.getInstance(mContext).requestHttpAsycle(true, UrlMaker.addAddress(), object.toString(), listener);
+    }
+
+
+    /**
+     * 获取套餐列表
+     */
+    public static void getProducts(  FetchDataListener listener) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("uid", DataHelper.getUid(mContext));
+            object.put("token", DataHelper.getToken(mContext));
+            object.put("appid", CommonApplication.APP_ID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        HttpsController.getInstance(mContext).requestHttpAsycle(true, UrlMaker.getVipProducts(), object
+                .toString(), listener);
+    }
+
+    /**
+     * 获取vip邮寄地址
+     */
+    public static void addressList(FetchDataListener listener) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("uid", DataHelper.getUid(mContext));
+            object.put("token", DataHelper.getToken(mContext));
+            object.put("appid", CommonApplication.APP_ID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        HttpsController.getInstance(mContext).requestHttpAsycle(true, UrlMaker.listddress(), object.toString(), listener);
+    }
+
+    /**
+     * 支付成功 ||微信回调出错
+     *
+     * @param data
+     */
+    public static int saveLevel(String data) {
+        String token = DataHelper.getToken(mContext);
+        String key = token.substring(token.length() - 8, token.length());// 解析的key
+        String json = DESCoder.decode(key, data);
+        // 存储解密之后的明文权限
+        DataHelper.saveBusinessWeekCrt(mContext, json);
+        // 解析付费状态
+        int status = 0;
+        if (json != null) try {
+            JSONObject jsonObject = new JSONObject(json);
+            Log.e("getUserPermission", json);
+            /**
+             * 解析服务器返回的权限值{ status= (已验证-成功) 2 || (已验证-假订单) 4 }刷新本地存储
+             */
+            status = jsonObject.optInt("status");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return status;
+
+    }
+
+
 
 
     /**

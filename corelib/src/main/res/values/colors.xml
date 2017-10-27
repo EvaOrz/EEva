@@ -15,6 +15,7 @@
     <color name="body_bg">#f6f6f6</color>
     <color name="red">#cd3333</color>
 
+    <color name="gray_light">#FFC0C0C0</color>
     <color name="gray_dark">#ff4b4b4b</color>
     <color name="title_bar">#FFFAFAFA</color>
 
@@ -22,4 +23,9 @@
     <color name="dot_color">#7fffffff</color>
     <color name="blue">#2c97e8</color>
     <color name="green">#008000</color>
+
+    <color name="wheel_1">#eeffffff</color>
+    <color name="wheel_2">#eaffffff</color>
+    <color name="wheel_3">#33ffffff</color>
+    <color name="vip_mine_pay">#cd9d4c</color>
 </resources>

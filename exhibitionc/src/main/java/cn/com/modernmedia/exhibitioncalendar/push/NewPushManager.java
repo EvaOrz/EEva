@@ -23,6 +23,8 @@ import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
 import cn.com.modernmedia.exhibitioncalendar.util.UriParse;
 import cn.jpush.android.api.JPushInterface;
 
+import static cn.com.modernmedia.corelib.CommonApplication.mContext;
+
 /**
  * 推送管理类
  * Created by Eva. on 16/7/14.
@@ -106,7 +108,9 @@ public class NewPushManager {
             return;
         }
         NewPushManager.token = token;
-
+        if (!TextUtils.isEmpty(token)) {
+            DataHelper.setPushToken(mContext, token);
+        }
         /**
          * 没注册过，向服务器上传注册id
          */
@@ -175,10 +179,6 @@ public class NewPushManager {
             if (!TextUtils.isEmpty(url)) {
 
                 UriParse.clickSlate(context, URLEncoder.encode(url, "UTF-8"), new Entry[]{}, null);
-                //                Intent intent = new Intent(context, CalendarDetailActivity.class);
-                //                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                //                intent.putExtra("push_url", url);
-                //                context.startActivity(intent);
             }
 
         } catch (JSONException e) {

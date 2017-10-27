@@ -43,6 +43,7 @@ public class CalendarDetailActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
+                    webView.setCalendar(calendarModel);
                     // 图片太大了
                     if (calendarModel != null && !TextUtils.isEmpty(calendarModel.getBackgroundImg()))
                         MyApplication.finalBitmap.display(view, calendarModel.getBackgroundImg());
@@ -72,19 +73,18 @@ public class CalendarDetailActivity extends BaseActivity {
         if (getIntent().getSerializableExtra("calendar_detail") != null) {
             calendarModel = (CalendarModel) getIntent().getSerializableExtra("calendar_detail");
             id = calendarModel.getItemId();
-            webView.setCalendarModel(calendarModel);
+
             webView.loadUrl(UrlMaker.getDetailPage() + "?itemid=" + id);
             handler.sendEmptyMessage(0);
         } else initData();
     }
 
     private void initData() {
-        apiController.getDetail(this, id, new FetchEntryListener() {
+        apiController.getCalendarDetail(this, id, new FetchEntryListener() {
             @Override
             public void setData(Entry entry) {
                 if (entry != null && entry instanceof CalendarModel) {
                     calendarModel = (CalendarModel) entry;
-                    webView.setCalendarModel(calendarModel);
                     handler.sendEmptyMessage(0);
                 }
 

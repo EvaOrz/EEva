@@ -185,7 +185,7 @@ public abstract class BaseApi {
             thread.setPostParams(getPostParams());
             thread.setImagePath(getPostImagePath());
         }
-        thread.setHeaderMap(Tools.getRequastHeader(mContext));
+        thread.setHeaderMap(Tools.getRequastHeaderMap(mContext));
         thread.setUserAgent("exhibitioncalendar" + Tools.getAppVersion(mContext));
         thread.setmFetchDataListener(new FetchDataListener() {
 

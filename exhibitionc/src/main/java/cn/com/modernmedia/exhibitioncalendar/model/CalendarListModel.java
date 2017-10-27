@@ -9,7 +9,7 @@ import java.util.List;
 import cn.com.modernmedia.corelib.model.Entry;
 
 import static cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel.Coordinate.parseCoordinate;
-import static cn.com.modernmedia.exhibitioncalendar.model.TagListModel.HouseOrCity;
+import static cn.com.modernmedia.exhibitioncalendar.model.TagListModel.*;
 
 /**
  * 展览model
@@ -70,10 +70,10 @@ public class CalendarListModel extends Entry {
         private int status;
         private String extension = "";
         private Coordinate coordinates;
-        private List<HouseOrCity> typelist;
-        private List<HouseOrCity> houselist;
-        private List<HouseOrCity> citylist;
-        private List<HouseOrCity> hotlist;
+        private List<TagInfo> typelist;
+        private List<TagInfo> houselist;
+        private List<TagInfo> citylist;
+        private List<TagInfo> hotlist;
         private String address = "";
         private String eventId = "";
         private String addTime = "";
@@ -122,12 +122,12 @@ public class CalendarListModel extends Entry {
             this.eventId = eventId;
         }
 
-        public static List<HouseOrCity> parseHouseOrCityList(JSONArray array) {
-            List<HouseOrCity> list = new ArrayList<>();
+        public static List<TagInfo> parseHouseOrCityList(JSONArray array) {
+            List<TagInfo> list = new ArrayList<>();
             if (array == null || array.length() == 0) return list;
             for (int i = 0; i < array.length(); i++) {
-                HouseOrCity houseOrCity = new HouseOrCity();
-                list.add(HouseOrCity.parseHouseOrCity(houseOrCity, array.optJSONObject(i)));
+                TagInfo houseOrCity = new TagInfo();
+                list.add(TagInfo.parseHouseOrCity(houseOrCity, array.optJSONObject(i)));
             }
             return list;
         }
@@ -276,31 +276,31 @@ public class CalendarListModel extends Entry {
             this.coordinates = coordinates;
         }
 
-        public List<TagListModel.HouseOrCity> getTypelist() {
+        public List<TagListModel.TagInfo> getTypelist() {
             return typelist;
         }
 
-        public void setTypelist(List<HouseOrCity> typelist) {
+        public void setTypelist(List<TagInfo> typelist) {
             this.typelist = typelist;
         }
 
-        public List<HouseOrCity> getHouselist() {
+        public List<TagInfo> getHouselist() {
             return houselist;
         }
 
-        public void setHouselist(List<HouseOrCity> houselist) {
+        public void setHouselist(List<TagInfo> houselist) {
             this.houselist = houselist;
         }
 
-        public List<HouseOrCity> getCitylist() {
+        public List<TagInfo> getCitylist() {
             return citylist;
         }
 
-        public void setCitylist(List<HouseOrCity> citylist) {
+        public void setCitylist(List<TagInfo> citylist) {
             this.citylist = citylist;
         }
 
-        public List<HouseOrCity> getHotlist() {
+        public List<TagInfo> getHotlist() {
             return hotlist;
         }
 
@@ -312,7 +312,7 @@ public class CalendarListModel extends Entry {
             this.time = time;
         }
 
-        public void setHotlist(List<HouseOrCity> hotlist) {
+        public void setHotlist(List<TagInfo> hotlist) {
             this.hotlist = hotlist;
         }
 
@@ -339,7 +339,7 @@ public class CalendarListModel extends Entry {
 
             public static Coordinate parseCoordinate(JSONObject jsonObject) {
                 Coordinate coordinate = new Coordinate();
-
+                if (jsonObject == null)return coordinate;
                 coordinate.setCoId(jsonObject.optString("item_id"));
                 coordinate.setLongitude(jsonObject.optString("longitude"));
                 coordinate.setLatitude(jsonObject.optString("latitude"));

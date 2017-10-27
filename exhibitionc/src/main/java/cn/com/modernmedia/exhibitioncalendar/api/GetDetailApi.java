@@ -1,7 +1,6 @@
 package cn.com.modernmedia.exhibitioncalendar.api;
 
 import android.content.Context;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -10,6 +9,7 @@ import cn.com.modernmedia.corelib.http.BaseApi;
 import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.exhibitioncalendar.MyApplication;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
+import cn.com.modernmedia.exhibitioncalendar.model.MuseumListModel.MuseumModel;
 
 /**
  * 获取展览详情接口
@@ -20,15 +20,21 @@ public class GetDetailApi extends BaseApi {
 
 
     private CalendarModel calendarModel = new CalendarModel();
+    private MuseumModel museumModel = new MuseumModel();
     private String post;
+    private int type = 0;// 0：展览 1：展馆
 
-    public GetDetailApi(Context c, String id) {
+    public GetDetailApi(Context c, String id, int type) {
+        this.type = type;
         try {
             JSONObject postObject = new JSONObject();
             addPostParams(postObject, "appid", MyApplication.APPID + "");
-            addPostParams(postObject, "version", Tools.getAppVersion(c));
-            addPostParams(postObject, "item_id", id);
-
+            if (type == 0) {
+                addPostParams(postObject, "version", Tools.getAppVersion(c));
+                addPostParams(postObject, "item_id", id);
+            } else if (type == 1) {
+                addPostParams(postObject, "museum_id", id);
+            }
             setPostParams(postObject.toString());
         } catch (Exception e) {
             e.printStackTrace();
@@ -36,8 +42,12 @@ public class GetDetailApi extends BaseApi {
 
     }
 
-    public CalendarModel getDetail() {
+    public CalendarModel getCalendarDetail() {
         return calendarModel;
+    }
+
+    public MuseumModel getMuseumDetail() {
+        return museumModel;
     }
 
     @Override
@@ -52,18 +62,23 @@ public class GetDetailApi extends BaseApi {
     @Override
     protected void handler(JSONObject jsonObject) {
         if (jsonObject == null) return;
-        JSONArray jsonArray = jsonObject.optJSONArray("item");
-        if (jsonArray == null || jsonArray.length() == 0) return;
 
+        if (type == 0) {
+            JSONArray jsonArray = jsonObject.optJSONArray("item");
+            if (jsonArray == null || jsonArray.length() == 0) return;
+            calendarModel = CalendarModel.parseCalendarModel(calendarModel, jsonArray.optJSONObject(0));
+        } else if (type == 1) {
+            museumModel = MuseumModel.parseMuseumModel(museumModel, jsonObject);
 
-        calendarModel = CalendarModel.parseCalendarModel(calendarModel, jsonArray.optJSONObject(0));
-        Log.e("GetDetailApi", jsonObject.toString());
+        }
 
     }
 
     @Override
     protected String getUrl() {
-        return UrlMaker.getExhibitionDetail();
+        if (type == 0) return UrlMaker.getExhibitionDetail();
+        else if (type == 1) return UrlMaker.getMuseumDetail();
+        return "";
     }
 
     @Override

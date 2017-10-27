@@ -35,7 +35,7 @@ import cn.com.modernmedia.exhibitioncalendar.adapter.CoverVPAdapter;
 import cn.com.modernmedia.exhibitioncalendar.adapter.DetailVPAdapter;
 import cn.com.modernmedia.exhibitioncalendar.adapter.VerticleVPAdapter;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
-import cn.com.modernmedia.exhibitioncalendar.api.HandleFavApi;
+import cn.com.modernmedia.exhibitioncalendar.api.user.HandleFavApi;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
 import cn.com.modernmedia.exhibitioncalendar.model.TagListModel;
@@ -61,7 +61,6 @@ public class MainActivity extends BaseActivity {
     private TextView weatherTxt, actionButton, myNum;
     public ApiController apiController;
     public WeatherModel weatherModel;
-    private TagListModel tagListModel;
     private MainCityListScrollView mainCityListScrollView;
     private CalendarListModel calendarListModel;// 首页推荐数据
     private ViewPager coverPager, detailPager;
@@ -95,7 +94,9 @@ public class MainActivity extends BaseActivity {
                     weatherTxt.setText(weatherModel.getDesc());
                     break;
                 case 1:// 城市数据
-                    mainCityListScrollView.setData(tagListModel.getHouseOrCities());
+                    if (AppValue.allCitys.getUsers().size() > 5)
+                        mainCityListScrollView.setData(AppValue.allCitys.getUsers().subList(0, 5));
+                    else mainCityListScrollView.setData(AppValue.allCitys.getUsers());
                     break;
                 case 2:// 初始化首页推荐数据
                     if (calendarListModel != null) {
@@ -170,14 +171,14 @@ public class MainActivity extends BaseActivity {
         title.setText(item.getTitle());
         // 显示用户自己设置的时间
         if (!TextUtils.isEmpty(item.getTime())) {
-            date.setText(Tools.format(Long.parseLong(item.getTime()) * 1000, "yyyy-MM-dd HH:mm"));
+            date.setText(item.getTime());
         } else
             date.setText(Tools.getStringToDate(item.getStartTime()) + "-" + Tools.getStringToDate(item.getEndTime()));
 
         if (ParseUtil.listNotNull(item.getCitylist())) {
             city.setText(item.getCitylist().get(0).getTagName());
         }
-        MyApplication.finalBitmap.display(img, item.getImg());
+        MyApplication.finalBitmap.display(img, item.getCoverImg());
         final ImageView sandian = viewHolder.getView(R.id.sandian);
         sandian.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -266,7 +267,6 @@ public class MainActivity extends BaseActivity {
             @Override
             public void setData(Entry entry) {
                 if (entry != null && entry instanceof TagListModel) {
-                    tagListModel = (TagListModel) entry;
                     handler.sendEmptyMessage(1);
                 }
             }
@@ -286,6 +286,13 @@ public class MainActivity extends BaseActivity {
             public void setData(Entry entry) {
                 if (entry != null && entry instanceof CalendarListModel) {
                 }
+            }
+        });
+
+        apiController.getMuseumList(this, new FetchEntryListener() {
+            @Override
+            public void setData(Entry entry) {
+
             }
         });
         initUserData();
@@ -310,9 +317,7 @@ public class MainActivity extends BaseActivity {
         myListLayout = (LinearLayout) page2.findViewById(R.id.ceshi);
         page2.findViewById(R.id.main_add).setOnClickListener(this);
         page1.findViewById(R.id.main_godown).setOnClickListener(this);
-        ((TextView) page1.findViewById(R.id.main_date)).setText(Tools.format(System.currentTimeMillis(), "dd"));
-        ((TextView) page1.findViewById(R.id.main_month)).setText(Tools.getEnDate());
-        ((TextView) page1.findViewById(R.id.main_week)).setText(Tools.getChinaDate());
+        page1.findViewById(R.id.my_vip_level).setOnClickListener(this);
         myNum = (TextView) page1.findViewById(R.id.main_calendar_num);
         mainCityListScrollView = (MainCityListScrollView) page1.findViewById(R.id.main_city_listview);
         weatherImg = (ImageView) page1.findViewById(R.id.main_weather_img);
@@ -330,10 +335,8 @@ public class MainActivity extends BaseActivity {
                     if (currentPosition > 0) {
                         coverPager.setCurrentItem(currentPosition - 1);
                     }
-                    Log.e("lllllllll", "zuo");
                 } else {
                     if (currentPosition < 4) coverPager.setCurrentItem(currentPosition + 1);
-                    Log.e("lllllllll", "you");
                 }
             }
 
@@ -419,7 +422,11 @@ public class MainActivity extends BaseActivity {
             case R.id.main_add:// 添加红按钮
                 startActivity(new Intent(MainActivity.this, CalendarListActivity.class));
                 break;
+            case R.id.my_vip_level:
 
+                startActivity(new Intent(MainActivity.this, MyVipActivity.class));
+
+                break;
             case R.id.main_godown://
                 verticalViewPager.setCurrentItem(1);
                 break;
@@ -491,15 +498,19 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         NewPushManager.getInstance(this).onresume(this);
-        if (CommonApplication.loginStatusChange) {
-            Log.e("登录状态变化", "登录状态变化");
+        if (CommonApplication.loginStatusChange == 2) {
+            Log.e("登录状态变化", "重新请求我的展览列表");
             initUserData();
-            CommonApplication.loginStatusChange = false;
-
+        } else if (CommonApplication.loginStatusChange == 1) {
+            Log.e("我的展览状态变化", "刷新页面");
+            // 更新我的展览列表
+            handler.sendEmptyMessage(3);
+        } else if (CommonApplication.loginStatusChange == 3) {
+            Log.e("我的城市收藏状态变化", "刷新页面");
+            handler.sendEmptyMessage(1);
         }
-        // 更新我的展览列表
-        handler.sendEmptyMessage(3);
 
+        CommonApplication.loginStatusChange = 0;
 
     }
 

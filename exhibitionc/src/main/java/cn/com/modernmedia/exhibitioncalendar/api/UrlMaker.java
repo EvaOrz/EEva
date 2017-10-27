@@ -17,30 +17,48 @@ public class UrlMaker {
      * Host信息
      **/
     public static String HOST;
-    private static String calendarHomePage = "https://artcalendar.bbwc.cn/html/artCalendar/index.html";
-    private static String calendarDetailPage = "https://artcalendar.bbwc.cn/html/artCalendar/detail.html";
-    public static String calendarAboutPage = "https://artcalendar.bbwc.cn/html/artCalendar/about.html";
-    private static String calendarTagPage = "https://artcalendar.bbwc.cn/html/editartCalendar/index.html";
-
-    private static String calendarHomePageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/index.html";
-    private static String calendarDetailPageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/detail.html";
-    private static String calendarTagPageDev = "https://artcalendar-test.bbwc.cn/html/editartCalendar/index.html";
     private static String API_URL;
     private static String USER_MODEL_URL;
+    private static String PRODUCT_URL = "";// 付费相关
+
+    // 正式环境
+    private static String calendarHomePage = "https://artcalendar.bbwc.cn/html/artCalendar/html/index.html";
+    private static String calendarDetailPage = "https://artcalendar.bbwc.cn/html/artCalendar/detail.html";
+    public static String calendarAboutPage = "https://artcalendar.bbwc.cn/html/artCalendar/about.html";
+    private static String calendarTagPage = "https://artcalendar.bbwc.cn/html/artCalendar/html/topic.html?topic_id=";
+    private static String calendarDetailActivePage = "https://artcalendar.bbwc.cn/html/artCalendar/html/activity.html?active_id=";
+    private static String calendarHomeMuseumPage = "http://artcalendar.bbwc.cn/html/artCalendar/html/museum_list.html";
+    private static String calendarDetailMuseumPage = "http://artcalendar.bbwc" + ".cn/html/artCalendar/html/museum_detail.html?itemid=";
+
+    // 测试环境
+    private static String calendarHomePageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/html/index.html";
+    private static String calendarDetailPageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/detail.html";
+    private static String calendarTagPageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/html/topic.html?topic_id=";
+    private static String calendarDetailActivePageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/html/activity.html?active_id=";
+    private static String calendarHomeMuseumPageDev = "http://artcalendar-test.bbwc.cn/html/artCalendar/html/museum_list.html";
+    private static String calendarDetailMuseumPageDev = "http://artcalendar-test.bbwc.cn/html/artCalendar/html/museum_detail.html?itemid=";
+
+    // 编辑环境
+    private static String calendarDetailActivePageEdit = "https://artcalendar.bbwc.cn/html/editartCalendar/html/activity.html?active_id=";
+    private static String calendarHomeMuseumPageEdit = "http://artcalendar.bbwc.cn/html/editartCalendar/html/museum_list.html";
+    private static String calendarDetailMuseumPageEdit = "http://artcalendar.bbwc.cn/html/editartCalendar/html/museum_detail.html?museum_id=";
 
     /**
      * 初始化host
      */
     public static void setHost() {
         if (MyApplication.DEBUG == 0) {// 线上环境
-            HOST = "https://artcalendar.bbwc.cn/";
+            HOST = "https://artcalendar.bbwc.cn";
             USER_MODEL_URL = "http://user.bbwc.cn/interface/index.php";
+            API_URL = HOST + "/index/api3/";
+            PRODUCT_URL = "https://buy.bbwc.cn";
 
         } else if (MyApplication.DEBUG == 1) {// inhouse环境
-            HOST = "https://artcalendar-test.bbwc.cn/";
-            USER_MODEL_URL = "http://user.test.bbwc.cn/interface/index.php";
+            HOST = "https://artcalendar-test.bbwc.cn";
+            USER_MODEL_URL = "http://user-test.bbwc.cn/interface/index.php";
+            API_URL = HOST + "/index/edit/";
+            PRODUCT_URL = "https://buy-test.bbwc.cn";
         }
-        API_URL = HOST + "index/api/";
     }
 
     public static String getDetailPage() {
@@ -52,6 +70,36 @@ public class UrlMaker {
         return calendarDetailPage;
     }
 
+    /**
+     * 获取全部展馆
+     *
+     * @return
+     */
+    public static String getZhanguanList() {
+        if (MyApplication.DEBUG == 0) {
+            return calendarHomeMuseumPage;
+        } else if (MyApplication.DEBUG == 1) {
+            return calendarHomeMuseumPageDev;
+        }
+        return "";
+    }
+
+    /**
+     * 获取展馆详情
+     *
+     * @param id
+     * @return
+     */
+    public static String getZhanguanDetail(String id) {
+        if (MyApplication.DEBUG == 0) {
+            return calendarDetailMuseumPage + id;
+        } else if (MyApplication.DEBUG == 1) {
+            return calendarDetailMuseumPageDev + id;
+        }
+        Log.e("展馆详情", calendarDetailMuseumPage + id);
+        return "";
+    }
+
     public static String getHomePage() {
         if (MyApplication.DEBUG == 0) {
             return calendarHomePage;
@@ -61,11 +109,11 @@ public class UrlMaker {
         return calendarHomePage;
     }
 
-    public static String getTagPage() {
+    public static String getTagPage(String tagId) {
         if (MyApplication.DEBUG == 0) {
-            return calendarTagPage;
+            return calendarTagPage + tagId;
         } else if (MyApplication.DEBUG == 1) {
-            return calendarTagPageDev;
+            return calendarTagPageDev + tagId;
         }
         return calendarTagPage;
     }
@@ -223,13 +271,14 @@ public class UrlMaker {
         return API_URL + "citydel?datatype=" + ConstData.DATA_TYPE;
     }
 
+
     /**
-     * 获取用户城市列表
+     * 全部城市列表
      *
      * @return
      */
-    public static String getUserCitys() {
-        return API_URL + "mycity?datatype=" + ConstData.DATA_TYPE;
+    public static String getAllCitys() {
+        return API_URL + "citylist?datatype=" + ConstData.DATA_TYPE;
     }
 
     /**
@@ -250,6 +299,7 @@ public class UrlMaker {
         return API_URL + "details?datatype=" + ConstData.DATA_TYPE;
     }
 
+
     /**
      * 获取展览列表接口
      *
@@ -257,6 +307,16 @@ public class UrlMaker {
      */
     public static String getAllList() {
         return API_URL + "itemlist?datatype=" + ConstData.DATA_TYPE;
+    }
+
+    /**
+     * 获取展馆列表接口
+     *
+     * @return
+     */
+    public static String getMuseumList() {
+        return API_URL + "museumlist?datatype=" + ConstData.DATA_TYPE;
+
     }
 
     /**
@@ -353,6 +413,62 @@ public class UrlMaker {
      * @return
      */
     public static String getShareWebUrl(String shareId) {
-        return HOST + "api/share?id=" + shareId;
+        return API_URL + "share?id=" + shareId;
+    }
+
+
+    public static String getMuseumDetail() {
+        return API_URL + "museumdetails?datatype=" + ConstData.DATA_TYPE;
+    }
+
+    /**
+     * 修改VIP邮寄地址 edit
+     *
+     * @return
+     */
+    public static String editAddress() {
+        return USER_MODEL_URL + "/useraddress/edit?datatype=" + ConstData.DATA_TYPE;
+    }
+
+    /**
+     * 新添加VIP邮寄地址 add
+     *
+     * @return
+     */
+    public static String addAddress() {
+        return USER_MODEL_URL + "/useraddress/add?datatype=" + ConstData.DATA_TYPE;
+    }
+    /**
+     * 获取VIP邮寄地址 list
+     *
+     * @return
+     */
+    public static String listddress() {
+        return USER_MODEL_URL + "/useraddress/list?datatype=" + ConstData.DATA_TYPE;
+    }
+
+
+    /**
+     * 新支付：更新订单状态
+     * type :1- weixin 2- zhifubao
+     */
+    public static String newUpdateOrderStatus(int type) {
+        return PRODUCT_URL + "/order/pay/type/" + type + "?datatype=" + ConstData.DATA_TYPE;
+    }
+
+    /**
+     * 新支付：获取订单
+     * type :1- weixin 2- zhifubao
+     */
+    public static String newGetOrder(int type) {
+        return PRODUCT_URL + "/order/add/type/" + type + "?datatype=" + ConstData.DATA_TYPE;
+    }
+
+    /**
+     * 获取套餐列表
+     * @return
+     */
+    public static String getVipProducts(){
+        return API_URL+"viphome?datatype="+ ConstData.DATA_TYPE;
     }
 }

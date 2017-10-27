@@ -66,6 +66,8 @@ public class SettingActivity extends BaseActivity implements EvaSwitchBar.OnChan
 
         pushSwitch.setChecked(ifPush);
 
+        findViewById(R.id.settings_test).setOnClickListener(this);
+
         autoLoop.setOnChangeListener(this);
         wifiVedio.setOnChangeListener(this);
         pushSwitch.setOnChangeListener(this);
@@ -80,6 +82,10 @@ public class SettingActivity extends BaseActivity implements EvaSwitchBar.OnChan
 
         } else if (v.getId() == R.id.setting_back) {
             finish();
+        } else if (v.getId() == R.id.settings_test) {
+//            UriParse.doLinkWeb(SettingActivity.this, "http://artcalendar.bbwc" + "" +
+//                    ".cn/html/artCalendar/html/museum_detail.html?museum_id=1541",
+//                    SettingActivity.class);
         }
     }
 
@@ -164,7 +170,6 @@ public class SettingActivity extends BaseActivity implements EvaSwitchBar.OnChan
     }
 
     public void resumePush() {
-
         Log.e("极光恢复", "极光恢复推送");
         JPushInterface.resumePush(getApplicationContext());
         Log.e("极光恢复推送", JPushInterface.isPushStopped(getApplicationContext()) ? "停止" : "开启");

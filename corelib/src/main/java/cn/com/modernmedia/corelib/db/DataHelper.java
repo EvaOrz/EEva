@@ -6,6 +6,9 @@ import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import cn.com.modernmedia.corelib.model.UserModel;
 
 
@@ -29,7 +32,6 @@ public class DataHelper {
     public static final String TOKEN = "token";
     public static final String NICKNAME = "nickname";
     public static final String ISSUELEVEL = "issuelevel";
-    public static final String END_TIME = "end_time";
     public static final String DESC = "desc";
     public static final String IS_EMAIL_PUSHED = "email_push";
     public static final String REALNAME = "realname";
@@ -49,17 +51,12 @@ public class DataHelper {
     public static final String USER_STATUS = "user_status";
     public static final String UNION_ID = "union_id";//微信unionid
     public static final String OPEN_ID = "open_id";//整合第三方openid
-    public static final String ISVIP = "isVip";
-    public static final String VIPPID = "vipPid";
-    public static final String PID = "pid";
     public static final String EBOOKENDTIME = "ebookendtime";
-    public static final String CODE_TITLE = "title";//激活成功提示语
-    public static final String CODE_ISVIP = "isvip";//激活码是否兑换vip
-    public static final String CODE_NEEDADDRESS = "needaddress";//激活码是否需要地址
-    public static final String ADDRESS_ID = "address_id";//用户邮寄地址id
-
+    public static final String PUSH_TOKEN = "push_token";// 推送token
     public static final String ADV_TIME = "adv_time";//入版广告时间
     public static final String UUID = "uuid";
+    public static final String VIPLEVEL = "vip_level";// vip身份
+    public static final String ADDRESS_ID = "address_id";//用户邮寄地址id
 
     public static final String LAST_LOGIN_USERNAME = "last_login_username";// 上次登录账号
     public static final String NEW_LOGIN = "new_login";//整合第三方
@@ -71,6 +68,8 @@ public class DataHelper {
      * 广告更新时间
      */
     private static final String ADV_UPDATETIME = "adv_updatetime";
+
+    public static final String BUSINESSWEEK_CRT = "businessweek_crt";// 商周证书
 
 
     private static SharedPreferences mPref;
@@ -206,6 +205,8 @@ public class DataHelper {
         editor.putString(UNION_ID, "");
         editor.putString(OPEN_ID, "");
         editor.putLong(EBOOKENDTIME, 0);
+        editor.putInt(VIPLEVEL,0);
+        editor.putString(BUSINESSWEEK_CRT, "");
         editor.commit();
     }
 
@@ -421,6 +422,30 @@ public class DataHelper {
         editor.putBoolean(INDEX_HEAD_AUTO_LOOP, ifAuto);
         editor.commit();
     }
+    /**
+     * 存用户的address_id
+     */
+    public static void setAddressId(Context context, String address_id) {
+        Editor editor = getPref(context).edit();
+        editor.putString(ADDRESS_ID, address_id);
+        editor.commit();
+    }
+
+    /**
+     * 获取激活成功的needaddress
+     */
+    public static String getAddressId(Context context) {
+        return getPref(context).getString(ADDRESS_ID, "");
+    }
+
+    /**
+     * 清除激活码address_id
+     */
+    public static void cleanAddressId(Context context) {
+        Editor editor = getPref(context).edit();
+        editor.putString(ADDRESS_ID, "");
+        editor.commit();
+    }
 
 
     /**
@@ -442,5 +467,173 @@ public class DataHelper {
         Editor editor = getPref(context).edit();
         editor.putBoolean(WIFI_AUTO_PLAY_VEDIO, ifAuto);
         editor.commit();
+    }
+
+    /**
+     * 获取某个level的权限以及到期情况
+     *
+     * @return
+     */
+    public static boolean getLevelByType(Context context, int type) {
+        boolean hasLevel = false;
+        String data = getPref(context).getString(BUSINESSWEEK_CRT, "");
+        if (TextUtils.isEmpty(data)) return hasLevel;
+        try {
+            JSONObject jsonObject = new JSONObject(data);
+            JSONArray array = jsonObject.optJSONArray("item");
+            // 遍历
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject object = array.optJSONObject(i);
+                if (object.optInt("level") == type) {//vip升级关键词
+                    Long endTime = jsonObject.optLong("endTime");
+                    if (endTime * 1000L > System.currentTimeMillis()) {
+                        hasLevel = true;
+                    }
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return hasLevel;
+    }
+
+    /**
+     * 获取某种权限的到期时间
+     *
+     * @param context
+     * @param type
+     * @return
+     */
+    public static long getEndTimeByType(Context context, int type) {
+        long endTime = 0;
+        String data = getPref(context).getString(BUSINESSWEEK_CRT, "");
+        if (TextUtils.isEmpty(data)) return endTime;
+        try {
+            JSONObject jsonObject = new JSONObject(data);
+            JSONArray array = jsonObject.optJSONArray("item");
+            // 遍历
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject object = array.optJSONObject(i);
+                if (object.optInt("level") == type) {//vip升级关键词
+                    long ss = jsonObject.optLong("endTime");
+                    if (ss * 1000L > System.currentTimeMillis()) {
+                        endTime = ss;
+                    }
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return endTime;
+    }
+
+
+    /**
+     * 存储提交失败的订单
+     *
+     * @param context
+     * @param order   -- DES算法加密后的订单信息
+     * @return
+     */
+    public static void setOrder(Context context, String aliOrWeixin, String order) {
+        Editor editor = getPref(context).edit();
+        editor.putString(aliOrWeixin, order);
+        editor.commit();
+    }
+
+    /**
+     * 清除本地订单
+     *
+     * @param context
+     * @param aliOrWeixin
+     */
+    public static void clearOrder(Context context, String aliOrWeixin) {
+        Editor editor = getPref(context).edit();
+        editor.putString(aliOrWeixin, null);
+        editor.commit();
+    }
+
+
+    /**
+     * 获取未提交订单
+     *
+     * @param context
+     * @param aliOrWeixin 参数是“alipay”或者“weixin”
+     * @return
+     */
+    public static String getOrder(Context context, String aliOrWeixin) {
+        return getPref(context).getString(aliOrWeixin, null);
+    }
+
+    /**
+     * 存储商周证书
+     *
+     * @param context
+     * @param json
+     */
+    public static void saveBusinessWeekCrt(Context context, String json) {
+        if (TextUtils.isEmpty(json)) return;
+        Editor editor = getPref(context).edit();
+        editor.putString(BUSINESSWEEK_CRT, json);
+
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            int isVip = jsonObject.optInt("isVip", 0);//0:小白 -1:各种过期 1：vip
+            String pid = jsonObject.optString("vipPid");// 之前购买的vip套餐
+            long endTime = jsonObject.optLong("userEndTime");// vip到期时间
+            editor.putLong(VIP_END_TIME, endTime);
+            int viplevel = 0;
+            if (isVip == 1 && !TextUtils.isEmpty(pid)) {// vip
+                if (endTime * 1000 > System.currentTimeMillis()) {// 有效期内
+                    if (pid.equals("app1_vip_1")) {
+                        viplevel = 1;
+                    } else if (pid.equals("app1_vip_2")) {
+                        viplevel = 2;
+                    } else if (pid.equals("app1_vip_3")) {
+                        viplevel = 3;
+                    }
+                } else {
+                    viplevel = -1;
+                }
+
+            }
+            editor.putInt(VIPLEVEL, viplevel);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        editor.commit();
+    }
+    /**
+     * 通过权限接口获得 VIP身份
+     *
+     * @param context
+     * @return
+     */
+    public static int getVipLevel(Context context) {
+        return getPref(context).getInt(VIPLEVEL, 0);
+    }
+
+    /**
+     * 存push token
+     *
+     * @param context
+     * @param token
+     */
+    public static void setPushToken(Context context, String token) {
+        Editor editor = getPref(context).edit();
+        editor.putString(PUSH_TOKEN, token);
+        editor.commit();
+    }
+
+    /**
+     * 取push token
+     *
+     * @param context
+     * @return
+     */
+    public static String getPushToken(Context context) {
+        return getPref(context).getString(PUSH_TOKEN, "");
     }
 }

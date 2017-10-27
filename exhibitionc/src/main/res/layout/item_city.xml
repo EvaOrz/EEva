@@ -1,47 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
+              android:gravity="center_horizontal"
               android:layout_height="match_parent"
+              android:padding="5dp"
               android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
 
-        android:layout_height="wrap_content">
 
         <LinearLayout
-            android:id="@+id/city_icon"
-            android:layout_width="58dp"
-            android:layout_height="58dp"
-            android:layout_marginRight="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/city_round"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+           >
 
-            <TextView
-                android:id="@+id/city_name"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_14"/>
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+                <ImageView
+                    android:id="@+id/city_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_height="wrap_content"/>
 
-            <TextView
-                android:id="@+id/city_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_12"/>
+                <TextView
+                    android:id="@+id/city_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:lines="1"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_alignParentBottom="true"
+                    android:textSize="@dimen/text_size_12"/>
+
+            </LinearLayout>
+
+
+
+
+
+
 
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/city_tian"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="5dp"
-            android:src="@mipmap/baitian"/>
 
-    </RelativeLayout>
+
 
 
 </LinearLayout>

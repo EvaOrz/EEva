@@ -76,7 +76,7 @@
                 android:id="@+id/map_back"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@mipmap/back_white"/>
+                android:src="@mipmap/left_back"/>
 
             <ImageView
                 android:id="@+id/map_daohang"

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -96,9 +95,8 @@ public class MyListActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        if (CommonApplication.loginStatusChange) {
-            Log.e("My_list_login", "loginStatusChange");
+// 登录状态改变
+        if (CommonApplication.loginStatusChange  == 2) {
             initData(true);
         }
     }

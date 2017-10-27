@@ -1,10 +1,18 @@
 package cn.com.modernmedia.corelib.webridge;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import cn.com.modernmedia.corelib.CommonApplication;
+import cn.com.modernmedia.corelib.db.DataHelper;
+import cn.com.modernmedia.corelib.model.UserModel;
+import cn.com.modernmedia.corelib.util.ConstData;
+import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.corelib.webridge.WBWebridge.AsynExecuteCommandListener;
 
 
@@ -35,6 +43,35 @@ public class WBWebridgeImplement implements WBWebridgeListener {
         if (listener != null) {
             try {
 
+
+                Intent i = new Intent();
+                i.putExtra("share_json", json.toString());
+                i.setAction("show_share_dialog");
+                mContext.sendBroadcast(i);
+
+
+                json.put("shareResult", true);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            listener.onCallBack(json.toString());
+        }
+    }
+
+    /**
+     * {"eval":{"command":"openMap","params":{"title":"林冠艺术基金会","latitude":"39.9929660","longitude":"116.5021170","addr":"中国北京市朝阳区酒仙桥路2号798艺术区","image":"http://7xl6wr.com2.z0.glb.qiniucdn.com/1508145410186917.png"},"sequence":7}}
+     */
+    public void openMap(JSONObject json, AsynExecuteCommandListener listener) {
+        if (listener != null) {
+            try {
+
+
+                Intent i = new Intent();
+                i.putExtra("open_map", json.toString());
+                i.setAction("open_map_activity");
+                mContext.sendBroadcast(i);
+
+
                 json.put("shareResult", true);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -50,19 +87,82 @@ public class WBWebridgeImplement implements WBWebridgeListener {
      * @param json {"level":0}
      */
     public void isPaid(JSONObject json, AsynExecuteCommandListener listener) {
+        if (listener != null) {
+            JSONObject result = new JSONObject();
+            try {
+                if (DataHelper.getLevelByType(mContext, 1)) result.put("isPaid", true);
 
+                else result.put("isPaid", false);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            listener.onCallBack(result.toString());
+        }
     }
 
     public void isPaidForLevel(JSONObject json, AsynExecuteCommandListener listener) {
+        if (listener != null) {
+            JSONObject result = new JSONObject();
+            try {
+                if (DataHelper.getLevelByType(mContext, 1)) {
+                    result.put("isPaid", true);
+                    result.put("expire", DataHelper.getEndTimeByType(mContext, 1));
 
+                } else result.put("isPaid", false);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            listener.onCallBack(result.toString());
+        }
     }
 
-
-    public void queryAppInfo(AsynExecuteCommandListener listener) {
-
-    }
 
     public void domReady(JSONObject json, AsynExecuteCommandListener listener) {
+
+    }
+
+    /**
+     * js 查询登录状态
+     *
+     * @param listener
+     */
+    public void queryLoginStatus(JSONObject s, AsynExecuteCommandListener listener) {
+
+        if (listener != null) {
+
+            JSONObject result = new JSONObject();
+            try {
+                UserModel u = DataHelper.getUserLoginInfo(mContext);
+                if (u == null) result.put("loginStatus", false);
+                else {
+                    result.put("loginStatus", true);
+
+                    JSONObject uJson = new JSONObject();
+                    uJson.put("userId", u.getUid());
+                    uJson.put("userToken", u.getToken());
+                    result.put("user", uJson);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            listener.onCallBack(result.toString());
+        }
+
+
+    }
+
+    /**
+     * js 调用原生登录
+     */
+    public void login(String s, AsynExecuteCommandListener listener) {
+
+        if (listener != null) CommonApplication.asynExecuteCommandListener = listener;
+
+        Intent i = new Intent();
+        i.setAction("cn.com.modernmediausermodel.LoginActivity_nomal");
+        mContext.sendBroadcast(i);
 
     }
 
@@ -71,28 +171,28 @@ public class WBWebridgeImplement implements WBWebridgeListener {
      *
      * @param listener
      */
-    public void queryAppInfo(JSONObject json, AsynExecuteCommandListener listener) {
+    public void queryAppInfo(String s, AsynExecuteCommandListener listener) {
         if (listener != null) {
 
             JSONObject result = new JSONObject();
-//            try {
-//                PackageManager packageManager = mContext.getPackageManager();
-//                PackageInfo info = packageManager.getPackageInfo(mContext.getPackageName(), PackageManager.GET_META_DATA);
-//                result.put("appID", ConstData.getInitialAppId());
-//                result.put("deviceUUID", CommonApplication.getMyUUID());
-//                result.put("appMode", ConstData.IS_DEBUG);
-//                result.put("appApiVersion", ConstData.API_VERSION);
-//                result.put("appDisplayName", info.applicationInfo.loadLabel(packageManager));
-//                result.put("appBundleName", "");
-//                result.put("appVersion", info.versionName);
-//                result.put("appBuild", info.versionCode);
+            try {
+                PackageManager packageManager = mContext.getPackageManager();
+                PackageInfo info = packageManager.getPackageInfo(mContext.getPackageName(), PackageManager.GET_META_DATA);
+                result.put("appID", CommonApplication.APP_ID);
+                result.put("deviceUUID", Tools.getMyUUID(mContext));
+                result.put("appMode", CommonApplication.DEBUG);
+                result.put("appApiVersion", ConstData.API_VERSION);
+                result.put("appDisplayName", info.applicationInfo.loadLabel(packageManager));
+                result.put("appBundleName", "");
+                result.put("appVersion", info.versionName);
+                result.put("appBuild", info.versionCode);
 
 
-//            } catch (JSONException e) {
-            //                e.printStackTrace();
-            //            } catch (PackageManager.NameNotFoundException e) {
-            //                e.printStackTrace();
-            //            }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
             listener.onCallBack(result.toString());
         }
     }
@@ -100,7 +200,6 @@ public class WBWebridgeImplement implements WBWebridgeListener {
     public void uploadPics(JSONObject json, AsynExecuteCommandListener listener) {
         if (listener != null) {
             JSONObject result = new JSONObject();
-//            mContext.startActivity(new Intent(mContext, UploadPicsActivity.class));
             listener.onCallBack(result.toString());
         }
     }
@@ -115,6 +214,55 @@ public class WBWebridgeImplement implements WBWebridgeListener {
 
 
             json.put("shareResult", true);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        listener.onCallBack(json.toString());
+    }
+
+    /**
+     * js调用vip支付
+     * "params": {
+     * "goodId": "event_10000",
+     * "goodName": "金融创新与人民币国际化论坛",
+     * "price": 100,
+     * "needTel": "0"
+     * },
+     * <p>
+     * 返回值
+     * {
+     * "result":{
+     * “success": true/false,
+     * "data":{
+     * "uid":uid,              // uid
+     * "appid":appid,          // appid
+     * "pid":pid,              // pid
+     * "tradeNum":tradeNum,    // 订单号
+     * "tradeName":tradeName,  // 产品名称
+     * "tradeType":tradeType,  // 支付方式(1微信,2阿里,5applePay)
+     * "tradePrice":tradePrice // 价格
+     * }
+     * },
+     * "error": error
+     * }
+     */
+    public void slatePay(JSONObject json, AsynExecuteCommandListener listener) {
+        if (json == null) return;
+
+        CommonApplication.asynExecuteCommandListener = listener;
+
+    }
+
+    /**
+     * js调用渠道号
+     */
+    public void getChannel(JSONObject json, AsynExecuteCommandListener listener) {
+
+        try {
+            JSONObject result = new JSONObject();
+
+
+            result.put("businessweek_channel", CommonApplication.CHANNEL);
         } catch (JSONException e) {
             e.printStackTrace();
         }

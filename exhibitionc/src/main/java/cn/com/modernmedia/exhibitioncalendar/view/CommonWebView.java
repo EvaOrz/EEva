@@ -30,7 +30,7 @@ import java.util.List;
 
 import cn.com.modernmedia.corelib.model.Entry;
 import cn.com.modernmedia.corelib.webridge.WBWebView;
-import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
+import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel;
 import cn.com.modernmedia.exhibitioncalendar.util.UriParse;
 
 /**
@@ -44,9 +44,9 @@ public class CommonWebView extends WBWebView {
     private boolean loadOk = true;
     private Context mContext;
     private boolean isChangeStatus = false;
+    private CalendarListModel.CalendarModel detail;
     private WebProcessListener listener;
     private boolean isFetchNull = false;
-    private CalendarModel calendarModel;
     private List<String> urlList = new ArrayList<String>();// 图片列表
     private List<String> descList = new ArrayList<String>();// 描述列表
     private boolean hasLoadFromHttp = false;// 防止无限获取http
@@ -90,6 +90,11 @@ public class CommonWebView extends WBWebView {
         }
     }
 
+    public void setCalendar(CalendarListModel.CalendarModel calendar){
+        this.detail = calendar;
+
+    }
+
     private void init(boolean bgIsTransparent) {
         me = this;
         if (bgIsTransparent) this.setBackgroundColor(0);// 设置webview本身的白色背景为透明，以显示在它下面的view
@@ -120,7 +125,6 @@ public class CommonWebView extends WBWebView {
                             if (!isError) showErrorType(0);
                         }
                     }, 500);
-                    view.loadUrl("javascript:window.local_obj.showSource(document.getElementsByTagName('head')[0].innerHTML)");
 
                     targetUrl = url;
                 }
@@ -136,7 +140,7 @@ public class CommonWebView extends WBWebView {
 
                 if (url.startsWith("slate") || url.contains("map.html")) {
                     //                if (url.startsWith("slate")) {
-                    UriParse.clickSlate(mContext, url, new Entry[]{calendarModel}, me);
+                    UriParse.clickSlate(mContext, url, new Entry[]{detail}, me);
                     return true;
                 } else if (url.startsWith("http") || url.startsWith("https")) {
                     targetUrl = url;
@@ -371,9 +375,6 @@ public class CommonWebView extends WBWebView {
         }
     }
 
-    public void setCalendarModel(CalendarModel calendarModel) {
-        this.calendarModel = calendarModel;
-    }
 
     private String receiveData(InputStream is) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

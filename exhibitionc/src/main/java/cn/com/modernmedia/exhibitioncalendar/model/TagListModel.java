@@ -4,6 +4,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import cn.com.modernmedia.corelib.model.Entry;
@@ -13,32 +15,105 @@ import cn.com.modernmedia.corelib.model.Entry;
  */
 
 public class TagListModel extends Entry {
-    private List<HouseOrCity> houseOrCities = new ArrayList<>();
+    private List<TagInfo> areas = new ArrayList<>();
+    private List<TagInfo> citys = new ArrayList<>();
+    private List<TagInfo> users = new ArrayList<>();
 
+    public List<TagInfo> getAreas() {
+        return areas;
+    }
 
-    public static TagListModel parseTagListModel(TagListModel tagListModel, JSONObject jsonObject) {
-        List<HouseOrCity> houseOrCities = new ArrayList<>();
-        JSONArray jsonArray = jsonObject.optJSONArray("tag");
-        if (jsonArray == null) return null;
-        for (int i = 0; i < jsonArray.length(); i++) {
-            HouseOrCity c = new HouseOrCity();
-            houseOrCities.add(HouseOrCity.parseHouseOrCity(c, jsonArray.optJSONObject(i)));
+    public void setAreas(List<TagInfo> areas) {
+        this.areas = areas;
+    }
+
+    public List<TagInfo> getCitys() {
+        return citys;
+    }
+
+    public void setCitys(List<TagInfo> citys) {
+        this.citys = citys;
+    }
+
+    public List<TagInfo> getUsers() {
+        if (users == null || users.size() == 0) {
+            if (citys != null && citys.size() > 4) {
+
+                paixu(citys);
+                return citys.subList(0, 5);
+            }
 
         }
-        tagListModel.setHouseOrCities(houseOrCities);
+
+        return users;
+    }
+
+    public void setUsers(List<TagInfo> users) {
+        this.users = users;
+    }
+
+    public static TagListModel parseTagListModel(TagListModel tagListModel, JSONObject jsonObject) {
+        List<TagInfo> as = new ArrayList<>();
+        List<TagInfo> cs = new ArrayList<>();
+        List<TagInfo> us = new ArrayList<>();
+
+        JSONArray area = jsonObject.optJSONArray("area");
+        JSONArray city = jsonObject.optJSONArray("city");
+        JSONArray user = jsonObject.optJSONArray("user");
+        if (area != null && area.length() > 0) {
+            for (int i = 0; i < area.length(); i++) {
+                as.add(TagInfo.parseHouseOrCity(new TagInfo(), area.optJSONObject(i)));
+            }
+        }
+        if (city != null && city.length() > 0) {
+            for (int i = 0; i < city.length(); i++) {
+                cs.add(TagInfo.parseHouseOrCity(new TagInfo(), city.optJSONObject(i)));
+            }
+        }
+        if (user != null && user.length() > 0) {
+            for (int i = 0; i < user.length(); i++) {
+                us.add(TagInfo.parseHouseOrCity(new TagInfo(), user.optJSONObject(i)));
+            }
+        }
+        tagListModel.setAreas(as);
+        tagListModel.setCitys(cs);
+        paixu(us);
+        tagListModel.setUsers(us);
+
         return tagListModel;
     }
 
-    public List<HouseOrCity> getHouseOrCities() {
-        return houseOrCities;
+
+    /**
+     * 按照sort 属性排序
+     *
+     * @param list
+     */
+    private static void paixu(List<TagInfo> list) {
+        Collections.sort(list, new Comparator<TagInfo>() {
+
+            /*
+             * int compare(Student o1, Student o2) 返回一个基本类型的整型，
+             * 返回负数表示：o1 小于o2，
+             * 返回0 表示：o1和o2相等，
+             * 返回正数表示：o1大于o2。
+             */
+            public int compare(TagInfo o1, TagInfo o2) {
+
+                if (o1.getSort() > o2.getSort()) {
+                    return 1;
+                }
+                if (o1.getSort() == o2.getSort()) {
+                    return 0;
+                }
+                return -1;
+            }
+        });
     }
 
-    public void setHouseOrCities(List<HouseOrCity> houseOrCities) {
-        this.houseOrCities = houseOrCities;
-    }
-
-    public static class HouseOrCity extends Entry {
+    public static class TagInfo extends Entry {
         private String tagId = "";
+        private String pidTagId = "";
         private String tagName = "";
         private String tagNameEn = "";
         private String extension = "";
@@ -47,21 +122,142 @@ public class TagListModel extends Entry {
         private String timeZone = "";
         private String color = "";
         private BackImg backImg = new BackImg();
+        private String title = "";
+        private String titleImg = "";
+        private String content = "";
+        private int type;
+        private String tagIdStr = "";
+        private int museumNum;
+        private String scopeTagId = "";
+        private BackImg cityicon = new BackImg();
+        private int itemNum;
+        private BackImg cityiconWhite = new BackImg();
 
-        public HouseOrCity() {
+        private boolean isCheck = false;
+
+
+        public TagInfo() {
         }
 
-        public static HouseOrCity parseHouseOrCity(HouseOrCity houseOrCity, JSONObject jsonObject) {
-            houseOrCity.setTagId(jsonObject.optString("tag_id"));
-            houseOrCity.setTagName(jsonObject.optString("tag_name"));
-            houseOrCity.setTagNameEn(jsonObject.optString("tag_name_en"));
-            houseOrCity.setExtension(jsonObject.optString("extension"));
-            houseOrCity.setAppid(jsonObject.optInt("appid"));
-            houseOrCity.setSort(jsonObject.optInt("sort"));
-            houseOrCity.setTimeZone(jsonObject.optString("time_zone"));
-            houseOrCity.setColor(jsonObject.optString("color"));
-            houseOrCity.setBackImg(BackImg.parseBackImg(jsonObject.optJSONObject("backImg")));
-            return houseOrCity;
+        public static TagInfo parseHouseOrCity(TagInfo tagInfo, JSONObject jsonObject) {
+            tagInfo.setTagId(jsonObject.optString("tag_id"));
+            tagInfo.setPidTagId(jsonObject.optString("pid_tag_id"));
+            tagInfo.setTagName(jsonObject.optString("tag_name"));
+            tagInfo.setTagNameEn(jsonObject.optString("tag_name_en"));
+            tagInfo.setExtension(jsonObject.optString("extension"));
+            tagInfo.setAppid(jsonObject.optInt("appid"));
+            tagInfo.setSort(jsonObject.optInt("sort"));
+            tagInfo.setTimeZone(jsonObject.optString("time_zone"));
+            tagInfo.setColor(jsonObject.optString("color"));
+            tagInfo.setBackImg(BackImg.parseBackImg(jsonObject.optJSONObject("backImg")));
+            tagInfo.setTitle(jsonObject.optString("title"));
+            tagInfo.setTagIdStr(jsonObject.optString("tag_id_str"));
+            tagInfo.setTitleImg(jsonObject.optString("title_img"));
+            tagInfo.setContent(jsonObject.optString("content"));
+            tagInfo.setType(jsonObject.optInt("type"));
+            tagInfo.setMuseumNum(jsonObject.optInt("museum_num"));
+            tagInfo.setScopeTagId(jsonObject.optString("scope_tag_id"));
+            tagInfo.setCityicon(BackImg.parseBackImg(jsonObject.optJSONObject("cityicon")));
+            tagInfo.setItemNum(jsonObject.optInt("item_num"));
+            tagInfo.setCityiconWhite(BackImg.parseBackImg(jsonObject.optJSONObject("cityicon_white")));
+
+            return tagInfo;
+        }
+
+        public boolean isCheck() {
+            return isCheck;
+        }
+
+        public void setCheck(boolean check) {
+            isCheck = check;
+        }
+
+        public String getPidTagId() {
+            return pidTagId;
+        }
+
+        public void setPidTagId(String pidTagId) {
+            this.pidTagId = pidTagId;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getTitleImg() {
+            return titleImg;
+        }
+
+        public void setTitleImg(String titleImg) {
+            this.titleImg = titleImg;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public void setType(int type) {
+            this.type = type;
+        }
+
+        public String getTagIdStr() {
+            return tagIdStr;
+        }
+
+        public void setTagIdStr(String tagIdStr) {
+            this.tagIdStr = tagIdStr;
+        }
+
+        public int getMuseumNum() {
+            return museumNum;
+        }
+
+        public void setMuseumNum(int museumNum) {
+            this.museumNum = museumNum;
+        }
+
+        public String getScopeTagId() {
+            return scopeTagId;
+        }
+
+        public void setScopeTagId(String scopeTagId) {
+            this.scopeTagId = scopeTagId;
+        }
+
+        public BackImg getCityicon() {
+            return cityicon;
+        }
+
+        public void setCityicon(BackImg cityicon) {
+            this.cityicon = cityicon;
+        }
+
+        public int getItemNum() {
+            return itemNum;
+        }
+
+        public void setItemNum(int itemNum) {
+            this.itemNum = itemNum;
+        }
+
+        public BackImg getCityiconWhite() {
+            return cityiconWhite;
+        }
+
+        public void setCityiconWhite(BackImg cityiconWhite) {
+            this.cityiconWhite = cityiconWhite;
         }
 
         public String getTimeZone() {
