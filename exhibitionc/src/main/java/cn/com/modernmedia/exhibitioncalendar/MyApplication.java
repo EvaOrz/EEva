@@ -30,6 +30,7 @@ public class MyApplication extends CommonApplication {
 
     public static MuseumDetailActivity museumDetailActivity;
 
+
     /**
      * 初始化整个app的配置
      *
@@ -50,13 +51,13 @@ public class MyApplication extends CommonApplication {
     public void onCreate() {
 
         mContext = this;
-        drawCls = R.drawable.class;
+        drawCls = R.mipmap.class;
         stringCls = R.string.class;
 
-        UrlMaker.setHost();
         initMemorySize();
         APPID = 61;
-        DEBUG = 0;
+        DEBUG = 1;
+        UrlMaker.setHost();
         ConstData.setAppId(APPID);
         WEIXIN_APP_ID = "wx9320801de5f7e77a";
         WEIXIN_SECRET = "f23486b3fa95b337be103cd5edbf92b7";

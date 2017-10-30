@@ -230,12 +230,13 @@
 
         <RadioButton
             android:id="@+id/vip_pay_weixin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:button="@drawable/pay_style_selector"
-            android:padding="10dp"/>
+            android:button="@null"
+            android:background="@drawable/pay_style_selector"
+            />
     </RelativeLayout>
 
     <View
@@ -287,12 +288,13 @@
 
         <RadioButton
             android:id="@+id/vip_pay_zhifubao"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:button="@null"
+            android:background="@drawable/pay_style_selector"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:button="@drawable/pay_style_selector"
-            android:padding="10dp"/>
+            />
     </RelativeLayout>
 
     <View

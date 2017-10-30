@@ -55,7 +55,6 @@ public class GetMyListApi extends BaseApi {
     @Override
     protected void handler(JSONObject jsonObject) {
         if (isNull(jsonObject)) return;
-        Log.e("GetMyListApi", jsonObject.toString());
         ErrorMsg errorMsg = new ErrorMsg();
         JSONObject errorObject = jsonObject.optJSONObject("error");
         if (!isNull(errorObject)) {

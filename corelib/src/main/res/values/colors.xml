@@ -28,4 +28,7 @@
     <color name="wheel_2">#eaffffff</color>
     <color name="wheel_3">#33ffffff</color>
     <color name="vip_mine_pay">#cd9d4c</color>
+
+
+    <color name="vip_head_bg">#6a8492</color>
 </resources>

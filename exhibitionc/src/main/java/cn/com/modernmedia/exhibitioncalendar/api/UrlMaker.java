@@ -55,7 +55,7 @@ public class UrlMaker {
 
         } else if (MyApplication.DEBUG == 1) {// inhouse环境
             HOST = "https://artcalendar-test.bbwc.cn";
-            USER_MODEL_URL = "http://user-test.bbwc.cn/interface/index.php";
+            USER_MODEL_URL = "http://user.test.bbwc.cn/interface/index.php";
             API_URL = HOST + "/index/edit/";
             PRODUCT_URL = "https://buy-test.bbwc.cn";
         }

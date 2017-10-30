@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -46,7 +47,7 @@ import cn.com.modernmedia.exhibitioncalendar.model.ProductListModel.ProductModel
  * Eva. on 2017/10/25.
  */
 
-public class PayActivity extends BaseActivity {
+public class PayActivity extends BaseActivity implements CompoundButton.OnCheckedChangeListener {
 
     protected static final int REQ_CODE = 102;
     private static final int WEIXIN_PAY = 1;
@@ -58,7 +59,7 @@ public class PayActivity extends BaseActivity {
     private static final int PID = 4;
 
     // 微信参数
-    public static final String APP_KEY = "";// PaySignKey（API密钥）
+    public static final String APP_KEY = "b2eujfhVFiCRQhbnmYcdkGPWvv361616";// PaySignKey（API密钥）
     private PayReq weixinReq;
     private final IWXAPI msgApi = WXAPIFactory.createWXAPI(this, null);
 
@@ -96,9 +97,44 @@ public class PayActivity extends BaseActivity {
         findViewById(R.id.peisong_style).setOnClickListener(this);
         findViewById(R.id.pay_back).setOnClickListener(this);
         findViewById(R.id.pay_btn).setOnClickListener(this);
-
-
+        weixinPay = (RadioButton) findViewById(R.id.vip_pay_weixin);
+        zhifubaoPay = (RadioButton) findViewById(R.id.vip_pay_zhifubao);
+        weixinPay.setChecked(true);//默认微信支付
+        pay_style = WEIXIN_PAY;
+        weixinPay.setOnCheckedChangeListener(this);
+        zhifubaoPay.setOnCheckedChangeListener(this);
     }
+
+    private void setChecked(int ii){
+        if (ii == 0){
+            pay_style = WEIXIN_PAY;
+            weixinPay.setChecked(true);
+            zhifubaoPay.setChecked(false);
+        }else if (ii == 1){
+            weixinPay.setChecked(false);
+            zhifubaoPay.setChecked(true);
+            pay_style = ZHIFUBAO_PAY;
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        switch (buttonView.getId()) {
+            case R.id.vip_pay_weixin:
+                if (isChecked){
+                    setChecked(0);
+                }else setChecked(1);
+                break;
+            case R.id.vip_pay_zhifubao:
+
+                if (isChecked){
+                    setChecked(1);
+                }else setChecked(0);
+                break;
+
+        }
+    }
+
 
     @Override
     public void onClick(View view) {
@@ -133,14 +169,14 @@ public class PayActivity extends BaseActivity {
         try {
             object.put("uid", userModel.getUid());
             object.put("usertoken", userModel.getToken());
-            object.put("pid", product.getGoodId());
+            object.put("pid", product.getPid());
             object.put("appid", CommonApplication.APP_ID);
             object.put("marketkey", CommonApplication.CHANNEL);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         payName.setText(product.getGoodName());
-        payMoney.setText(formatPrice(product.getPirce()));
+        payMoney.setText(formatPrice(product.getGoodPrice()));
 
 
     }
@@ -480,7 +516,7 @@ public class PayActivity extends BaseActivity {
             jsonObject.put("toid", toid);// 第三方平台订单号
             jsonObject.put("status", status);
             jsonObject.put("product_name", product.getGoodName());
-            jsonObject.put("product_price", product.getPirce());
+            jsonObject.put("product_price", product.getGoodPrice());
             jsonObject.put("pay_style", payStyle);
             jsonObject.put("time", time);
             jsonObject.put("name", name);

@@ -1,5 +1,8 @@
 package cn.com.modernmedia.exhibitioncalendar.model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,64 +25,100 @@ public class ProductListModel extends Entry {
         this.list = list;
     }
 
+    public static ProductListModel parseProductListModel(JSONObject jsonObject) {
+        ProductListModel productListModel = new ProductListModel();
+        List<ProductModel> productListModels = new ArrayList<>();
+        JSONArray jsonArray = jsonObject.optJSONArray("app61_vip");
+        if (jsonArray == null) return null;
+        for (int i = 0; i < jsonArray.length(); i++) {
+            productListModels.add(ProductModel.parseProductModel( jsonArray.optJSONObject(i)));
+        }
+        productListModel.setList(productListModels);
+        return productListModel;
+    }
+
     public static class ProductModel extends Entry {
         private static final long serialVersionUID = 1L;
-        private String goodId = "";      //商品ID
+        private String pid = "";      //商品ID
         private String goodName = "";    //商品名称
-        private String goodType = "";    //商品类型：订阅、消耗、永久
-        private int pirce;       //商品价格：单位:分(人民币)
-        private String showPrice = "";   //显示价格。例如：1元/年
-        private String desc = "";        //商品描述
-        private String num = "";         //商品数量
-        private String unit = "";        //商品单位
+        private int goodType;    //商品类型：订阅、消耗、永久
+        private int goodPrice;       //商品价格：单位:分(人民币)
+        private String salesPrice = "";   //显示价格。例如：1元/年
+        private String goodDesc = "";        //商品描述
+        private int goodNum;         //商品数量
+        private String goodUnit = "";        //商品单位
         private String expireTime = "";  //有效期。商品类型为订阅时，表示有效截止时间点
         private String needAddress = ""; //是否必须填写配送信息 1需要，0不需要
-        private int isExchange;// 0 不显示：1：显示【套餐升级】
-        private int durationLeft; // 套餐剩余天数
-        private int durationTotal;//套餐总
-        private int durationAdd;
-        private String durationUnit = "";// 套餐剩余单位
+        private String goodIcon1 = "";
+        private String goodIcon2 = "";
+        private int bright;// 0：不点亮 1：点亮
+
         private List<VipPayType> payTypeLists = new ArrayList<>();
-        private List<Fun> funList = new ArrayList<>();
+        private List<ProductModel> childList = new ArrayList<>();
 
-        public int getDurationLeft() {
-            return durationLeft;
+
+        public static ProductModel parseProductModel(JSONObject jsonObject) {
+            ProductModel productModel = new ProductModel();
+            productModel.setPid(jsonObject.optString("pid"));
+            productModel.setGoodName(jsonObject.optString("good_name"));
+            productModel.setGoodPrice(jsonObject.optInt("good_price"));
+            productModel.setGoodType(jsonObject.optInt("good_type"));
+            productModel.setGoodUnit(jsonObject.optString("good_unit"));
+            productModel.setGoodNum(jsonObject.optInt("good_num"));
+            productModel.setNeedAddress(jsonObject.optString("good_needaddress"));
+            productModel.setGoodDesc(jsonObject.optString("good_desc"));
+            productModel.setGoodIcon1(jsonObject.optString("good_icon_1"));
+            productModel.setGoodIcon2(jsonObject.optString("good_icon_2"));
+            productModel.setBright(jsonObject.optInt("bright"));
+            productModel.setSalesPrice(jsonObject.optString("sales_price"));
+            productModel.setPayTypeLists(parsePayType(jsonObject.optJSONArray("pay_list")));
+            if (jsonObject.optJSONArray("child") != null)
+                productModel.setChildList(parseProductModel(jsonObject.optJSONArray("child")));
+
+            return productModel;
         }
 
-        public void setDurationLeft(int durationLeft) {
-            this.durationLeft = durationLeft;
+        public static List<ProductModel> parseProductModel(JSONArray array) {
+            List<ProductModel> list = new ArrayList<>();
+            if (array == null || array.length() == 0) return list;
+            for (int i = 0; i < array.length(); i++) {
+                list.add(parseProductModel(array.optJSONObject(i)));
+            }
+            return list;
         }
 
-        public int getDurationTotal() {
-            return durationTotal;
+
+        public static List<VipPayType> parsePayType(JSONArray array) {
+            List<VipPayType> list = new ArrayList<>();
+            if (array == null || array.length() == 0) return list;
+            for (int i = 0; i < array.length(); i++) {
+                list.add(VipPayType.parseVipPayType(array.optJSONObject(i)));
+            }
+            return list;
         }
 
-        public void setDurationTotal(int durationTotal) {
-            this.durationTotal = durationTotal;
+        public int getBright() {
+            return bright;
         }
 
-        public int getDurationAdd() {
-            return durationAdd;
+        public void setBright(int bright) {
+            this.bright = bright;
         }
 
-        public void setDurationAdd(int durationAdd) {
-            this.durationAdd = durationAdd;
+        public String getGoodDesc() {
+            return goodDesc;
         }
 
-        public String getDurationUnit() {
-            return durationUnit;
+        public void setGoodDesc(String goodDesc) {
+            this.goodDesc = goodDesc;
         }
 
-        public void setDurationUnit(String durationUnit) {
-            this.durationUnit = durationUnit;
+        public String getPid() {
+            return pid;
         }
 
-        public String getGoodId() {
-            return goodId;
-        }
-
-        public void setGoodId(String goodId) {
-            this.goodId = goodId;
+        public void setPid(String pid) {
+            this.pid = pid;
         }
 
         public String getGoodName() {
@@ -90,60 +129,45 @@ public class ProductListModel extends Entry {
             this.goodName = goodName;
         }
 
-        public String getGoodType() {
+        public int getGoodType() {
             return goodType;
         }
 
-        public void setGoodType(String goodType) {
+        public void setGoodType(int goodType) {
             this.goodType = goodType;
         }
 
-        public int getPirce() {
-            return pirce;
+        public int getGoodPrice() {
+            return goodPrice;
         }
 
-        public void setPirce(int pirce) {
-            this.pirce = pirce;
+        public void setGoodPrice(int goodPrice) {
+            this.goodPrice = goodPrice;
         }
 
-        public String getShowPrice() {
-            return showPrice;
+        public String getSalesPrice() {
+            return salesPrice;
         }
 
-        public void setShowPrice(String showPrice) {
-            this.showPrice = showPrice;
+        public void setSalesPrice(String showPrice) {
+            this.salesPrice = showPrice;
         }
 
-        public String getDesc() {
-            return desc;
+
+        public int getGoodNum() {
+            return goodNum;
         }
 
-        public void setDesc(String desc) {
-            this.desc = desc;
+        public void setGoodNum(int goodNum) {
+            this.goodNum = goodNum;
         }
 
-        public String getNum() {
-            return num;
+        public String getGoodUnit() {
+            return goodUnit;
         }
 
-        public void setNum(String num) {
-            this.num = num;
-        }
-
-        public List<Fun> getFunList() {
-            return funList;
-        }
-
-        public void setFunList(List<Fun> funList) {
-            this.funList = funList;
-        }
-
-        public List<VipPayType> getPayTypeLists() {
-            return payTypeLists;
-        }
-
-        public void setPayTypeLists(List<VipPayType> payTypeLists) {
-            this.payTypeLists = payTypeLists;
+        public void setGoodUnit(String goodUnit) {
+            this.goodUnit = goodUnit;
         }
 
         public String getExpireTime() {
@@ -154,14 +178,6 @@ public class ProductListModel extends Entry {
             this.expireTime = expireTime;
         }
 
-        public String getUnit() {
-            return unit;
-        }
-
-        public void setUnit(String unit) {
-            this.unit = unit;
-        }
-
         public String getNeedAddress() {
             return needAddress;
         }
@@ -170,27 +186,61 @@ public class ProductListModel extends Entry {
             this.needAddress = needAddress;
         }
 
-        public int getIsExchange() {
-            return isExchange;
+        public String getGoodIcon1() {
+            return goodIcon1;
         }
 
-        public void setIsExchange(int isExchange) {
-            this.isExchange = isExchange;
+        public void setGoodIcon1(String goodIcon1) {
+            this.goodIcon1 = goodIcon1;
+        }
+
+        public String getGoodIcon2() {
+            return goodIcon2;
+        }
+
+        public void setGoodIcon2(String goodIcon2) {
+            this.goodIcon2 = goodIcon2;
+        }
+
+        public List<VipPayType> getPayTypeLists() {
+            return payTypeLists;
+        }
+
+        public void setPayTypeLists(List<VipPayType> payTypeLists) {
+            this.payTypeLists = payTypeLists;
+        }
+
+        public List<ProductModel> getChildList() {
+            return childList;
+        }
+
+        public void setChildList(List<ProductModel> childList) {
+            this.childList = childList;
         }
     }
 
     public static class VipPayType extends Entry {
         private static final long serialVersionUID = 1L;
-        private String payTypeId = "";           //支付方式ID
+        private int payTypeId;           //支付方式ID
         private String payTypeName = "";         //支付方式名称
-        private String isRecommend = "";         //是否为推荐支付方式
+        private int isRecommend;         //是否为推荐支付方式
         private String recommendIconUrl = "";    //支付方式推送的ICON。http://s1.cdn.bbwc.cn/statics/images/pay/tuijian@3x.png
 
-        public String getPayTypeId() {
+        public static VipPayType parseVipPayType(JSONObject jsonObject) {
+            VipPayType vipPayType = new VipPayType();
+            if (jsonObject == null) return vipPayType;
+            vipPayType.setPayTypeId(jsonObject.optInt("pay_id"));
+            vipPayType.setPayTypeName(jsonObject.optString("pay_name"));
+            vipPayType.setRecommendIconUrl(jsonObject.optString("recommend_icon_url"));
+            vipPayType.setIsRecommend(jsonObject.optInt("is_recommend"));
+            return vipPayType;
+        }
+
+        public int getPayTypeId() {
             return payTypeId;
         }
 
-        public void setPayTypeId(String payTypeId) {
+        public void setPayTypeId(int payTypeId) {
             this.payTypeId = payTypeId;
         }
 
@@ -202,11 +252,11 @@ public class ProductListModel extends Entry {
             this.recommendIconUrl = recommendIconUrl;
         }
 
-        public String getIsRecommend() {
+        public int getIsRecommend() {
             return isRecommend;
         }
 
-        public void setIsRecommend(String isRecommend) {
+        public void setIsRecommend(int isRecommend) {
             this.isRecommend = isRecommend;
         }
 
@@ -219,101 +269,5 @@ public class ProductListModel extends Entry {
         }
     }
 
-    public static class Fun extends Entry {
-        private static final long serialVersionUID = 1L;
-        private String funId = "";           //功能id
-        private String funName = "";         //功能名称
-        private String desc = "";            //功能描述
-        private VipIcon vipIcon;     //icon
-        private String num = "";             //功能数量
-        private String showName = "";        //功能的显示名称
-        private String type = "";            //功能类型。虚拟、实物
 
-        public String getFunId() {
-            return funId;
-        }
-
-        public void setFunId(String funId) {
-            this.funId = funId;
-        }
-
-        public String getFunName() {
-            return funName;
-        }
-
-        public void setFunName(String funName) {
-            this.funName = funName;
-        }
-
-        public String getDesc() {
-            return desc;
-        }
-
-        public void setDesc(String desc) {
-            this.desc = desc;
-        }
-
-        public String getNum() {
-            return num;
-        }
-
-        public void setNum(String num) {
-            this.num = num;
-        }
-
-        public String getShowName() {
-            return showName;
-        }
-
-        public void setShowName(String showName) {
-            this.showName = showName;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public VipIcon getVipIcon() {
-            return vipIcon;
-        }
-
-        public void setVipIcon(VipIcon vipIcon) {
-            this.vipIcon = vipIcon;
-        }
-    }
-
-    public static class VipIcon extends Entry {
-        private static final long serialVersionUID = 1L;
-        private String normal = "";//"普通 icon地址：未过期的场景使用这个地址",
-        private String selected = "";//"暂时无用"
-        private String style1_normal = "";//"特殊 icon地址: 我的VIP中过期的权限"
-
-        public String getNormal() {
-            return normal;
-        }
-
-        public void setNormal(String normal) {
-            this.normal = normal;
-        }
-
-        public String getStyle1_normal() {
-            return style1_normal;
-        }
-
-        public void setStyle1_normal(String style1_normal) {
-            this.style1_normal = style1_normal;
-        }
-
-        public String getSelected() {
-            return selected;
-        }
-
-        public void setSelected(String selected) {
-            this.selected = selected;
-        }
-    }
 }

@@ -1,5 +1,6 @@
 package cn.com.modernmedia.corelib.util;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
@@ -32,6 +33,7 @@ import android.widget.Toast;
 import com.squareup.okhttp.Headers;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -654,7 +656,58 @@ public class Tools {
         }
         return result;
     }
+    /**
+     * 根据图片名称获取图片资源id
+     *
+     * @param pic
+     * @return 0,错误；1.颜色；else 资源id
+     */
+    public static int getId(String pic) {
+        if (CommonApplication.drawCls == null) {
+            return ID_ERROR;
+        }
+        if (TextUtils.isEmpty(pic)) {
+            return ID_ERROR;
+        }
+        if (pic.startsWith("#")) {
+            return ID_COLOR;
+        }
+        if (pic.startsWith("http")) {
+            return ID_HTTP;
+        }
+        try {
+            Field field = CommonApplication.drawCls.getDeclaredField(pic);
+            return field.getInt(pic);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ID_ERROR;
+    }
 
+    /**
+     * 给控件设置image
+     *
+     * @param view
+     * @param pic
+     */
+    @SuppressLint("NewApi")
+    public static void setImage(View view, String pic) {
+        int id = getId(pic);
+        if (id == ID_ERROR)
+            return;
+        if (id == ID_COLOR) {
+            view.setBackgroundColor(Color.parseColor(pic));
+            return;
+        }
+        if (id == ID_HTTP) {
+            CommonApplication.finalBitmap.display(view, pic);
+            return;
+        }
+        if (view instanceof ImageView)
+            ((ImageView) view).setImageResource(id);
+        else
+            view.setBackgroundResource(id);
+    }
 
     /**
      * 转换jsParmas
