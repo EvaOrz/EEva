@@ -3,13 +3,51 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:orientation="vertical"
-              android:padding="10dp">
+    >
 
-    <ImageView
-        android:id="@+id/vip_icon"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scaleType="fitXY"
-        android:src="@mipmap/test"/>
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <ImageView
+            android:id="@+id/vip_icon1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:layout_weight="1"
+            android:src="@mipmap/test"/>
+
+        <ImageView
+            android:id="@+id/vip_icon2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:layout_weight="1"
+            android:src="@mipmap/test"/>
+
+        <ImageView
+            android:id="@+id/vip_icon3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:layout_weight="1"
+            android:src="@mipmap/test"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/vip_icon_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/gray_line"
+        android:padding="5dp"
+        android:textColor="@color/gray_dark"
+        android:textSize="@dimen/text_size_12"
+        android:visibility="gone"/>
+
 
 </LinearLayout>

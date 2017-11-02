@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import cn.com.modernmedia.exhibitioncalendar.MyApplication;
+import cn.com.modernmedia.exhibitioncalendar.activity.LoginActivity;
 import cn.com.modernmedia.exhibitioncalendar.activity.MapActivity;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel;
 
@@ -37,7 +38,6 @@ public class SlateUriReceiver extends BroadcastReceiver {
                 MyApplication.museumDetailActivity.handler.sendMessage(ms);
             }
         } else if (intent.getAction().equals("open_map_activity")) {
-
             String ss = intent.getStringExtra("open_map");
             if (!TextUtils.isEmpty(ss)) {
                 try {
@@ -58,6 +58,7 @@ public class SlateUriReceiver extends BroadcastReceiver {
                     calendarModel.setBackgroundImg(img);
 
                     Intent i = new Intent(context, MapActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     i.putExtra("map_calendar", calendarModel);
                     i.putExtra("latitude", latitude);
                     i.putExtra("longitude", longitude);
@@ -66,10 +67,11 @@ public class SlateUriReceiver extends BroadcastReceiver {
                 } catch (JSONException e) {
 
                 }
-
-
             }
-
+        } else if (intent.getAction().equals("open_login_activity")) {
+            Intent i = new Intent(context, LoginActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(i);
         }
     }
 }

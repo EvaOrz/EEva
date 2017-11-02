@@ -50,7 +50,7 @@ public class UrlMaker {
         if (MyApplication.DEBUG == 0) {// 线上环境
             HOST = "https://artcalendar.bbwc.cn";
             USER_MODEL_URL = "http://user.bbwc.cn/interface/index.php";
-            API_URL = HOST + "/index/api3/";
+            API_URL = HOST + "/api3/";
             PRODUCT_URL = "https://buy.bbwc.cn";
 
         } else if (MyApplication.DEBUG == 1) {// inhouse环境
@@ -421,32 +421,6 @@ public class UrlMaker {
         return API_URL + "museumdetails?datatype=" + ConstData.DATA_TYPE;
     }
 
-    /**
-     * 修改VIP邮寄地址 edit
-     *
-     * @return
-     */
-    public static String editAddress() {
-        return USER_MODEL_URL + "/useraddress/edit?datatype=" + ConstData.DATA_TYPE;
-    }
-
-    /**
-     * 新添加VIP邮寄地址 add
-     *
-     * @return
-     */
-    public static String addAddress() {
-        return USER_MODEL_URL + "/useraddress/add?datatype=" + ConstData.DATA_TYPE;
-    }
-    /**
-     * 获取VIP邮寄地址 list
-     *
-     * @return
-     */
-    public static String listddress() {
-        return USER_MODEL_URL + "/useraddress/list?datatype=" + ConstData.DATA_TYPE;
-    }
-
 
     /**
      * 新支付：更新订单状态
@@ -466,9 +440,38 @@ public class UrlMaker {
 
     /**
      * 获取套餐列表
+     *
      * @return
      */
-    public static String getVipProducts(){
-        return API_URL+"viphome?datatype="+ ConstData.DATA_TYPE;
+    public static String getVipProducts() {
+        return API_URL + "viphome?datatype=" + ConstData.DATA_TYPE;
+    }
+
+
+    /**
+     * 新支付：获取用户订阅身份
+     */
+    public static String getVipInfo() {
+        return API_URL + "vipinfo?datatype=" + ConstData.DATA_TYPE;
+    }
+
+    /**
+     * 激活兑换码
+     * @return
+     */
+    public static String getJihuoCode() {
+        if (MyApplication.DEBUG == 0) {
+            return "https://artcalendar.bbwc.cn/html/artCalendar/html/redeem.html";
+        } else if (MyApplication.DEBUG == 1) {
+            return "https://artcalendar-test.bbwc.cn/html/artCalendar/html/redeem.html";
+        }
+        return "";
+    }
+
+    /**
+     * VIP添加、修改（api2以上版本）
+     */
+    public static String addVipInfo() {
+        return API_URL + "vipadd?datatype=" + ConstData.DATA_TYPE;
     }
 }

@@ -38,17 +38,5 @@
                     android:textSize="@dimen/text_size_12"/>
 
             </LinearLayout>
-
-
-
-
-
-
-
         </LinearLayout>
-
-
-
-
-
 </LinearLayout>

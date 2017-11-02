@@ -158,16 +158,6 @@
             android:textColor="@color/gray_dark"
             android:textSize="@dimen/text_size_14"/>
 
-        <TextView
-            android:id="@+id/vip_address_detail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/vip_pay_detail"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_14"
-            android:visibility="gone"/>
 
         <ImageView
             android:layout_width="wrap_content"

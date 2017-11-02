@@ -32,6 +32,7 @@ public class BaseActivity extends Activity implements View.OnClickListener, Acti
     public Context mContext;
 
     private Dialog dialog;
+    public boolean needFull = true;
 
     //    private RelativeLayout process_layout;
     //    private ProgressBar loading;
@@ -40,6 +41,7 @@ public class BaseActivity extends Activity implements View.OnClickListener, Acti
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!needFull) return;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//4.4 全透明状态栏
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }

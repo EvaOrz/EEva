@@ -406,17 +406,17 @@ public class ApiController {
             jsonObject.put("marketkey", CommonApplication.CHANNEL);
 
             DataHelper.setOrder(mContext, type, jsonObject.toString());// 更新本地订单状态
-
-
             int urltype = type.equals(NEW_WEIXIN_KEY) ? 1 : 2;
 
             HttpsController.getInstance(mContext).requestHttpAsycle(true, UrlMaker.newUpdateOrderStatus(urltype), jsonObject.toString(), new FetchDataListener() {
                 @Override
                 public void fetchData(boolean isSuccess, String data, boolean fromHttp) {
                     if (isSuccess) {
+                        Log.e("notifyServer", data);
                         DataHelper.clearOrder(mContext, type);
-                        if (TextUtils.isEmpty(statuStr) || statuStr.equals(SUCCESS))
-                            saveLevel(data);
+                        if (TextUtils.isEmpty(statuStr) || statuStr.equals(SUCCESS)) {
+                        }
+                        saveLevel(data);
                     }
                 }
             });
@@ -425,81 +425,6 @@ public class ApiController {
 
         }
 
-    }
-
-
-    /**
-     * 修改vip邮寄地址
-     */
-    public static void addressEdit(String name, String phone, String city, String address, String code, String id, FetchDataListener listener) {
-        JSONObject object = new JSONObject();
-        try {
-            object.put("uid", DataHelper.getUid(mContext));
-            object.put("token", DataHelper.getToken(mContext));
-            object.put("appid", CommonApplication.APP_ID);
-            object.put("name", name);
-            object.put("phone", phone);
-            object.put("city", city);
-            object.put("address", address);
-            object.put("code", code);
-            object.put("id", Integer.parseInt(id));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        HttpsController.getInstance(mContext).requestHttpAsycle(true, UrlMaker.editAddress(), object.toString(), listener);
-    }
-
-
-    /**
-     * 添加vip邮寄地址
-     */
-    public static void addressAdd(String name, String phone, String city, String address, String code, FetchDataListener listener) {
-        JSONObject object = new JSONObject();
-        try {
-            object.put("uid", DataHelper.getUid(mContext));
-            object.put("token", DataHelper.getToken(mContext));
-            object.put("appid", CommonApplication.APP_ID);
-            object.put("name", name);
-            object.put("phone", phone);
-            object.put("city", city);
-            object.put("address", address);
-            object.put("code", code);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        HttpsController.getInstance(mContext).requestHttpAsycle(true, UrlMaker.addAddress(), object.toString(), listener);
-    }
-
-
-    /**
-     * 获取套餐列表
-     */
-    public static void getProducts(  FetchDataListener listener) {
-        JSONObject object = new JSONObject();
-        try {
-            object.put("uid", DataHelper.getUid(mContext));
-            object.put("token", DataHelper.getToken(mContext));
-            object.put("appid", CommonApplication.APP_ID);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        HttpsController.getInstance(mContext).requestHttpAsycle(true, UrlMaker.getVipProducts(), object
-                .toString(), listener);
-    }
-
-    /**
-     * 获取vip邮寄地址
-     */
-    public static void addressList(FetchDataListener listener) {
-        JSONObject object = new JSONObject();
-        try {
-            object.put("uid", DataHelper.getUid(mContext));
-            object.put("token", DataHelper.getToken(mContext));
-            object.put("appid", CommonApplication.APP_ID);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        HttpsController.getInstance(mContext).requestHttpAsycle(true, UrlMaker.listddress(), object.toString(), listener);
     }
 
     /**
@@ -512,7 +437,6 @@ public class ApiController {
         String key = token.substring(token.length() - 8, token.length());// 解析的key
         String json = DESCoder.decode(key, data);
         // 存储解密之后的明文权限
-        DataHelper.saveBusinessWeekCrt(mContext, json);
         // 解析付费状态
         int status = 0;
         if (json != null) try {
@@ -530,6 +454,69 @@ public class ApiController {
     }
 
 
+
+    /**
+     * 获取套餐列表
+     */
+    public static void getProducts(FetchDataListener listener) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("uid", DataHelper.getUid(mContext));
+            object.put("token", DataHelper.getToken(mContext));
+            object.put("appid", CommonApplication.APP_ID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        HttpsController.getInstance(mContext).requestHttpAsycle(true, UrlMaker.getVipProducts(), object.toString(), listener);
+    }
+
+    /**
+     * Login 页面监听返回
+     *
+     * @param fetchDataListener
+     */
+    public static void getUserPermission(FetchDataListener fetchDataListener) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("token", DataHelper.getToken(mContext));
+            object.put("appid", CommonApplication.APP_ID);
+            object.put("uid", DataHelper.getUid(mContext));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        HttpsController.getInstance(mContext).requestHttpAsycle(true, UrlMaker.getVipInfo(), object.toString(), fetchDataListener);
+    }
+
+    /**
+     * VIP添加、修改（api2以上版本）
+     *
+     * @param fetchDataListener
+     */
+    public static void addVipInfo(String realname, String email, String province, String city,
+                                  String area, String address, String phone ,
+                                  String code ,FetchDataListener
+                                          fetchDataListener) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("token", DataHelper.getToken(mContext));
+            object.put("appid", CommonApplication.APP_ID);
+            object.put("uid", DataHelper.getUid(mContext));
+            object.put("realname", realname);
+            object.put("email", email);
+            object.put("province", province);
+            object.put("city", city);
+            object.put("area", area);
+            object.put("address", address);
+            object.put("phone",phone);
+            object.put("security_code",code);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        HttpsController.getInstance(mContext).requestHttpAsycle(true, UrlMaker.addVipInfo(), object.toString(), fetchDataListener);
+
+    }
 
 
     /**

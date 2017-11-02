@@ -13,6 +13,10 @@ import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
 import cn.com.modernmedia.corelib.CommonApplication;
+import cn.com.modernmedia.corelib.db.DataHelper;
+import cn.com.modernmedia.corelib.listener.FetchDataListener;
+import cn.com.modernmedia.exhibitioncalendar.MyApplication;
+import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
 
 /**
  * 微信支付回调activity
@@ -22,11 +26,12 @@ import cn.com.modernmedia.corelib.CommonApplication;
 public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 
     private IWXAPI api;
+    private ApiController controller;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        controller = ApiController.getInstance(this);
         api = WXAPIFactory.createWXAPI(this, CommonApplication.WEIXIN_APP_ID);
         api.handleIntent(getIntent(), this);
     }
@@ -48,14 +53,23 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
             Log.e("微信支付code:", resp.errCode + "" + resp.errStr);
             // resp.errCode == 0为支付成功，为-2未取消支付，-1出错
             if (resp.errCode == 0) {
-                // 存储支付成功后用户的level
-                //                            SlateDataHelper.setIssueLevel(WXPayEntryActivity.this, "1");
+                controller.notifyServer(ApiController.SUCCESS, ApiController.NEW_WEIXIN_KEY, new FetchDataListener() {
+                    @Override
+                    public void fetchData(boolean isSuccess, String data, boolean fromHttp) {
+                        if (isSuccess) {
+                            DataHelper.clearOrder(WXPayEntryActivity.this, ApiController.NEW_WEIXIN_KEY);
+                            controller.saveLevel(data);
+                        }
+                    }
+                });
                 //跳转交易详情界面
                 goToPayResult(resp.errCode);
 
             } else if (resp.errCode == -2) {// 取消支付
+                controller.notifyServer(ApiController.CANCEL, ApiController.NEW_WEIXIN_KEY);
                 goToPayResult(resp.errCode);
             } else {
+                controller.notifyServer(ApiController.ERROR, ApiController.NEW_WEIXIN_KEY);
                 goToPayResult(resp.errCode);
             }
 
@@ -63,7 +77,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
     }
 
     private void goToPayResult(int code) {
-        //        VipProductPayActivity.payintent(this,"微信",code+"");
+        MyApplication.weixinPayStatus = code;
         WXPayEntryActivity.this.finish();
     }
 

@@ -68,7 +68,6 @@ public class PushDeviceInfoApi extends BaseApi {
                     .getUid(context) + "|" + devicetoken + "|" + Tools.getAppVersion(context) + "|" + MyApplication.width + "|" + MyApplication.height + "|" + android.os.Build.MODEL + "|" + Tools.getNetMacAdress(context) + "|" + android.os.Build.VERSION.RELEASE + "|" + android.os.Build.VERSION.SDK + "|" + CommonApplication.CHANNEL + "|" + encryk + "|" + SECRET;
             addPostParams(postObject, "encryv", MD5.MD5Encode(md5));
 
-            Log.e("********************", md5);
             Log.e("********************", postObject.toString());
             post = postObject.toString();
             setPostParams(post);

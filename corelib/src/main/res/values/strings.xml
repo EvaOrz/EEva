@@ -27,7 +27,7 @@
     <string name="password_safety_weak">弱</string>
     <string name="password_safety_mid">中</string>
     <string name="password_safety_high">高</string>
-    <string name="get_account_error">账号格式错误</string>
+    <string name="get_account_error">手机号码格式错误</string>
     <string name="password_length_error">密码长度应该在4-16个字符之间</string>
     <string name="nick_name_length_error">用户昵称应该低于8位</string>
     <!-- 修改密码 -->
@@ -66,7 +66,8 @@
 
     <string name="share_success">分享成功</string>
     <string name="share_failed">分享失败</string>
-
+    <string name="my_vip_btn1">会员订购</string>
+    <string name="my_vip_btn2">会员续费</string>
 
     <string name="back">返回</string>
     <string name="follow_all">全部关注</string>
@@ -95,6 +96,7 @@
     <string name="hot_hint">选择城市查看展览</string>
     <string name="my_zhanlan">我的展览</string>
     <string name="about_us">关于我们</string>
+    <string name="buquan_info">请补全配送信息</string>
 
     <string name="time">时间</string>
     <string name="area">地区</string>
@@ -106,7 +108,7 @@
     <string name="add_to_calendar">添加至日历</string>
     <string name="add_more">添加更多展览</string>
     <string name="chaxuning">正在查询</string>
-
+    <string name="duihuan_code">兑换激活码</string>
 
     <!--个人中心-->
     <string name="usercenter">个人中心</string>
@@ -144,7 +146,7 @@
     <string name="reset_pwd">重置密码</string>
     <string name="reset_new_pwd">设置新密码</string>
     <string name="msg_login_pwd_null">请输入密码</string>
-
+    <string name="msg_has_no_code">请输入短信验证码</string>
 
     <string name="msg_login_email_error">无效的邮箱地址或手机号码</string>
     <string name="msg_login_email_null">请输入邮箱或手机号码</string>
@@ -232,6 +234,7 @@
     <string name="vip_pay_style">选择支付方式</string>
     <string name="vip_pay_style_null">请您选择支付方式</string>
     <string name="vip_pay_btn">确认支付</string>
+    <string name="vip_pay_btn1">会员续费</string>
     <string name="message_notification">短信提醒</string>
     <string name="message_notification1">用于您身份的识别</string>
     <string name="message_notification2">用于接收课程提醒信息</string>
@@ -245,6 +248,7 @@
     <string name="order_error_phone_number">请输入11位手机号码</string>
     <string name="order_error_phone_format">请正确填写手机号码</string>
     <string name="order_post">提交</string>
+    <string name="order_name">收件人</string>
     <string name="order_name_hint">填写收件人姓名</string>
     <string name="order_address_hint">填写详细地址</string>
     <string name="order_city">城市</string>
@@ -255,4 +259,17 @@
     <string name="save_fail">保存失败</string>
     <string name="order_make_faild">订单生成失败</string>
     <string name="my_vip_level">我的VIP特权</string>
+    <string name="my_vip_nolevel">VIP特权通道</string>
+    <string name="vip_address_info">配送信息</string>
+
+    <string name="vip_pay_detail">交易详情</string>
+    <string name="vip_pay_success">交易成功</string>
+    <string name="vip_pay_fail">交易失败</string>
+    <string name="vip_pay_cancel">交易取消</string>
+    <string name="vip_paycallback_money">交易金额</string>
+    <string name="vip_paycallback_style">付款方式</string>
+    <string name="vip_paycallback_product">商品名称</string>
+    <string name="vip_paycallback_id">订单编号</string>
+    <string name="vip_paycallback_time">创建时间</string>
+    <string name="vip_pay_ing">订单正在处理，请稍候。</string>
 </resources>

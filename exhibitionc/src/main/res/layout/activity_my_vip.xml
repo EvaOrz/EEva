@@ -9,13 +9,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:gravity="center_horizontal"
         android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/nav_bar_height"
-
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -38,36 +37,56 @@
                 android:textSize="@dimen/text_size_16"/>
         </RelativeLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:gravity="center_horizontal"
-            android:orientation="vertical">
+            >
 
             <cn.com.modernmedia.corelib.widget.RoundImageView
                 android:id="@+id/avatar"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:layout_margin="10dp"
+
                 android:src="@mipmap/avatar_bg"/>
 
-            <TextView
-                android:id="@+id/nickname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:text="未登录"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_14"/>
-        </LinearLayout>
+            <ImageView
+                android:id="@+id/vip_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:src="@mipmap/app61_vip_1"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:text="未登录"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_14"/>
+
+        <TextView
+            android:id="@+id/deadline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:text="会员有效期"
+            android:textColor="@color/gray_light"
+            android:textSize="@dimen/text_size_10"
+            android:visibility="gone"/>
 
         <RadioGroup
             android:id="@+id/index_special_rg"
             android:layout_width="280dp"
             android:layout_height="30dp"
-            android:orientation="horizontal"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="15dp">
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
 
             <RadioButton
                 android:id="@+id/vip_type1"
@@ -78,10 +97,9 @@
                 android:button="@null"
                 android:checked="true"
                 android:gravity="center"
-                android:text="优享会员"
-                android:textStyle="bold"
                 android:textColor="@color/black"
-                android:textSize="14sp"/>
+                android:textSize="14sp"
+                android:textStyle="bold"/>
 
             <RadioButton
                 android:id="@+id/vip_type2"
@@ -90,12 +108,11 @@
                 android:layout_weight="1"
                 android:background="@drawable/my_vip_selecter"
                 android:button="@null"
-                android:gravity="center"
-                android:text="尊享会员"
                 android:checked="false"
-                android:textStyle="bold"
+                android:gravity="center"
                 android:textColor="@color/black"
-                android:textSize="14sp"/>
+                android:textSize="14sp"
+                android:textStyle="bold"/>
 
         </RadioGroup>
 
@@ -112,20 +129,48 @@
         <LinearLayout
             android:id="@+id/vip_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
 
             android:orientation="vertical"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+
+        <ImageView
+            android:id="@+id/vip_kefu"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:padding="15dp"
+            android:layout_marginRight="15dp"
+            android:src="@mipmap/kefu"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="15dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:background="@color/body_bg"
+        android:paddingRight="15dp">
+
+        <TextView
+            android:id="@+id/vip_duihuan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/duihuan_code"
+            android:textColor="@color/vip_jihuo"
+            android:textSize="@dimen/text_size_14"/>
+
+        <TextView
+            android:id="@+id/vip_xieyi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
             android:text="VIP服务协议>>"
             android:textColor="@color/gray_light"
             android:textSize="@dimen/text_size_12"/>
     </RelativeLayout>
+
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -143,7 +188,6 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
-            android:text="188元/年"
             android:textColor="@color/red"
             android:textSize="@dimen/text_size_20"
             android:textStyle="bold"/>
@@ -161,7 +205,7 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:paddingTop="5dp"
-            android:text="会员订购"
+            android:text="@string/my_vip_btn1"
             android:textColor="@color/white"
             android:textSize="@dimen/text_size_14"/>
     </RelativeLayout>

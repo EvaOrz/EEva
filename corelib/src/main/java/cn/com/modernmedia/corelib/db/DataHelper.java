@@ -6,10 +6,8 @@ import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import cn.com.modernmedia.corelib.model.UserModel;
+import cn.com.modernmedia.corelib.model.VipInfoModel;
 
 
 /**
@@ -39,11 +37,9 @@ public class DataHelper {
     public static final String BIRTH = "birth";
     public static final String VIP = "vip";
     public static final String START_TIME = "start_time";
-    public static final String VIP_END_TIME = "vip_end_time";
+
     public static final String INDUSTRY = "industry";
     public static final String POSITION = "position";
-    public static final String PROVINCE = "province";
-    public static final String CITY = "city";
     public static final String INCOME = "income";
     public static final String LEVEL = "level";
     public static final String SEND = "send";
@@ -51,16 +47,11 @@ public class DataHelper {
     public static final String USER_STATUS = "user_status";
     public static final String UNION_ID = "union_id";//微信unionid
     public static final String OPEN_ID = "open_id";//整合第三方openid
-    public static final String EBOOKENDTIME = "ebookendtime";
     public static final String PUSH_TOKEN = "push_token";// 推送token
     public static final String ADV_TIME = "adv_time";//入版广告时间
     public static final String UUID = "uuid";
-    public static final String VIPLEVEL = "vip_level";// vip身份
-    public static final String ADDRESS_ID = "address_id";//用户邮寄地址id
-
     public static final String LAST_LOGIN_USERNAME = "last_login_username";// 上次登录账号
     public static final String NEW_LOGIN = "new_login";//整合第三方
-    public static final String NEW_LOGIN_TIME = "new_login_time";//整合第三方取消时间
     private static final String INDEX_HEAD_AUTO_LOOP = "index_head_auto_loop";// 首页自动轮播开关
     private static final String WIFI_AUTO_PLAY_VEDIO = "wifi_auto_play_vedio";// WiFi下自动播放视频
     private static final String PUSH_SERVICE_ENABLE = "push_service_enable";// 推送服务是否可用
@@ -68,9 +59,17 @@ public class DataHelper {
      * 广告更新时间
      */
     private static final String ADV_UPDATETIME = "adv_updatetime";
-
-    public static final String BUSINESSWEEK_CRT = "businessweek_crt";// 商周证书
-
+    /**
+     * vip 信息
+     */
+    private static final String VIP_PROVINCE = "vip_province";
+    private static final String VIP_CITY = "vip_city";
+    private static final String VIP_ADDRESS = "vip_address";
+    private static final String VIP_GOODS_ID = "vip_goods_id";
+    private static final String VIP_REALNAME = "vip_realname";
+    private static final String VIP_LEVEL = "vip_level";
+    private static final String VIP_PHONE = "vip_phone";
+    public static final String VIP_END_TIME = "vip_end_time";
 
     private static SharedPreferences mPref;
 
@@ -108,12 +107,10 @@ public class DataHelper {
         editor.putString(BIRTH, user.getBirth());
         editor.putString(VIP, user.getVip());
         editor.putLong(START_TIME, user.getStart_time());
-        editor.putLong(VIP_END_TIME, user.getVip_end_time());
         editor.putString(INDUSTRY, user.getIndustry());
         editor.putString(POSITION, user.getPosition());
         editor.putString(INCOME, user.getIncome());
-        editor.putString(PROVINCE, user.getProvince());
-        editor.putString(CITY, user.getCity());
+
         editor.putString(SEND, user.getSend());
         editor.putInt(LEVEL, user.getLevel());
         editor.putInt(COMPLETEVIP, user.getCompletevip());
@@ -150,13 +147,10 @@ public class DataHelper {
         user.setBirth(getPref(context).getString(BIRTH, ""));
         user.setVip(getPref(context).getString(VIP, ""));
         user.setStart_time(getPref(context).getLong(START_TIME, 0));
-        user.setVip_end_time(getPref(context).getLong(VIP_END_TIME, 0));
         user.setIndustry(getPref(context).getString(INDUSTRY, ""));
         user.setPosition(getPref(context).getString(POSITION, ""));
         user.setIncome(getPref(context).getString(INCOME, ""));
         user.setSend(getPref(context).getString(SEND, ""));
-        user.setProvince(getPref(context).getString(PROVINCE, ""));
-        user.setCity(getPref(context).getString(CITY, ""));
         user.setLevel(getPref(context).getInt(LEVEL, 0));
         user.setCompletevip(getPref(context).getInt(COMPLETEVIP, 0));
         user.setUser_status(getPref(context).getInt(USER_STATUS, 0));
@@ -192,21 +186,23 @@ public class DataHelper {
         editor.putString(BIRTH, "");
         editor.putString(VIP, "");
         editor.putLong(START_TIME, 0);
-        editor.putLong(VIP_END_TIME, 0);
         editor.putString(INDUSTRY, "");
         editor.putString(POSITION, "");
         editor.putString(SEND, "");
-        editor.putString(PROVINCE, "");
-        editor.putString(CITY, "");
         editor.putInt(LEVEL, 0);
         editor.putInt(COMPLETEVIP, 0);
         editor.putInt(USER_STATUS, 0);
         editor.putString(DESC, "");
         editor.putString(UNION_ID, "");
         editor.putString(OPEN_ID, "");
-        editor.putLong(EBOOKENDTIME, 0);
-        editor.putInt(VIPLEVEL,0);
-        editor.putString(BUSINESSWEEK_CRT, "");
+        editor.putString(VIP_PROVINCE, "");
+        editor.putString(VIP_ADDRESS, "");
+        editor.putString(VIP_CITY, "");
+        editor.putString(VIP_END_TIME, "");
+        editor.putString(VIP_REALNAME, "");
+        editor.putString(VIP_GOODS_ID, "");
+        editor.putInt(VIP_LEVEL, 0);
+        editor.putString(VIP_PHONE, "");
         editor.commit();
     }
 
@@ -422,30 +418,6 @@ public class DataHelper {
         editor.putBoolean(INDEX_HEAD_AUTO_LOOP, ifAuto);
         editor.commit();
     }
-    /**
-     * 存用户的address_id
-     */
-    public static void setAddressId(Context context, String address_id) {
-        Editor editor = getPref(context).edit();
-        editor.putString(ADDRESS_ID, address_id);
-        editor.commit();
-    }
-
-    /**
-     * 获取激活成功的needaddress
-     */
-    public static String getAddressId(Context context) {
-        return getPref(context).getString(ADDRESS_ID, "");
-    }
-
-    /**
-     * 清除激活码address_id
-     */
-    public static void cleanAddressId(Context context) {
-        Editor editor = getPref(context).edit();
-        editor.putString(ADDRESS_ID, "");
-        editor.commit();
-    }
 
 
     /**
@@ -467,66 +439,6 @@ public class DataHelper {
         Editor editor = getPref(context).edit();
         editor.putBoolean(WIFI_AUTO_PLAY_VEDIO, ifAuto);
         editor.commit();
-    }
-
-    /**
-     * 获取某个level的权限以及到期情况
-     *
-     * @return
-     */
-    public static boolean getLevelByType(Context context, int type) {
-        boolean hasLevel = false;
-        String data = getPref(context).getString(BUSINESSWEEK_CRT, "");
-        if (TextUtils.isEmpty(data)) return hasLevel;
-        try {
-            JSONObject jsonObject = new JSONObject(data);
-            JSONArray array = jsonObject.optJSONArray("item");
-            // 遍历
-            for (int i = 0; i < array.length(); i++) {
-                JSONObject object = array.optJSONObject(i);
-                if (object.optInt("level") == type) {//vip升级关键词
-                    Long endTime = jsonObject.optLong("endTime");
-                    if (endTime * 1000L > System.currentTimeMillis()) {
-                        hasLevel = true;
-                    }
-                }
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return hasLevel;
-    }
-
-    /**
-     * 获取某种权限的到期时间
-     *
-     * @param context
-     * @param type
-     * @return
-     */
-    public static long getEndTimeByType(Context context, int type) {
-        long endTime = 0;
-        String data = getPref(context).getString(BUSINESSWEEK_CRT, "");
-        if (TextUtils.isEmpty(data)) return endTime;
-        try {
-            JSONObject jsonObject = new JSONObject(data);
-            JSONArray array = jsonObject.optJSONArray("item");
-            // 遍历
-            for (int i = 0; i < array.length(); i++) {
-                JSONObject object = array.optJSONObject(i);
-                if (object.optInt("level") == type) {//vip升级关键词
-                    long ss = jsonObject.optLong("endTime");
-                    if (ss * 1000L > System.currentTimeMillis()) {
-                        endTime = ss;
-                    }
-                }
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return endTime;
     }
 
 
@@ -567,53 +479,6 @@ public class DataHelper {
         return getPref(context).getString(aliOrWeixin, null);
     }
 
-    /**
-     * 存储商周证书
-     *
-     * @param context
-     * @param json
-     */
-    public static void saveBusinessWeekCrt(Context context, String json) {
-        if (TextUtils.isEmpty(json)) return;
-        Editor editor = getPref(context).edit();
-        editor.putString(BUSINESSWEEK_CRT, json);
-
-        try {
-            JSONObject jsonObject = new JSONObject(json);
-            int isVip = jsonObject.optInt("isVip", 0);//0:小白 -1:各种过期 1：vip
-            String pid = jsonObject.optString("vipPid");// 之前购买的vip套餐
-            long endTime = jsonObject.optLong("userEndTime");// vip到期时间
-            editor.putLong(VIP_END_TIME, endTime);
-            int viplevel = 0;
-            if (isVip == 1 && !TextUtils.isEmpty(pid)) {// vip
-                if (endTime * 1000 > System.currentTimeMillis()) {// 有效期内
-                    if (pid.equals("app1_vip_1")) {
-                        viplevel = 1;
-                    } else if (pid.equals("app1_vip_2")) {
-                        viplevel = 2;
-                    } else if (pid.equals("app1_vip_3")) {
-                        viplevel = 3;
-                    }
-                } else {
-                    viplevel = -1;
-                }
-
-            }
-            editor.putInt(VIPLEVEL, viplevel);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        editor.commit();
-    }
-    /**
-     * 通过权限接口获得 VIP身份
-     *
-     * @param context
-     * @return
-     */
-    public static int getVipLevel(Context context) {
-        return getPref(context).getInt(VIPLEVEL, 0);
-    }
 
     /**
      * 存push token
@@ -635,5 +500,40 @@ public class DataHelper {
      */
     public static String getPushToken(Context context) {
         return getPref(context).getString(PUSH_TOKEN, "");
+    }
+
+    /**
+     * @param context
+     * @param vipInfoModel
+     */
+    public static void saveVipInfo(Context context, VipInfoModel vipInfoModel) {
+        Editor editor = getPref(context).edit();
+        editor.putString(VIP_PROVINCE, vipInfoModel.getProvince());
+        editor.putString(VIP_ADDRESS, vipInfoModel.getAddress());
+        editor.putString(VIP_CITY, vipInfoModel.getCity());
+        editor.putString(VIP_END_TIME, vipInfoModel.getVip_endtime());
+        editor.putString(VIP_REALNAME, vipInfoModel.getRealname());
+        editor.putString(VIP_GOODS_ID, vipInfoModel.getGoods_id());
+        editor.putInt(VIP_LEVEL, vipInfoModel.getLevel());
+        editor.putString(VIP_PHONE, vipInfoModel.getPhone());
+        editor.commit();
+    }
+
+    /**
+     * @param context
+     * @return
+     */
+    public static VipInfoModel getVipInfo(Context context) {
+        VipInfoModel vipInfoModel = new VipInfoModel();
+        vipInfoModel.setProvince(getPref(context).getString(VIP_PROVINCE, ""));
+        vipInfoModel.setLevel(getPref(context).getInt(VIP_LEVEL, 0));
+        vipInfoModel.setAddress(getPref(context).getString(VIP_ADDRESS, ""));
+        vipInfoModel.setCity(getPref(context).getString(VIP_CITY, ""));
+        vipInfoModel.setVip_endtime(getPref(context).getString(VIP_END_TIME, ""));
+        vipInfoModel.setRealname(getPref(context).getString(VIP_REALNAME, ""));
+        vipInfoModel.setGoods_id(getPref(context).getString(VIP_GOODS_ID, ""));
+        vipInfoModel.setPhone(getPref(context).getString(VIP_PHONE, ""));
+
+        return vipInfoModel;
     }
 }

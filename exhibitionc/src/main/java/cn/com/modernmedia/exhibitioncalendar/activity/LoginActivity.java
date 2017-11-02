@@ -27,6 +27,7 @@ import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -34,6 +35,7 @@ import java.io.File;
 import cn.com.modernmedia.corelib.BaseActivity;
 import cn.com.modernmedia.corelib.CommonApplication;
 import cn.com.modernmedia.corelib.db.DataHelper;
+import cn.com.modernmedia.corelib.listener.FetchDataListener;
 import cn.com.modernmedia.corelib.listener.FetchEntryListener;
 import cn.com.modernmedia.corelib.listener.ImageDownloadStateListener;
 import cn.com.modernmedia.corelib.listener.OpenAuthListener;
@@ -41,6 +43,7 @@ import cn.com.modernmedia.corelib.model.Entry;
 import cn.com.modernmedia.corelib.model.ErrorMsg;
 import cn.com.modernmedia.corelib.model.UserModel;
 import cn.com.modernmedia.corelib.model.VerifyCode;
+import cn.com.modernmedia.corelib.model.VipInfoModel;
 import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.corelib.util.sina.SinaAuth;
 import cn.com.modernmedia.corelib.util.sina.SinaConstants;
@@ -337,7 +340,35 @@ public class LoginActivity extends BaseActivity {
         // 返回上一级界面
         CommonApplication.loginStatusChange = 2;
         showToast(R.string.msg_login_success);
-        finish();
+
+        notifyWeb(user);
+        getIssueLevel();
+
+
+    }
+
+    /**
+     * 取用户的付费权限
+     */
+    private void getIssueLevel() {
+        mController.getUserPermission(new FetchDataListener() {
+            @Override
+            public void fetchData(boolean isSuccess, String data, boolean fromHttp) {
+                if (isSuccess) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(data);
+                        if (jsonObject != null) {
+                            VipInfoModel vipInfoModel = VipInfoModel.parseVipInfoModel(jsonObject);
+                            DataHelper.saveVipInfo(LoginActivity.this, vipInfoModel);
+                        }
+                    } catch (JSONException e) {
+
+                    }
+                }
+                finish();
+            }
+        });
+
 
     }
 
@@ -614,5 +645,28 @@ public class LoginActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (sinaAuth != null) sinaAuth.onActivityResult(requestCode, resultCode, data);
     }
+    /**
+     * 通知网页js回调登录结果
+     */
+    private void notifyWeb(UserModel u) {
+        JSONObject result = new JSONObject();
+        try {
+            if (u == null) {
+                result.put("loginStatus", false);
+            } else {
+                result.put("loginStatus", true);
 
+                JSONObject uJson = new JSONObject();
+                uJson.put("userId", u.getUid());
+                uJson.put("userToken", u.getToken());
+                uJson.put("userName", u.getUserName());
+                uJson.put("userAvatarUrl", u.getAvatar());
+                uJson.put("userNickname", u.getNickName());
+                result.put("user", uJson);
+            }
+        } catch (JSONException e) {
+        }
+        if (CommonApplication.asynExecuteCommandListener != null)
+            CommonApplication.asynExecuteCommandListener.onCallBack(result.toString());
+    }
 }

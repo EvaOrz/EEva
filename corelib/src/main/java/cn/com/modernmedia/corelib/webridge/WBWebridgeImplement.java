@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -80,45 +81,6 @@ public class WBWebridgeImplement implements WBWebridgeListener {
         }
     }
 
-
-    /**
-     * js查询本地付费权限
-     *
-     * @param json {"level":0}
-     */
-    public void isPaid(JSONObject json, AsynExecuteCommandListener listener) {
-        if (listener != null) {
-            JSONObject result = new JSONObject();
-            try {
-                if (DataHelper.getLevelByType(mContext, 1)) result.put("isPaid", true);
-
-                else result.put("isPaid", false);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            listener.onCallBack(result.toString());
-        }
-    }
-
-    public void isPaidForLevel(JSONObject json, AsynExecuteCommandListener listener) {
-        if (listener != null) {
-            JSONObject result = new JSONObject();
-            try {
-                if (DataHelper.getLevelByType(mContext, 1)) {
-                    result.put("isPaid", true);
-                    result.put("expire", DataHelper.getEndTimeByType(mContext, 1));
-
-                } else result.put("isPaid", false);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            listener.onCallBack(result.toString());
-        }
-    }
-
-
     public void domReady(JSONObject json, AsynExecuteCommandListener listener) {
 
     }
@@ -135,15 +97,20 @@ public class WBWebridgeImplement implements WBWebridgeListener {
             JSONObject result = new JSONObject();
             try {
                 UserModel u = DataHelper.getUserLoginInfo(mContext);
-                if (u == null) result.put("loginStatus", false);
-                else {
+                if (u == null) {
+                    result.put("loginStatus", false);
+                } else {
                     result.put("loginStatus", true);
 
                     JSONObject uJson = new JSONObject();
                     uJson.put("userId", u.getUid());
                     uJson.put("userToken", u.getToken());
+                    uJson.put("userName", u.getUserName());
+                    uJson.put("userAvatarUrl", u.getAvatar());
+                    uJson.put("userNickname", u.getNickName());
                     result.put("user", uJson);
                 }
+                Log.e("webridge:", result.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -156,12 +123,25 @@ public class WBWebridgeImplement implements WBWebridgeListener {
     /**
      * js 调用原生登录
      */
+    public void login(JSONObject s, AsynExecuteCommandListener listener) {
+
+        if (listener != null) CommonApplication.asynExecuteCommandListener = listener;
+
+        Intent i = new Intent();
+        i.setAction("open_login_activity");
+        mContext.sendBroadcast(i);
+
+    }
+
+    /**
+     * js 调用原生登录
+     */
     public void login(String s, AsynExecuteCommandListener listener) {
 
         if (listener != null) CommonApplication.asynExecuteCommandListener = listener;
 
         Intent i = new Intent();
-        i.setAction("cn.com.modernmediausermodel.LoginActivity_nomal");
+        i.setAction("open_login_activity");
         mContext.sendBroadcast(i);
 
     }

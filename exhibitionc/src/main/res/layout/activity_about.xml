@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/black"
-              android:fitsSystemWindows="true"
+              android:background="@color/white"
               android:orientation="vertical"
     >
 
@@ -37,7 +36,23 @@
     <cn.com.modernmedia.exhibitioncalendar.view.CommonWebView
         android:id="@+id/about_webview"
         android:layout_width="match_parent"
+
         android:layout_height="match_parent"/>
 
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical">
 
+        <TextView
+            android:id="@+id/about_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="@drawable/graylight_10radius_corner_bg"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_14"
+            android:visibility="gone"/>
+    </ScrollView>
 </LinearLayout>

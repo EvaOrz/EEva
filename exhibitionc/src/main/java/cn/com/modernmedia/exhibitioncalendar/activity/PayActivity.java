@@ -34,13 +34,16 @@ import cn.com.modernmedia.corelib.db.DataHelper;
 import cn.com.modernmedia.corelib.http.HttpsController;
 import cn.com.modernmedia.corelib.listener.FetchDataListener;
 import cn.com.modernmedia.corelib.model.UserModel;
+import cn.com.modernmedia.corelib.model.VipInfoModel;
 import cn.com.modernmedia.corelib.pay.Base64;
 import cn.com.modernmedia.corelib.pay.PayResult;
 import cn.com.modernmedia.corelib.util.Tools;
+import cn.com.modernmedia.exhibitioncalendar.MyApplication;
 import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
 import cn.com.modernmedia.exhibitioncalendar.api.UrlMaker;
 import cn.com.modernmedia.exhibitioncalendar.model.ProductListModel.ProductModel;
+import cn.com.modernmedia.exhibitioncalendar.view.PayStatusPopView;
 
 /**
  * 支付页面
@@ -50,8 +53,8 @@ import cn.com.modernmedia.exhibitioncalendar.model.ProductListModel.ProductModel
 public class PayActivity extends BaseActivity implements CompoundButton.OnCheckedChangeListener {
 
     protected static final int REQ_CODE = 102;
-    private static final int WEIXIN_PAY = 1;
-    private static final int ZHIFUBAO_PAY = 2;
+    public static final int WEIXIN_PAY = 1;
+    public static final int ZHIFUBAO_PAY = 2;
 
     private static final int SDK_PAY_FLAG = 1;
     private static final int SDK_CHECK_FLAG = 2;
@@ -70,12 +73,14 @@ public class PayActivity extends BaseActivity implements CompoundButton.OnChecke
     private int pay_style = 0;// 支付方式
     private ProductModel product = new ProductModel();
     private static String outNo;// 第三方交易号
+    private String payTimeTxt; //下单时间
 
     private RadioButton weixinPay, zhifubaoPay;
     private TextView payMoney, payName, payTime, payAddress;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        needFull = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pay);
 
@@ -87,13 +92,14 @@ public class PayActivity extends BaseActivity implements CompoundButton.OnChecke
         controller = ApiController.getInstance(this);
         initView();
         weixinReq = new PayReq();// 微信req请求
+
     }
 
     private void initView() {
         payMoney = (TextView) findViewById(R.id.pay_money);
         payName = (TextView) findViewById(R.id.pay_name);
         payTime = (TextView) findViewById(R.id.pay_time);
-        payAddress = (TextView) findViewById(R.id.vip_address_detail);
+        payAddress = (TextView) findViewById(R.id.vip_pay_detail);
         findViewById(R.id.peisong_style).setOnClickListener(this);
         findViewById(R.id.pay_back).setOnClickListener(this);
         findViewById(R.id.pay_btn).setOnClickListener(this);
@@ -105,12 +111,12 @@ public class PayActivity extends BaseActivity implements CompoundButton.OnChecke
         zhifubaoPay.setOnCheckedChangeListener(this);
     }
 
-    private void setChecked(int ii){
-        if (ii == 0){
+    private void setChecked(int ii) {
+        if (ii == 0) {
             pay_style = WEIXIN_PAY;
             weixinPay.setChecked(true);
             zhifubaoPay.setChecked(false);
-        }else if (ii == 1){
+        } else if (ii == 1) {
             weixinPay.setChecked(false);
             zhifubaoPay.setChecked(true);
             pay_style = ZHIFUBAO_PAY;
@@ -121,15 +127,15 @@ public class PayActivity extends BaseActivity implements CompoundButton.OnChecke
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
             case R.id.vip_pay_weixin:
-                if (isChecked){
+                if (isChecked) {
                     setChecked(0);
-                }else setChecked(1);
+                } else setChecked(1);
                 break;
             case R.id.vip_pay_zhifubao:
 
-                if (isChecked){
+                if (isChecked) {
                     setChecked(1);
-                }else setChecked(0);
+                } else setChecked(0);
                 break;
 
         }
@@ -148,20 +154,35 @@ public class PayActivity extends BaseActivity implements CompoundButton.OnChecke
                 startActivityForResult(intent, REQ_CODE);
                 break;
             case R.id.pay_btn:
-                if (pay_style == WEIXIN_PAY) {
-                    boolean sIsWXAppInstalledAndSupported = msgApi.isWXAppInstalled() && msgApi.isWXAppSupportAPI();
-                    if (!sIsWXAppInstalledAndSupported) {
-                        showLoadingDialog(false);
-                        Tools.showToast(this, R.string.no_weixin);
-                        return;
+                if (checkInfo()) {
+                    if (pay_style == WEIXIN_PAY) {
+                        boolean sIsWXAppInstalledAndSupported = msgApi.isWXAppInstalled() && msgApi.isWXAppSupportAPI();
+                        if (!sIsWXAppInstalledAndSupported) {
+                            showLoadingDialog(false);
+                            Tools.showToast(this, R.string.no_weixin);
+                            return;
+                        }
+                        dopay(WEIXIN_PAY);
+                    } else if (pay_style == ZHIFUBAO_PAY) {
+                        check();//查询终端设备是否存在支付宝认证账户
+                        dopay(ZHIFUBAO_PAY);
                     }
-                    dopay(WEIXIN_PAY);
-                } else if (pay_style == ZHIFUBAO_PAY) {
-                    check();//查询终端设备是否存在支付宝认证账户
-                    dopay(ZHIFUBAO_PAY);
                 }
                 break;
         }
+    }
+
+    /**
+     * 检查会员信息
+     *
+     * @return
+     */
+    private boolean checkInfo() {
+        VipInfoModel vipInfoModel = DataHelper.getVipInfo(this);
+        if (vipInfoModel == null || TextUtils.isEmpty(vipInfoModel.getRealname()) || TextUtils.isEmpty(vipInfoModel.getPhone()) || TextUtils.isEmpty(vipInfoModel.getAddress()) || TextUtils.isEmpty(vipInfoModel.getCity()) || TextUtils.isEmpty(vipInfoModel.getProvince())) {
+            showToast(R.string.buquan_info);
+            return false;
+        } else return true;
     }
 
     private void initData() {
@@ -177,8 +198,6 @@ public class PayActivity extends BaseActivity implements CompoundButton.OnChecke
         }
         payName.setText(product.getGoodName());
         payMoney.setText(formatPrice(product.getGoodPrice()));
-
-
     }
 
     public static String formatPrice(int msg) {
@@ -190,10 +209,27 @@ public class PayActivity extends BaseActivity implements CompoundButton.OnChecke
     protected void onResume() {
         super.onResume();
         userModel = DataHelper.getUserLoginInfo(this);
+        /**
+         * 登录返回
+         */
         if (userModel != null && !gotoPay) {
+            mHandler.sendEmptyMessage(ADDRESS);
             initData();
+            payTimeTxt = getTime("yyyy-MM-dd HH:mm:ss");
+            payTime.setText(payTimeTxt);//更新下单时间
         }
-        payTime.setText(getTime("yyyy-MM-dd HH:mm:ss"));//更新下单时间
+
+        /**
+         * 支付返回的状态
+         */
+        int status = MyApplication.weixinPayStatus;
+        Log.e("ppppppppp", "gopay: " + (gotoPay ? "true" : "false") + status + payTimeTxt);
+        if (gotoPay && status != 100) {// 微信支付返回
+            gotoPay = false;
+            MyApplication.weixinPayStatus = 100;
+            //0为支付成功，-2取消支付，-1出错
+            payintent(this, product, WEIXIN_PAY, payTimeTxt, status, outNo);
+        }
 
     }
 
@@ -212,10 +248,8 @@ public class PayActivity extends BaseActivity implements CompoundButton.OnChecke
 
                     // 支付宝返回此次支付结果及加签，建议对支付宝签名信息拿签约时支付宝提供的公钥做验签
                     String resultInfo = payResult.getResult();
-                    Log.e("*******支付宝resultInfo", resultInfo);
 
                     final String resultStatus = payResult.getResultStatus();
-                    Log.e("*******支付宝resultStatus", resultStatus);
 
                     // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
                     if (TextUtils.equals(resultStatus, "9000")) {
@@ -229,23 +263,24 @@ public class PayActivity extends BaseActivity implements CompoundButton.OnChecke
                                     DataHelper.clearOrder(PayActivity.this, ApiController.NEW_ALI_KEY);
                                     controller.saveLevel(data);
                                     //跳转交易详情界面
-                                    payintent(PayActivity.this, getString(R.string.zhifubaopay), resultStatus);
+                                    payintent(PayActivity.this, product, ZHIFUBAO_PAY, payTimeTxt, 0, outNo);
                                 }
                             }
                         });
                     } else if (TextUtils.equals(resultStatus, "6001")) {
                         controller.notifyServer(ApiController.CANCEL, ApiController.NEW_ALI_KEY);
-                        payintent(PayActivity.this, getString(R.string.zhifubaopay), resultStatus);
+                        payintent(PayActivity.this, product, ZHIFUBAO_PAY, payTimeTxt, -2, outNo);
                     } else {
                         // 判断resultStatus 为非“9000”则代表可能支付失败
                         // “8000”代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
                         if (TextUtils.equals(resultStatus, "8000")) {
                             showToast("支付结果确认中");
                             controller.notifyServer(ApiController.PAYING, ApiController.NEW_ALI_KEY);
+                            payintent(PayActivity.this, product, ZHIFUBAO_PAY, payTimeTxt, -3, outNo);
                         } else {
                             // 其他值就可以判断为支付失败，包括用户主动取消支付，或者系统返回的错误
                             controller.notifyServer(ApiController.ERROR, ApiController.NEW_ALI_KEY);
-                            payintent(PayActivity.this, getString(R.string.zhifubaopay), resultStatus);
+                            payintent(PayActivity.this, product, ZHIFUBAO_PAY, payTimeTxt, -1, outNo);
                         }
                         showLoadingDialog(false);
                     }
@@ -253,9 +288,12 @@ public class PayActivity extends BaseActivity implements CompoundButton.OnChecke
                 case SDK_CHECK_FLAG:
                     break;
                 case ADDRESS:
-                    payAddress.setVisibility(View.VISIBLE);
-                    //                    vip_post_detail.setText(errorMsg.getRealname() + " " + errorMsg.getPhone());
-                    payAddress.setText(userModel.getCity() + userModel.getAddress());
+                    VipInfoModel vipInfoModel = DataHelper.getVipInfo(PayActivity.this);
+                    if (vipInfoModel == null || TextUtils.isEmpty(vipInfoModel.getRealname()) || TextUtils.isEmpty(vipInfoModel.getPhone()) || TextUtils.isEmpty(vipInfoModel.getAddress()) || TextUtils.isEmpty(vipInfoModel.getCity()) || TextUtils.isEmpty(vipInfoModel.getProvince())) {
+                        payAddress.setText(R.string.peisong_style);
+                    } else {
+                        payAddress.setText(vipInfoModel.getRealname() + "\n" + vipInfoModel.getPhone() + "\n" + vipInfoModel.getProvince() + " " + vipInfoModel.getCity() + "\n" + vipInfoModel.getAddress());
+                    }
                     break;
 
             }
@@ -270,9 +308,6 @@ public class PayActivity extends BaseActivity implements CompoundButton.OnChecke
      */
     private void doUpload(final int type) {
         try {
-
-
-            Log.e("11", object.toString());
             HttpsController.getInstance(this).requestHttpPost(UrlMaker.newGetOrder(type), object.toString(), new FetchDataListener() {
                 @Override
                 public void fetchData(boolean isSuccess, String data, boolean fromHttp) {
@@ -292,10 +327,6 @@ public class PayActivity extends BaseActivity implements CompoundButton.OnChecke
                                         // 预支付订单
                                         weixinPay(paydata.optString("prepayid"));
                                         saveOrder(PayActivity.this, userModel, ApiController.NEW_WEIXIN_KEY, outNo, "", ApiController.PAYING, product, getString(R.string.weixin), getTime("yyyy-MM-dd HH:mm:ss"), userModel.getRealname(), userModel.getPhone(), userModel.getCity() + userModel.getAddress(), false);
-                                        /**
-                                         * 跳往支付结果页面，状态：订单处理中..
-                                         */
-                                        //                                        payintent(getString(R.string.weixinpay), "10");
                                     } else if (type == ZHIFUBAO_PAY) {
                                         // 签名
                                         String aliOrderInfo = new String(Base64.decode(paydata.optString("request_str")));
@@ -475,8 +506,15 @@ public class PayActivity extends BaseActivity implements CompoundButton.OnChecke
         return formatter.format(curDate);
     }
 
-    public static void payintent(Context c, String style, String resultStatus) {
 
+    private void payintent(Context c, ProductModel p, int style, String time, int payStatus, String outNo) {
+        final PayStatusPopView payStatusPopView = new PayStatusPopView(c, p, style, time, payStatus, outNo);
+        getWindow().getDecorView().post(new Runnable() {
+            @Override
+            public void run() {
+                payStatusPopView.show();
+            }
+        });
     }
 
     @Override

@@ -1,17 +1,17 @@
 package cn.com.modernmedia.exhibitioncalendar.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,40 +21,34 @@ import java.util.regex.Pattern;
 import cn.com.modernmedia.corelib.BaseActivity;
 import cn.com.modernmedia.corelib.db.DataHelper;
 import cn.com.modernmedia.corelib.listener.FetchDataListener;
-import cn.com.modernmedia.corelib.model.UserModel;
+import cn.com.modernmedia.corelib.listener.FetchEntryListener;
+import cn.com.modernmedia.corelib.model.Entry;
+import cn.com.modernmedia.corelib.model.VerifyCode;
+import cn.com.modernmedia.corelib.model.VipInfoModel;
+import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
 import cn.com.modernmedia.exhibitioncalendar.view.ChangeDistrictDialog;
 
 
 /**
- * 4.1.0 vip邮寄地址
- *
- * @author: zhufei
+ * 新增vip 收货地址页面
  */
 public class PostUserOrderInfoActivity extends BaseActivity {
-    private EditText name, phone, address;
-    private TextView city;
+    private EditText name, phone, address, code;
+    private TextView city, getverify;
     private ApiController apiController;
-    private UserModel user;
+    private VipInfoModel vipInfoModel;
+    private boolean canGetVerify = true;// 是否可获取验证码
+    private String pp, cc;
 
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case 0:
-                    UserModel error = (UserModel) msg.obj;
-                    if (error.getAddress() != null && !TextUtils.isEmpty(error.getAddress())) {
-                        address.setText(error.getAddress());
-                        name.setText(error.getRealname());
-                        phone.setText(error.getPhone());
-                        if (!TextUtils.isEmpty(error.getProvince())) {
-                            city.setText(error.getProvince() + " " + error.getCity());
-                        } else city.setText(user.getCity());
-                    } else {
-                        if (!user.getRealname().isEmpty()) name.setText(user.getRealname());
-                        if (!user.getPhone().isEmpty()) phone.setText(user.getPhone());
-                    }
+
+                case 1:
+                    city.setText(pp + " " + cc);
                     break;
             }
         }
@@ -65,20 +59,34 @@ public class PostUserOrderInfoActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_order_info);
-        user = DataHelper.getUserLoginInfo(this);
-        if (user == null) return;
-
 
         apiController = ApiController.getInstance(this);
+
+        initView();
+
+    }
+
+    private void initView() {
         name = (EditText) findViewById(R.id.order_name_edit);
         phone = (EditText) findViewById(R.id.order_phone_edit);
         city = (TextView) findViewById(R.id.order_city_edit);
+        code = (EditText) findViewById(R.id.verify_code_edit);
         address = (EditText) findViewById(R.id.order_address_edit);
+        getverify = (TextView) findViewById(R.id.verify_get);
+        getverify.setOnClickListener(this);
         findViewById(R.id.order_post).setOnClickListener(this);
         findViewById(R.id.order_back).setOnClickListener(this);
         city.setOnClickListener(this);
-        //优先联网获取
-        getAddressList();
+
+        vipInfoModel = DataHelper.getVipInfo(this);
+        if (vipInfoModel != null) {
+            address.setText(vipInfoModel.getAddress());
+            name.setText(vipInfoModel.getRealname());
+            phone.setText(vipInfoModel.getPhone());
+            pp = vipInfoModel.getProvince();
+            cc = vipInfoModel.getCity();
+            city.setText(pp + " " + cc);
+        }
     }
 
     @Override
@@ -99,14 +107,14 @@ public class PostUserOrderInfoActivity extends BaseActivity {
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.order_post) {//提交
-            String order_name = name.getText().toString();
-            String order_phone = phone.getText().toString();
-            String order_city = city.getText().toString();
-            String order_address = address.getText().toString();
+        String order_name = name.getText().toString();
+        String order_phone = phone.getText().toString();
+        String order_code = code.getText().toString();
+        String order_address = address.getText().toString();
 
+        if (v.getId() == R.id.order_post) {//提交
             String str = order_name.replaceAll(" ", "");//去掉所有空格
-            if (TextUtils.isEmpty(str) || str.length() <= 0 || TextUtils.isEmpty(order_phone) || order_phone.length() <= 0 || TextUtils.isEmpty(order_city) || order_city.length() <= 0 || TextUtils.isEmpty(order_address) || order_address.length() <= 0) {
+            if (TextUtils.isEmpty(str) || TextUtils.isEmpty(order_address)) {
                 showToast(R.string.order_error_null);
                 return;
             }
@@ -114,100 +122,87 @@ public class PostUserOrderInfoActivity extends BaseActivity {
                 showToast(R.string.order_error_phone_number);
                 return;
             }
-            showLoadingDialog(true);
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    showLoadingDialog(false);
-                }
-            }, 900);
-            if (!TextUtils.isEmpty(DataHelper.getAddressId(this))) {//修改
-                apiController.addressEdit(order_name, order_phone, order_city, order_address, "", DataHelper.getAddressId(this), new FetchDataListener() {
-                    @Override
-                    public void fetchData(boolean isSuccess, String data, boolean fromHttp) {
-                        if (isSuccess) {
-                            parseAddress(data);
-                        }
-                    }
-                });
-            } else {//添加
-                apiController.addressAdd(order_name, order_phone, order_city, order_address, "", new FetchDataListener() {
-                    @Override
-                    public void fetchData(boolean isSuccess, String data, boolean fromHttp) {
-                        if (isSuccess) {
-                            parseAddress(data);
-                        }
-                    }
-                });
+            if (TextUtils.isEmpty(order_code)) {
+                showToast(R.string.msg_has_no_code);
+                return;
             }
+            commit(str, order_address, order_phone, order_code);
         } else if (v.getId() == R.id.order_back) {
             finish();
         } else if (v.getId() == R.id.order_city_edit) {
-            changeDistrict(this, city);
+            changeDistrict();
+        } else if (v.getId() == R.id.verify_get) {// 获取验证码
+            if (Tools.checkIsPhone(this, order_phone)) doGetVerifyCode(order_phone);
+            else showToast(R.string.get_account_error);// 手机号码格式错误
         }
     }
 
-    //获取用户邮寄地址
-    private void getAddressList() {
+
+    private void commit(String realname, String address, String phone, String code) {
         showLoadingDialog(true);
-        apiController.addressList(new FetchDataListener() {
+        apiController.addVipInfo(realname, "", pp, cc, "", address, phone, code, new FetchDataListener() {
             @Override
             public void fetchData(boolean isSuccess, String data, boolean fromHttp) {
+                Log.e("addVipInfo", data);
                 showLoadingDialog(false);
                 if (isSuccess) {
-                    parseAddress(data);
+                    try {
+                        JSONObject jsonObject = new JSONObject(data);
+                        if (jsonObject != null) {
+                            VipInfoModel vipInfoModel = VipInfoModel.parseVipInfoModel(jsonObject);
+                            DataHelper.saveVipInfo(PostUserOrderInfoActivity.this, vipInfoModel);
+                            finish();
+                        }
+                    } catch (JSONException e) {
+
+                    }
                 }
             }
         });
     }
 
-    private void parseAddress(String data) {
-        try {
-            JSONObject obj = new JSONObject(data);
-            JSONObject jsonObject = obj.optJSONObject("error");
-            final int no = jsonObject.optInt("no");
-            JSONArray array = obj.optJSONArray("useraddress");
-            JSONObject object = array.optJSONObject(0);
-            DataHelper.setAddressId(this, obj.optInt("id") + "");
-            user.setRealname(object.optString("name"));
-            user.setProvince(object.optString("province"));
-            user.setPhone(object.optString("phone"));
-            user.setCity(object.optString("city"));
-            user.setAddress(object.optString("address"));
-
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    doIntent(no == 200);
+    /**
+     * 获取手机验证码
+     */
+    protected void doGetVerifyCode(String phone) {
+        if (canGetVerify) {
+            canGetVerify = false;
+            // 开启倒计时器
+            new CountDownTimer(60000, 1000) {
+                public void onTick(long millisUntilFinished) {
+                    getverify.setText(millisUntilFinished / 1000 + "s重新获取");
                 }
-            }, 1000);
-        } catch (JSONException e) {
-            e.printStackTrace();
+
+                public void onFinish() {
+                    getverify.setText(R.string.get_verify_code);
+                    canGetVerify = true;
+                }
+            }.start();
+            apiController.getVerifyCode(phone, new FetchEntryListener() {
+
+                @Override
+                public void setData(Entry entry) {
+                    if (entry instanceof VerifyCode) {
+                        showToast(entry.toString());
+                    }
+                }
+            });
         }
     }
 
-    private void changeDistrict(Context context, final TextView district_textview) {
-        ChangeDistrictDialog mChangeAddressDialog = new ChangeDistrictDialog(context);
+    private void changeDistrict() {
+        ChangeDistrictDialog mChangeAddressDialog = new ChangeDistrictDialog(this);
         mChangeAddressDialog.setAddress("北京", "朝阳");
         mChangeAddressDialog.show();
         mChangeAddressDialog.setAddresskListener(new ChangeDistrictDialog.OnAddressCListener() {
 
             @Override
             public void onClick(String province, String city) {
-                district_textview.setText(province + " " + city);
+                pp = province;
+                cc = city;
+                mHandler.sendEmptyMessage(1);
             }
         });
-    }
-
-    private void doIntent(boolean success) {
-        if (success) {
-            Intent i = new Intent();
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("error", user);
-            i.putExtras(bundle);
-            this.setResult(RESULT_OK, i);
-            this.finish();
-        } else showToast(R.string.save_fail);
     }
 
     //手机号数字正则匹配

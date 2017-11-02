@@ -76,13 +76,14 @@ public class MainCityListScrollView extends LinearLayout {
             layout.addView(viewHolder.getConvertView(), layoutParams);
         }
         removeAllViews();
-        LinearLayout.LayoutParams lll = new LinearLayout.LayoutParams(CommonApplication.width - 120,LayoutParams.WRAP_CONTENT);
-        addView(layout,lll);
+        LinearLayout.LayoutParams lll = new LinearLayout.LayoutParams(CommonApplication.width - 120, LayoutParams.WRAP_CONTENT);
+        addView(layout, lll);
         ImageView icon = new ImageView(mContext);
 
-        LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(80, width - 100);
+        LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, width - 100);
         ll.gravity = Gravity.CENTER_VERTICAL;
-        icon.setImageResource(R.mipmap.city_more);
+        icon.setImageResource(R.drawable.city_more);
+        icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         icon.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

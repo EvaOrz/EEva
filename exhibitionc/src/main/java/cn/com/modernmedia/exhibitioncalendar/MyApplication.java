@@ -29,7 +29,7 @@ public class MyApplication extends CommonApplication {
     public static LocationClient mLocationClient;//定位SDK的核心类
 
     public static MuseumDetailActivity museumDetailActivity;
-
+    public static int weixinPayStatus = 100;
 
     /**
      * 初始化整个app的配置
@@ -56,7 +56,7 @@ public class MyApplication extends CommonApplication {
 
         initMemorySize();
         APPID = 61;
-        DEBUG = 1;
+        DEBUG = 0;
         UrlMaker.setHost();
         ConstData.setAppId(APPID);
         WEIXIN_APP_ID = "wx9320801de5f7e77a";

@@ -20,6 +20,7 @@ import cn.com.modernmedia.corelib.db.DataHelper;
 import cn.com.modernmedia.corelib.listener.FetchEntryListener;
 import cn.com.modernmedia.corelib.model.Entry;
 import cn.com.modernmedia.corelib.model.UserModel;
+import cn.com.modernmedia.corelib.model.VipInfoModel;
 import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.corelib.widget.RoundImageView;
 import cn.com.modernmedia.exhibitioncalendar.MyApplication;
@@ -40,13 +41,12 @@ import cn.com.modernmedia.exhibitioncalendar.view.ShareDialog;
 
 public class MyListActivity extends BaseActivity {
     private RoundImageView avatar;
-    private TextView nickname, clickAdd, ingText, edText;
+    private TextView nickname, clickAdd, ingText, edText, goVip;
     private UserModel userModel;
     private ListView listView;
     private String shareId;
     private ImageView cover;
-    //    private List<CalendarModel> ingdatas = new ArrayList<>();
-    //    private List<CalendarModel> eddatas = new ArrayList<>();
+    private VipInfoModel vipInfoModel = new VipInfoModel();// 用户的vip信息
 
 
     public Handler handler = new Handler() {
@@ -77,6 +77,14 @@ public class MyListActivity extends BaseActivity {
                 case 3:// 分享个人行程
                     new ShareDialog(MyListActivity.this, userModel.getUserName() + "的观展行程", "", userModel.getAvatar(), UrlMaker.getShareWebUrl(shareId));
                     break;
+                case 4:
+                    vipInfoModel = DataHelper.getVipInfo(MyListActivity.this);
+                    if (vipInfoModel == null || vipInfoModel.getLevel() == 0) {
+                        goVip.setText(R.string.my_vip_nolevel);
+                    } else {
+                        goVip.setText(R.string.my_vip_level);
+                    }
+                    break;
 
             }
 
@@ -95,9 +103,11 @@ public class MyListActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-// 登录状态改变
-        if (CommonApplication.loginStatusChange  == 2) {
+        // 登录状态改变
+        if (CommonApplication.loginStatusChange == 2) {
             initData(true);
+
+            handler.sendEmptyMessage(4);
         }
     }
 
@@ -107,6 +117,8 @@ public class MyListActivity extends BaseActivity {
         findViewById(R.id.my_share).setOnClickListener(this);
         avatar = (RoundImageView) findViewById(R.id.my_avatar);
         avatar.setOnClickListener(this);
+        goVip = (TextView) findViewById(R.id.my_vip_level);
+        goVip.setOnClickListener(this);
         nickname = (TextView) findViewById(R.id.my_nickname);
         clickAdd = (TextView) findViewById(R.id.l_click_add);
         ingText = (TextView) findViewById(R.id.list_ing);
@@ -125,6 +137,8 @@ public class MyListActivity extends BaseActivity {
         cover = (ImageView) findViewById(R.id.l_cover);
         cover.setLayoutParams(new RelativeLayout.LayoutParams(MyApplication.width, headerView.getMeasuredHeight()));
         cover.setImageResource(R.mipmap.my_bg);
+
+        handler.sendEmptyMessage(4);
     }
 
     /**
@@ -156,8 +170,6 @@ public class MyListActivity extends BaseActivity {
         } else {//
             handler.sendEmptyMessage(1);
         }
-
-
     }
 
     private void getIngData() {
@@ -233,6 +245,12 @@ public class MyListActivity extends BaseActivity {
                 edText.setBackgroundResource(R.drawable.red_3radius_corner_bg);
                 ingText.setBackgroundResource(R.drawable.gray_3radius_corner_bg);
                 handler.sendEmptyMessage(2);
+                break;
+
+            case R.id.my_vip_level:
+                if (userModel == null) {
+                    startActivity(new Intent(MyListActivity.this, LoginActivity.class));
+                } else startActivity(new Intent(MyListActivity.this, MyVipActivity.class));
                 break;
         }
     }

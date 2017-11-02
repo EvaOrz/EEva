@@ -1,6 +1,9 @@
 package cn.com.modernmedia.exhibitioncalendar.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,16 +19,21 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import cn.com.modernmedia.corelib.BaseActivity;
 import cn.com.modernmedia.corelib.CommonApplication;
 import cn.com.modernmedia.corelib.db.DataHelper;
+import cn.com.modernmedia.corelib.listener.FetchDataListener;
 import cn.com.modernmedia.corelib.listener.FetchEntryListener;
 import cn.com.modernmedia.corelib.model.Entry;
 import cn.com.modernmedia.corelib.model.ErrorMsg;
 import cn.com.modernmedia.corelib.model.UserModel;
+import cn.com.modernmedia.corelib.model.VipInfoModel;
 import cn.com.modernmedia.corelib.model.WeatherModel;
 import cn.com.modernmedia.corelib.util.ParseUtil;
 import cn.com.modernmedia.corelib.util.Tools;
@@ -58,7 +66,7 @@ import static cn.com.modernmedia.exhibitioncalendar.util.AppValue.myList;
 
 public class MainActivity extends BaseActivity {
     private ImageView weatherImg, avatar;
-    private TextView weatherTxt, actionButton, myNum;
+    private TextView weatherTxt, actionButton, myNum, goVip;
     public ApiController apiController;
     public WeatherModel weatherModel;
     private MainCityListScrollView mainCityListScrollView;
@@ -78,6 +86,7 @@ public class MainActivity extends BaseActivity {
     private VerticleVPAdapter verticleVPAdapter;
     private View page1, page2;
     private UserModel userModel;
+    private VipInfoModel vipInfoModel = new VipInfoModel();// 用户的vip信息
 
     private long lastClickTime = 0;// 上次点击返回按钮时间
 
@@ -129,6 +138,8 @@ public class MainActivity extends BaseActivity {
                     if (userModel != null) {
                         Tools.setAvatar(MainActivity.this, DataHelper.getAvatarUrl(MainActivity
                                 .this, userModel.getUserName()), avatar);
+                    }else {
+
                     }
                     break;
 
@@ -147,6 +158,14 @@ public class MainActivity extends BaseActivity {
                 case 7://不显示
                     actionButton.setVisibility(View.GONE);
 
+                    break;
+
+                case 8:// 更新首页vip 信息
+                    if (vipInfoModel == null || vipInfoModel.getLevel() == 0) {
+                        goVip.setText(R.string.my_vip_nolevel);
+                    } else {
+                        goVip.setText(R.string.my_vip_level);
+                    }
                     break;
             }
         }
@@ -203,10 +222,32 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         initView();
         initData();
-        uploadDeviceInfoForPush();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (MainActivity.this.checkSelfPermission(Manifest.permission.READ_PHONE_STATE) ==
+                    PackageManager.PERMISSION_GRANTED) {
+                uploadDeviceInfoForPush();
+            } else {
+                askPermission(new String[]{ Manifest.permission.READ_PHONE_STATE, }, 108);
+            }
+        } else {
+            uploadDeviceInfoForPush();
+        }
 
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 108:
+                // 101的第一个权限 是读定位
+                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                   uploadDeviceInfoForPush();
+                }
+                break;
+
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 
     /**
      * Push需要：上传device信息
@@ -214,7 +255,6 @@ public class MainActivity extends BaseActivity {
     private void uploadDeviceInfoForPush() {
         if (DataHelper.isPushServiceEnable(this)) NewPushManager.getInstance(this).register(this);
     }
-
 
     protected void onPause() {
         super.onPause();
@@ -240,7 +280,7 @@ public class MainActivity extends BaseActivity {
                     }
                 }
             });
-            //         已经过期
+            // 已经过期
             apiController.getMyList(this, "1", 2, new FetchEntryListener() {
                 @Override
                 public void setData(Entry entry) {
@@ -296,6 +336,35 @@ public class MainActivity extends BaseActivity {
             }
         });
         initUserData();
+        getIssueLevel();
+
+    }
+
+    /**
+     * 取用户的付费权限
+     * <p>
+     * 入版需要取一下权限
+     */
+    private void getIssueLevel() {
+        if (userModel == null) return;
+        apiController.getUserPermission(new FetchDataListener() {
+            @Override
+            public void fetchData(boolean isSuccess, String data, boolean fromHttp) {
+                if (isSuccess) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(data);
+                        if (jsonObject != null) {
+                            vipInfoModel = VipInfoModel.parseVipInfoModel(jsonObject);
+                            DataHelper.saveVipInfo(MainActivity.this, vipInfoModel);
+                            handler.sendEmptyMessage(8);
+                        }
+                    } catch (JSONException e) {
+
+                    }
+                }
+            }
+        });
+
 
     }
 
@@ -317,7 +386,8 @@ public class MainActivity extends BaseActivity {
         myListLayout = (LinearLayout) page2.findViewById(R.id.ceshi);
         page2.findViewById(R.id.main_add).setOnClickListener(this);
         page1.findViewById(R.id.main_godown).setOnClickListener(this);
-        page1.findViewById(R.id.my_vip_level).setOnClickListener(this);
+        goVip = (TextView) page1.findViewById(R.id.my_vip_level);
+        goVip.setOnClickListener(this);
         myNum = (TextView) page1.findViewById(R.id.main_calendar_num);
         mainCityListScrollView = (MainCityListScrollView) page1.findViewById(R.id.main_city_listview);
         weatherImg = (ImageView) page1.findViewById(R.id.main_weather_img);
@@ -423,7 +493,6 @@ public class MainActivity extends BaseActivity {
                 startActivity(new Intent(MainActivity.this, CalendarListActivity.class));
                 break;
             case R.id.my_vip_level:
-
                 startActivity(new Intent(MainActivity.this, MyVipActivity.class));
 
                 break;
@@ -501,6 +570,8 @@ public class MainActivity extends BaseActivity {
         if (CommonApplication.loginStatusChange == 2) {
             Log.e("登录状态变化", "重新请求我的展览列表");
             initUserData();
+            vipInfoModel = DataHelper.getVipInfo(this);
+            handler.sendEmptyMessage(8);
         } else if (CommonApplication.loginStatusChange == 1) {
             Log.e("我的展览状态变化", "刷新页面");
             // 更新我的展览列表
