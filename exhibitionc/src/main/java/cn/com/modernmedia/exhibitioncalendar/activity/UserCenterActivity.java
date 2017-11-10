@@ -131,7 +131,6 @@ public class UserCenterActivity extends BaseActivity {
 
                 FetchPhotoManager fetchPhotoManager = new FetchPhotoManager(this, picturePath);
                 fetchPhotoManager.doFecthPicture();
-
                 break;
             case R.id.nickname:
                 new SignDialog(UserCenterActivity.this, 1, new SignDialog.SignChangeListener() {
@@ -178,7 +177,7 @@ public class UserCenterActivity extends BaseActivity {
                         handler.sendEmptyMessage(1);
                     }
                 });
-
+                break;
             case R.id.sign:
                 new SignDialog(UserCenterActivity.this, 5, new SignDialog.SignChangeListener() {
                     @Override
@@ -187,6 +186,7 @@ public class UserCenterActivity extends BaseActivity {
                         handler.sendEmptyMessage(1);
                     }
                 });
+                break;
             case R.id.birthday:
                 new AddPopView(UserCenterActivity.this, 3, mUser.getBirth());
                 break;
@@ -315,7 +315,6 @@ public class UserCenterActivity extends BaseActivity {
                         showToast(TextUtils.isEmpty(toast) ? getString(R.string.msg_avatar_upload_failed) : toast);
                     }
                 }
-
         );
     }
 

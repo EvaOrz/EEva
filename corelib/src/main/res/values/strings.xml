@@ -272,4 +272,9 @@
     <string name="vip_paycallback_id">订单编号</string>
     <string name="vip_paycallback_time">创建时间</string>
     <string name="vip_pay_ing">订单正在处理，请稍候。</string>
+    <string name="update">软件版本更新</string>
+    <string name="download">下载</string>
+    <string name="update1">检测更新</string>
+    <string name="download_later">以后再说</string>
+    <string name="download_error">下载遇到了错误，已停止</string>
 </resources>

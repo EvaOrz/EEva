@@ -797,4 +797,21 @@ public class Tools {
         }
         return "";
     }
+
+    /**
+     * 获取版本号
+     */
+    public static int getAppIntVersionName(Context context) {
+        try {
+            PackageManager packageManager = context.getPackageManager();
+            PackageInfo info = packageManager.getPackageInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            if (TextUtils.isEmpty(info.versionName)) {
+                return 0;
+            } else return Integer.valueOf(info.versionName.replace(".", ""));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 }

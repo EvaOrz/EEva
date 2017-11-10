@@ -3,6 +3,7 @@ package cn.com.modernmedia.exhibitioncalendar.api;
 import android.text.TextUtils;
 import android.util.Log;
 
+import cn.com.modernmedia.corelib.CommonApplication;
 import cn.com.modernmedia.corelib.util.ConstData;
 import cn.com.modernmedia.exhibitioncalendar.MyApplication;
 
@@ -457,6 +458,7 @@ public class UrlMaker {
 
     /**
      * 激活兑换码
+     *
      * @return
      */
     public static String getJihuoCode() {
@@ -466,6 +468,18 @@ public class UrlMaker {
             return "https://artcalendar-test.bbwc.cn/html/artCalendar/html/redeem.html";
         }
         return "";
+    }
+
+    /**
+     * 判断版本号，不一致就升级
+     *
+     * @return
+     */
+    public static String checkVersion(String version) {
+        if (MyApplication.DEBUG == 0) {
+            return "https://user.bbwc.cn/device/versionUpdate?appid=" + MyApplication.APP_ID + "&type=android&version=" + version + "&src=" + CommonApplication.CHANNEL;
+        } else
+            return "https://user-test.bbwc.cn/device/versionUpdate?appid=" + MyApplication.APP_ID + "&type=android&version=" + version + "&src=" + CommonApplication.CHANNEL;
     }
 
     /**

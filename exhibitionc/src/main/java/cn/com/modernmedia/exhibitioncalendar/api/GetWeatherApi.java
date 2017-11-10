@@ -42,6 +42,7 @@ public class GetWeatherApi extends BaseApi {
 
     @Override
     protected void handler(JSONObject jsonObject) {
+        Log.e("GetWeather",jsonObject.toString());
         if (jsonObject == null) return;
         weatherModel.setIcon(jsonObject.optString("icon_url"));
         weatherModel.setAlarm(jsonObject.optString("alarms"));

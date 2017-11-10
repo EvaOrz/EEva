@@ -21,6 +21,7 @@ import cn.com.modernmedia.corelib.model.UserModel;
 import cn.com.modernmedia.corelib.util.DESCoder;
 import cn.com.modernmedia.exhibitioncalendar.api.GetSomeListApi.TAG_TYPE;
 import cn.com.modernmedia.exhibitioncalendar.api.user.BandAccountApi;
+import cn.com.modernmedia.exhibitioncalendar.api.user.CheckVersionApi;
 import cn.com.modernmedia.exhibitioncalendar.api.user.FindPasswordApi;
 import cn.com.modernmedia.exhibitioncalendar.api.user.GetBandStatusApi;
 import cn.com.modernmedia.exhibitioncalendar.api.user.HandleFavApi;
@@ -319,7 +320,15 @@ public class ApiController {
         GetSomeListApi getRecommendedListApi = new GetSomeListApi(c, TAG_TYPE.RECOMMEND, "", "");
         doPostRequest(getRecommendedListApi, getRecommendedListApi.getCalendarListModel(), USE_CACHE_FIRST, listener);
     }
-
+    /**
+     * 判断版本号
+     *
+     * @param listener
+     */
+    public void checkVersion(String v, FetchEntryListener listener) {
+        CheckVersionApi operate = new CheckVersionApi(v);
+        doGetRequest(operate, operate.getVersion(), FetchApiType.USE_HTTP_ONLY, listener);
+    }
 
     /**
      * 获取周边列表

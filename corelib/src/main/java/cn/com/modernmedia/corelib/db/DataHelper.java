@@ -71,6 +71,12 @@ public class DataHelper {
     private static final String VIP_PHONE = "vip_phone";
     public static final String VIP_END_TIME = "vip_end_time";
 
+    /**
+     * 检测更新所用
+     */
+    private static final String DOWN = "down";
+    private static final String LAST_VERSION = "last_version";// 最新版本
+    private static final String REFUSE_NOTICE_VERSION = "refuse_notice_version";// 用户拒绝主动弹出版本更新对话框
     private static SharedPreferences mPref;
 
     private static SharedPreferences getPref(Context context) {
@@ -350,6 +356,26 @@ public class DataHelper {
     }
 
     /**
+     * 获取最新版本号
+     *
+     * @return
+     */
+    public static int getLastVersion(Context context) {
+        return getPref(context).getInt(LAST_VERSION, 0);
+    }
+
+    /**
+     * 存储最新版本号
+     *
+     * @param context
+     * @param version
+     */
+    public static void setLastVersion(Context context, int version) {
+        Editor editor = getPref(context).edit();
+        editor.putInt(LAST_VERSION, version);
+        editor.commit();
+    }
+    /**
      * 存储是否点击新的登录接口
      *
      * @param context
@@ -441,6 +467,21 @@ public class DataHelper {
         editor.commit();
     }
 
+
+    /**
+     * @param context
+     * @return
+     */
+    public static boolean getRefuseNoticeVersion(Context context) {
+        return getPref(context).getBoolean(REFUSE_NOTICE_VERSION, false);
+    }
+
+
+    public static void setRefuseNoticeVersion(Context context, boolean isRefuse) {
+        Editor editor = getPref(context).edit();
+        editor.putBoolean(REFUSE_NOTICE_VERSION, isRefuse);
+        editor.commit();
+    }
 
     /**
      * 存储提交失败的订单

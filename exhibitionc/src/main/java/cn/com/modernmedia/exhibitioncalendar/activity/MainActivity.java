@@ -49,6 +49,7 @@ import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarMod
 import cn.com.modernmedia.exhibitioncalendar.model.TagListModel;
 import cn.com.modernmedia.exhibitioncalendar.push.NewPushManager;
 import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
+import cn.com.modernmedia.exhibitioncalendar.util.UpdateManager;
 import cn.com.modernmedia.exhibitioncalendar.util.UriParse;
 import cn.com.modernmedia.exhibitioncalendar.view.ChildHeightViewpager;
 import cn.com.modernmedia.exhibitioncalendar.view.ListItemMenuView;
@@ -232,7 +233,7 @@ public class MainActivity extends BaseActivity {
         } else {
             uploadDeviceInfoForPush();
         }
-
+        checkBbwc();
     }
 
     @Override
@@ -627,6 +628,28 @@ public class MainActivity extends BaseActivity {
 
             handler.sendEmptyMessage(6);
     }
+
+    /**
+     * 更新版本
+     */
+    private void checkBbwc() {
+        //googleplay 市场禁止检测版本更新
+        if (CommonApplication.CHANNEL.equals("googleplay")) {
+            return;
+        }
+        if (DataHelper.getRefuseNoticeVersion(this)){
+            return;
+        }
+
+        UpdateManager manager = new UpdateManager(this, new UpdateManager.CheckVersionListener() {
+
+            @Override
+            public void checkEnd() {
+            }
+        });
+        manager.checkVersion();
+    }
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
