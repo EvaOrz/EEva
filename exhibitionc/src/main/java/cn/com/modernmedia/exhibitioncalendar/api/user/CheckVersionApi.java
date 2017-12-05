@@ -36,6 +36,7 @@ public class CheckVersionApi extends BaseApi {
         return url;
     }
 
+    //{"code":0,"msg":"","data":{"id":"10","appid":"","cur_ver":"242","type":"android","src":"bbwc","feature":"","download":"","pubdate":"","is_del":"0"}}
     @Override
     protected void handler(JSONObject jsonObject) {
         if (jsonObject == null) return;

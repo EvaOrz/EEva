@@ -61,7 +61,7 @@ public class UriParse {
     public static String DETAILLIVECALENDAR = "detailLiveCalendar";
     public static String SAFARI = "safari";
     public static String DETAILMUSEUM = "detailMuseum";
-
+    public static String DETAILACTIVE = "detailActive";
 
     /**
      * 普通列表点击

@@ -5,6 +5,7 @@ import android.util.Log;
 
 import org.json.JSONObject;
 
+import cn.com.modernmedia.corelib.CommonApplication;
 import cn.com.modernmedia.corelib.db.DataHelper;
 import cn.com.modernmedia.corelib.http.BaseApi;
 import cn.com.modernmedia.corelib.model.ErrorMsg;
@@ -89,6 +90,7 @@ public class HandleFavApi extends BaseApi {
              */
             AppValue.myList.getCalendarModels().clear();
             AppValue.myList.getCalendarModels().addAll(calendarListModel.getCalendarModels());
+            CommonApplication.loginStatusChange = 1;
         }
     }
 

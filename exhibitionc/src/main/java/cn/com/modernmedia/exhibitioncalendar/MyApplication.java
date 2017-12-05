@@ -7,6 +7,7 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.mapapi.SDKInitializer;
+import com.flurry.android.FlurryAgent;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
@@ -60,13 +61,19 @@ public class MyApplication extends CommonApplication {
         UrlMaker.setHost();
         ConstData.setAppId(APPID);
         WEIXIN_APP_ID = "wx9320801de5f7e77a";
-        WEIXIN_SECRET = "f23486b3fa95b337be103cd5edbf92b7";
+        // weixin sign(f23486b3fa95b337be103cd5edbf92b7)
+        WEIXIN_SECRET = "6e8716f1240d37046d08ab7be6c21742";
         WEIXIN_PARTNER_ID = "1459768302";
 
         SINA_APP_ID = "3608123411";
         SINA_SECRET = "895c3716c902def304f1bf3c5af5900f";
 
         SDKInitializer.initialize(getApplicationContext());
+
+        /**
+         * 初始化Flurry
+         */
+        new FlurryAgent.Builder().withLogEnabled(true).build(this, "CF5TC8PBH2Y7G9NXDCTS");
 
         /**
          * 百度定位client

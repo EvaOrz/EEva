@@ -23,9 +23,13 @@ import android.widget.Toast;
 
 import com.sina.weibo.sdk.exception.WeiboException;
 import com.sina.weibo.sdk.net.RequestListener;
+import com.tencent.connect.UserInfo;
 import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
+import com.tencent.tauth.IUiListener;
+import com.tencent.tauth.Tencent;
+import com.tencent.tauth.UiError;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,6 +57,8 @@ import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
 import cn.com.modernmedia.exhibitioncalendar.model.UploadAvatarResult;
 import cn.com.modernmedia.exhibitioncalendar.view.OpenLoginPopwindow;
+
+import static cn.com.modernmedia.corelib.db.DataHelper.saveHasSync;
 
 /**
  * 登录页面
@@ -85,6 +91,8 @@ public class LoginActivity extends BaseActivity {
     private boolean isNomalLogin = true;// 是否是正常登录方式
     private boolean isShowPassword = false;// 是否显示密码
     private String lastUserName = "";// 记录登录方式（邮箱、手机号）
+    private int loginType = 0;// 1：新浪微博；2：腾讯qq；3：微信
+    private Tencent mTencent;
     /**
      * 从网页跳转支付，需要先验证登录
      */
@@ -113,6 +121,7 @@ public class LoginActivity extends BaseActivity {
         }, 500);
 
         fromSplashBundle = getIntent().getStringExtra("pid");
+        mTencent = Tencent.createInstance(CommonApplication.QQ_APP_ID, this.getApplicationContext());
 
     }
 
@@ -295,12 +304,13 @@ public class LoginActivity extends BaseActivity {
     }
 
     public void doWeixinlogin() {
+        loginType = 3;
         weixin_login = 1;
         sWXLoginCallback = new OnWXLoginCallback() {
             @Override
             public void onLogin(boolean isFirstLogin, UserModel user) {
                 if (isFirstLogin) {
-                    DataHelper.saveHasSync(mContext, true);
+                    saveHasSync(mContext, true);
                     openLogin(user, 3, null);
                 } else {// 登录过
                     lastUserName = "weixin";
@@ -488,24 +498,87 @@ public class LoginActivity extends BaseActivity {
             }
         });
     }
+    private IUiListener iuListener = new IUiListener() {
+        @Override
+        public void onComplete(Object o) {
+            Log.e("login", o.toString());
+            try {
+                if (!TextUtils.isEmpty(o.toString())) {
+                    JSONObject jsonObject = new JSONObject(o.toString());
+                    final String openid = jsonObject.optString("openid");
+                    getQQUser(openid);
+                }
+            } catch (JSONException e) {
+
+            }
+
+        }
+
+        @Override
+        public void onError(UiError uiError) {
+            Log.e("onError:", "code:" + uiError.errorCode + ", msg:" + uiError.errorMessage + ", detail:" + uiError.errorDetail);
+
+        }
+
+        @Override
+        public void onCancel() {
+            showToast("取消");
+        }
+    };
+    private void getQQUser(final String openid) {
+        showLoadingDialog(true);
+        UserInfo mInfo = new UserInfo(mContext, mTencent.getQQToken());
+        mInfo.getUserInfo(new IUiListener() {
+            @Override
+            public void onComplete(Object o) {
+
+                doAfterQQIsAuthed(o, openid);
+            }
+
+            @Override
+            public void onError(UiError uiError) {
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+    }
+    /**
+     * {"ret":0,"msg":"","is_lost":0,"nickname":"Sundial ☀","gender":"女","province":"海南","city":"三亚","figureurl":"http:\/\/qzapp.qlogo.cn\/qzapp\/101082784\/EDB238CADF1B62163DB1A72D062E22ED\/30","figureurl_1":"http:\/\/qzapp.qlogo.cn\/qzapp\/101082784\/EDB238CADF1B62163DB1A72D062E22ED\/50","figureurl_2":"http:\/\/qzapp.qlogo.cn\/qzapp\/101082784\/EDB238CADF1B62163DB1A72D062E22ED\/100","figureurl_qq_1":"http:\/\/q.qlogo.cn\/qqapp\/101082784\/EDB238CADF1B62163DB1A72D062E22ED\/40","figureurl_qq_2":"http:\/\/q.qlogo.cn\/qqapp\/101082784\/EDB238CADF1B62163DB1A72D062E22ED\/100","is_yellow_vip":"0","vip":"0","yellow_vip_level":"0","level":"0","is_yellow_year_vip":"0"}
+     */
+    private void doAfterQQIsAuthed(Object o, String openid) {
+        showLoadingDialog(false);
+        try {
+            JSONObject object = new JSONObject(o.toString());
+            UserModel mUser = new UserModel();
+            mUser.setQqId(openid);
+            mUser.setNickName(object.optString("nickname")); // 昵称
+            mUser.setAvatar(object.optString("figureurl_qq_1"));// 用户头像地址（中图），50×50像素
+            mUser.setOpenLoginJson(o.toString());
+            DataHelper.saveHasSync(mContext, true);
+            openLogin(mUser, 2, null);
+
+        } catch (JSONException e) {
+
+        }
+
+    }
+
 
     public void doQQLogin() {
-        //        QQLoginUtil qqLoginUtil = QQLoginUtil.getInstance(mContext);
-        //        qqLoginUtil.login();
-        //        qqLoginUtil.setLoginListener(new UserModelAuthListener() {
-        //
-        //            @Override
-        //            public void onCallBack(boolean isSuccess) {
-        //                if (isSuccess) {
-        //                    doAfterQQIsAuthed();
-        //                } else {
-        //                    showLoadingDialog(false);
-        //                }
-        //            }
-        //        });
+        loginType = 2;
+        if (!mTencent.isSessionValid()) {
+            mTencent.login(this, "all", iuListener);
+        } else {
+            getQQUser(mTencent.getOpenId());
+        }
     }
 
     public void doSinaLogin() {
+        loginType = 1;
         // 新浪微博认证
         sinaAuth = new SinaAuth(mContext);
         if (!sinaAuth.checkIsOAuthed()) {
@@ -549,7 +622,7 @@ public class LoginActivity extends BaseActivity {
                         mUser.setUserName(object.optString("idstr", ""));
                         mUser.setAvatar(object.optString("profile_image_url"));// 用户头像地址（中图），50×50像素
                         mUser.setOpenLoginJson(response);
-                        DataHelper.saveHasSync(LoginActivity.this, true);
+                        saveHasSync(LoginActivity.this, true);
                         openLogin(mUser, 1, null);
                     } else {
                         Toast.makeText(LoginActivity.this, response, Toast.LENGTH_LONG).show();

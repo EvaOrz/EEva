@@ -67,6 +67,7 @@ public class CommonApplication extends Application {
      * 1: 我的展览数据改变
      * 2: 登录状态改变
      * 3: 我的城市列表数据改变
+     * 4: 付费成功，需要重新获取权限
      */
     public static int loginStatusChange = 0;
     public static String installationId;

@@ -11,26 +11,27 @@ import java.util.List;
 
 import cn.com.modernmedia.exhibitioncalendar.MyApplication;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
+import cn.com.modernmedia.exhibitioncalendar.model.RecommandModel;
 
 /**
  * Created by Eva. on 17/4/10.
  */
 
 public class CoverVPAdapter extends PagerAdapter {
-    protected List<CalendarModel> list = new ArrayList<CalendarModel>();
+    protected List<CalendarModel> recos = new ArrayList<>();
     protected Context mContext;
     private int type;// 0:cover ,1:touming
 
-    public CoverVPAdapter(Context context, List<CalendarModel> list, int type) {
+    public CoverVPAdapter(Context context, RecommandModel recommandModel, int type) {
         this.mContext = context;
-        this.list = list;
+        this.recos.addAll(recommandModel.getRecommandModels());
         this.type = type;
     }
 
 
     @Override
     public int getCount() {
-        return 5;
+        return recos.size();
     }
 
     @Override
@@ -47,7 +48,7 @@ public class CoverVPAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, final int position) {
         View view = null;
         if (type == 0) {
-            view = fetchView(list.get(position));
+            view = fetchView(recos.get(position));
             container.addView(view);
         } else {
             view = new View(mContext);

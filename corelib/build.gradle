@@ -49,7 +49,12 @@ dependencies {
     // 图片显示
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
     compile files('libs/open_sdk.jar')
+    // 微博SDK
     compile files('libs/weiboSDKCore_3.1.4.jar')
+    // 百度地图SDK
     compile files('libs/BaiduLBS_Android.jar')
+    // 支付宝支付SDk
     compile files('libs/alipaySDK-20150610.jar')
+    // flurry
+    compile 'com.flurry.android:ads:8.1.0'
 }

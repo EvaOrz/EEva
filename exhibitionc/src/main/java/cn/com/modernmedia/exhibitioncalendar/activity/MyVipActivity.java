@@ -27,6 +27,7 @@ import cn.com.modernmedia.corelib.listener.FetchDataListener;
 import cn.com.modernmedia.corelib.model.VipInfoModel;
 import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.corelib.widget.RoundImageView;
+import cn.com.modernmedia.exhibitioncalendar.MyApplication;
 import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.adapter.VipIconAdapter;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
@@ -67,10 +68,13 @@ public class MyVipActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        vipInfoModel = DataHelper.getVipInfo(this);
-        handler.sendEmptyMessage(3);
         setUserInfo();
-        if (DataHelper.getUserLoginInfo(this) != null) {
+        // 初始化
+        vipInfoModel = DataHelper.getVipInfo(this);
+        handler.sendEmptyMessage(3);// 显示对应套餐
+        handler.sendEmptyMessage(4);// 显示有效期
+        // 付费状态变化之后再初始化
+        if (MyApplication.loginStatusChange == 4) {
             getIssueLevel();
         }
     }
@@ -88,7 +92,8 @@ public class MyVipActivity extends BaseActivity {
                         if (jsonObject != null) {
                             vipInfoModel = VipInfoModel.parseVipInfoModel(jsonObject);
                             DataHelper.saveVipInfo(MyVipActivity.this, vipInfoModel);
-                            handler.sendEmptyMessage(4);
+                            handler.sendEmptyMessage(3);// 显示对应套餐
+                            handler.sendEmptyMessage(4);// 显示有效期
                         }
                     } catch (JSONException e) {
 
@@ -108,17 +113,6 @@ public class MyVipActivity extends BaseActivity {
         } else {
             avatar.setImageResource(R.mipmap.avatar_bg);
             nickname.setText("未登录");
-        }
-        if (vipInfoModel != null) {
-            if (vipInfoModel.getLevel() == 0) {
-                goPay.setText(R.string.my_vip_btn1);
-            } else {
-                goPay.setText(R.string.my_vip_btn2);
-            }
-            if (!TextUtils.isEmpty(vipInfoModel.getGoods_id())) {
-                vip_icon.setVisibility(View.VISIBLE);
-                Tools.setImage(vip_icon, vipInfoModel.getGoods_id());
-            }
         }
     }
 
@@ -269,6 +263,17 @@ public class MyVipActivity extends BaseActivity {
                         deadLine.setText("会员有效期：" + Tools.format(Long.valueOf(vipInfoModel.getVip_endtime()) * 1000, "yyyy.MM.dd"));
                     } else {
                         deadLine.setVisibility(View.GONE);
+                    }
+                    if (vipInfoModel != null) {
+                        if (vipInfoModel.getLevel() == 0) {
+                            goPay.setText(R.string.my_vip_btn1);
+                        } else {
+                            goPay.setText(R.string.my_vip_btn2);
+                        }
+                        if (!TextUtils.isEmpty(vipInfoModel.getGoods_id())) {
+                            vip_icon.setVisibility(View.VISIBLE);
+                            Tools.setImage(vip_icon, vipInfoModel.getGoods_id());
+                        }
                     }
                     break;
             }

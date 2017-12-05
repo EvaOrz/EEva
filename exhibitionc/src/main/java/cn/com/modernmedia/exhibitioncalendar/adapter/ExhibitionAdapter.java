@@ -60,7 +60,7 @@ public class ExhibitionAdapter extends CheckScrollAdapter<CalendarModel> {
         title.setText(item.getTitle());
         // 显示用户自己设置的时间
         if (!TextUtils.isEmpty(item.getTime())) {
-            date.setText(item.getTime());
+            date.setText(Tools.getStringToDate(item.getTime()));
         } else
             date.setText(Tools.getStringToDate(item.getStartTime()) + "-" + Tools.getStringToDate(item.getEndTime()));
 

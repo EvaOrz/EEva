@@ -39,6 +39,7 @@ import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
 import cn.com.modernmedia.exhibitioncalendar.api.user.HandleFavApi;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
 import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
+import cn.com.modernmedia.exhibitioncalendar.util.FlurryEvent;
 import cn.com.modernmedia.exhibitioncalendar.view.AddPopView;
 import cn.com.modernmedia.exhibitioncalendar.view.ChooseAlarmPopView;
 
@@ -147,6 +148,8 @@ public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeLi
                 }
                 break;
             case R.id.tong_switch:// 同步到系统日历
+                // flurry log
+                FlurryEvent.logACSyncSystemCalendar(AddActivity.this);
                 if (state) {
                     tongbuStatus = true;
 

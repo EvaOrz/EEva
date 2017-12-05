@@ -31,6 +31,7 @@ import cn.com.modernmedia.exhibitioncalendar.api.GetShareIdApi;
 import cn.com.modernmedia.exhibitioncalendar.api.UrlMaker;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel;
 import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
+import cn.com.modernmedia.exhibitioncalendar.util.FlurryEvent;
 import cn.com.modernmedia.exhibitioncalendar.view.ShareDialog;
 
 /**
@@ -205,6 +206,8 @@ public class MyListActivity extends BaseActivity {
                 if (userModel == null) {
                     startActivity(new Intent(MyListActivity.this, LoginActivity.class));
                 } else {
+                    // flurry log
+                    FlurryEvent.logACShareMyCalendars(MyListActivity.this);
                     ApiController.getInstance(MyListActivity.this).getShareId(MyListActivity
                             .this, userModel.getUserName() + "的观展行程", new FetchEntryListener() {
                         @Override

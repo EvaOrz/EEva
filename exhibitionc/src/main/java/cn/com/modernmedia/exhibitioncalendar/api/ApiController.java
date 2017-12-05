@@ -19,7 +19,7 @@ import cn.com.modernmedia.corelib.listener.FetchEntryListener;
 import cn.com.modernmedia.corelib.model.Entry;
 import cn.com.modernmedia.corelib.model.UserModel;
 import cn.com.modernmedia.corelib.util.DESCoder;
-import cn.com.modernmedia.exhibitioncalendar.api.GetSomeListApi.TAG_TYPE;
+import cn.com.modernmedia.exhibitioncalendar.api.GetAllCalenderListApi.TAG_TYPE;
 import cn.com.modernmedia.exhibitioncalendar.api.user.BandAccountApi;
 import cn.com.modernmedia.exhibitioncalendar.api.user.CheckVersionApi;
 import cn.com.modernmedia.exhibitioncalendar.api.user.FindPasswordApi;
@@ -298,7 +298,7 @@ public class ApiController {
      * @param c
      */
     public void getAllList(Context c, FetchEntryListener listener) {
-        GetAllCalenderListApi getAllListApi = new GetAllCalenderListApi(c);
+        GetAllCalenderListApi getAllListApi = new GetAllCalenderListApi(c, TAG_TYPE.ALL, "", "");
         doPostRequest(getAllListApi, getAllListApi.getData(), USE_HTTP_ONLY, listener);
     }
 
@@ -317,9 +317,10 @@ public class ApiController {
      * @param listener
      */
     public void getRecommondList(Context c, FetchEntryListener listener) {
-        GetSomeListApi getRecommendedListApi = new GetSomeListApi(c, TAG_TYPE.RECOMMEND, "", "");
-        doPostRequest(getRecommendedListApi, getRecommendedListApi.getCalendarListModel(), USE_CACHE_FIRST, listener);
+        GetRecommandApi getRecommendedListApi = new GetRecommandApi(c);
+        doPostRequest(getRecommendedListApi, getRecommendedListApi.getRecommandModel(), USE_CACHE_FIRST, listener);
     }
+
     /**
      * 判断版本号
      *
@@ -337,8 +338,8 @@ public class ApiController {
      * @param listener
      */
     public void getNearList(Context c, String latitude, String longitude, FetchEntryListener listener) {
-        GetSomeListApi getRecommendedListApi = new GetSomeListApi(c, TAG_TYPE.NEAR, latitude, longitude);
-        doPostRequest(getRecommendedListApi, getRecommendedListApi.getCalendarListModel(), USE_CACHE_FIRST, listener);
+        GetAllCalenderListApi getAllCalenderListApi = new GetAllCalenderListApi(c, TAG_TYPE.NEAR, latitude, longitude);
+        doPostRequest(getAllCalenderListApi, getAllCalenderListApi.getData(), USE_CACHE_FIRST, listener);
     }
 
     /**
@@ -463,7 +464,6 @@ public class ApiController {
     }
 
 
-
     /**
      * 获取套餐列表
      */
@@ -502,10 +502,7 @@ public class ApiController {
      *
      * @param fetchDataListener
      */
-    public static void addVipInfo(String realname, String email, String province, String city,
-                                  String area, String address, String phone ,
-                                  String code ,FetchDataListener
-                                          fetchDataListener) {
+    public static void addVipInfo(String realname, String email, String province, String city, String area, String address, String phone, String code, FetchDataListener fetchDataListener) {
         JSONObject object = new JSONObject();
         try {
             object.put("token", DataHelper.getToken(mContext));
@@ -517,8 +514,8 @@ public class ApiController {
             object.put("city", city);
             object.put("area", area);
             object.put("address", address);
-            object.put("phone",phone);
-            object.put("security_code",code);
+            object.put("phone", phone);
+            object.put("security_code", code);
 
         } catch (JSONException e) {
             e.printStackTrace();

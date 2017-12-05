@@ -46,9 +46,11 @@ import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
 import cn.com.modernmedia.exhibitioncalendar.api.user.HandleFavApi;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
+import cn.com.modernmedia.exhibitioncalendar.model.RecommandModel;
 import cn.com.modernmedia.exhibitioncalendar.model.TagListModel;
 import cn.com.modernmedia.exhibitioncalendar.push.NewPushManager;
 import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
+import cn.com.modernmedia.exhibitioncalendar.util.FlurryEvent;
 import cn.com.modernmedia.exhibitioncalendar.util.UpdateManager;
 import cn.com.modernmedia.exhibitioncalendar.util.UriParse;
 import cn.com.modernmedia.exhibitioncalendar.view.ChildHeightViewpager;
@@ -66,12 +68,12 @@ import static cn.com.modernmedia.exhibitioncalendar.util.AppValue.myList;
  */
 
 public class MainActivity extends BaseActivity {
-    private ImageView weatherImg, avatar;
-    private TextView weatherTxt, actionButton, myNum, goVip;
+    private ImageView weatherImg, avatar, actionButton;
+    private TextView weatherTxt, myNum;
     public ApiController apiController;
     public WeatherModel weatherModel;
     private MainCityListScrollView mainCityListScrollView;
-    private CalendarListModel calendarListModel;// 首页推荐数据
+    private RecommandModel recommandModel;// 首页推荐数据
     private ViewPager coverPager, detailPager;
     private CoverVPAdapter coverVPAdapter;
     private DetailVPAdapter detailVPAdapter;
@@ -109,18 +111,19 @@ public class MainActivity extends BaseActivity {
                     else mainCityListScrollView.setData(AppValue.allCitys.getUsers());
                     break;
                 case 2:// 初始化首页推荐数据
-                    if (calendarListModel != null) {
-                        coverVPAdapter = new CoverVPAdapter(MainActivity.this, calendarListModel.getCalendarModels(), 0);
+                    if (recommandModel != null) {
+
+                        coverVPAdapter = new CoverVPAdapter(MainActivity.this, recommandModel, 0);
                         coverPager.setAdapter(coverVPAdapter);
                         coverVPAdapter.notifyDataSetChanged();
 
-                        detailVPAdapter = new DetailVPAdapter(MainActivity.this, calendarListModel.getCalendarModels());
+                        detailVPAdapter = new DetailVPAdapter(MainActivity.this, recommandModel);
                         detailPager.setAdapter(detailVPAdapter);
                         detailVPAdapter.notifyDataSetChanged();
 
-                        initDots(calendarListModel.getCalendarModels());
-                        if (ParseUtil.listNotNull(calendarListModel.getCalendarModels()))
-                            checkAdd(calendarListModel.getCalendarModels().get(0));
+                        initDots(recommandModel.getRecommandModels().size());
+                        if (ParseUtil.listNotNull(recommandModel.getRecommandModels()))
+                            checkAdd(recommandModel.getRecommandModels().get(0));
                     }
                     break;
 
@@ -131,42 +134,39 @@ public class MainActivity extends BaseActivity {
                     for (CalendarModel ca : myCalendarList) {
                         myListLayout.addView(getMylistItemView(ca));
                     }
-                    myNum.setText(myCalendarList.size() + "个待参观展览");
-                    if (calendarListModel != null && ParseUtil.listNotNull(calendarListModel.getCalendarModels()))
-                        calendarListModel.getCalendarModels().get(coverPager.getCurrentItem()).getItemId();
+                    if (userModel == null) {
+                        myNum.setText(R.string.no_login1);
+                    } else myNum.setText(myCalendarList.size() + "个待参观展览");
+
 
                 case 4:// 头像
                     if (userModel != null) {
                         Tools.setAvatar(MainActivity.this, DataHelper.getAvatarUrl(MainActivity
                                 .this, userModel.getUserName()), avatar);
-                    }else {
+                    } else {
 
                     }
                     break;
-
                 case 5:// 取消行程
                     actionButton.setVisibility(View.VISIBLE);
                     actionButton.setTag("delete");
-                    actionButton.setText(R.string.menu_cancle);
-                    actionButton.setBackgroundResource(R.drawable.green_3radius_corner_bg);
+                    actionButton.setImageResource(R.mipmap.main_added);
                     break;
                 case 6:// 添加行程
                     actionButton.setVisibility(View.VISIBLE);
                     actionButton.setTag("add");
-                    actionButton.setText(R.string.add_to_calendar);
-                    actionButton.setBackgroundResource(R.drawable.red_3radius_corner_bg);
+                    actionButton.setImageResource(R.mipmap.main_add);
                     break;
                 case 7://不显示
                     actionButton.setVisibility(View.GONE);
-
                     break;
 
                 case 8:// 更新首页vip 信息
-                    if (vipInfoModel == null || vipInfoModel.getLevel() == 0) {
-                        goVip.setText(R.string.my_vip_nolevel);
-                    } else {
-                        goVip.setText(R.string.my_vip_level);
-                    }
+                    //                    if (vipInfoModel == null || vipInfoModel.getLevel() == 0) {
+                    //                        goVip.setText(R.string.my_vip_nolevel);
+                    //                    } else {
+                    //                        goVip.setText(R.string.my_vip_level);
+                    //                    }
                     break;
             }
         }
@@ -191,7 +191,7 @@ public class MainActivity extends BaseActivity {
         title.setText(item.getTitle());
         // 显示用户自己设置的时间
         if (!TextUtils.isEmpty(item.getTime())) {
-            date.setText(item.getTime());
+            date.setText(Tools.getStringToDate(item.getTime()));
         } else
             date.setText(Tools.getStringToDate(item.getStartTime()) + "-" + Tools.getStringToDate(item.getEndTime()));
 
@@ -221,14 +221,14 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mContext = this;
         initView();
         initData();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (MainActivity.this.checkSelfPermission(Manifest.permission.READ_PHONE_STATE) ==
-                    PackageManager.PERMISSION_GRANTED) {
+            if (MainActivity.this.checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
                 uploadDeviceInfoForPush();
             } else {
-                askPermission(new String[]{ Manifest.permission.READ_PHONE_STATE, }, 108);
+                askPermission(new String[]{Manifest.permission.READ_PHONE_STATE,}, 108);
             }
         } else {
             uploadDeviceInfoForPush();
@@ -242,7 +242,7 @@ public class MainActivity extends BaseActivity {
             case 108:
                 // 101的第一个权限 是读定位
                 if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                   uploadDeviceInfoForPush();
+                    uploadDeviceInfoForPush();
                 }
                 break;
 
@@ -289,6 +289,8 @@ public class MainActivity extends BaseActivity {
                     }
                 }
             });
+        } else {
+            handler.sendEmptyMessage(3);
         }
     }
 
@@ -315,8 +317,15 @@ public class MainActivity extends BaseActivity {
         apiController.getRecommondList(this, new FetchEntryListener() {
             @Override
             public void setData(Entry entry) {
-                if (entry != null && entry instanceof CalendarListModel) {
-                    calendarListModel = (CalendarListModel) entry;
+                if (entry != null && entry instanceof RecommandModel) {
+                    recommandModel = ((RecommandModel) entry);
+                    List<CalendarModel> recos = new ArrayList<>();
+                    for (CalendarModel cc : recommandModel.getRecommandModels()) {
+                        if (cc.getType() != 4) {// 去除暂且不支持的专题
+                            recos.add(cc);
+                        }
+                    }
+                    recommandModel.setRecommandModels(recos);
                     handler.sendEmptyMessage(2);
                 }
             }
@@ -387,8 +396,7 @@ public class MainActivity extends BaseActivity {
         myListLayout = (LinearLayout) page2.findViewById(R.id.ceshi);
         page2.findViewById(R.id.main_add).setOnClickListener(this);
         page1.findViewById(R.id.main_godown).setOnClickListener(this);
-        goVip = (TextView) page1.findViewById(R.id.my_vip_level);
-        goVip.setOnClickListener(this);
+        findViewById(R.id.my_vip_level).setOnClickListener(this);
         myNum = (TextView) page1.findViewById(R.id.main_calendar_num);
         mainCityListScrollView = (MainCityListScrollView) page1.findViewById(R.id.main_city_listview);
         weatherImg = (ImageView) page1.findViewById(R.id.main_weather_img);
@@ -418,7 +426,7 @@ public class MainActivity extends BaseActivity {
         });
 
         dotLayout = (LinearLayout) page1.findViewById(R.id.main_dot_layout);
-        actionButton = (TextView) page1.findViewById(R.id.main_action);
+        actionButton = (ImageView) page1.findViewById(R.id.main_action);
         actionButton.setOnClickListener(this);
 
         detailPager = (ChildHeightViewpager) page1.findViewById(R.id.main_viewpager_detail);
@@ -430,7 +438,7 @@ public class MainActivity extends BaseActivity {
                 //滑动外部Viewpager
                 coverPager.scrollTo((int) (width * position + width * positionOffset), 0);
                 updateDots(position);
-                checkAdd(calendarListModel.getCalendarModels().get(detailPager.getCurrentItem()));
+                checkAdd(recommandModel.getRecommandModels().get(detailPager.getCurrentItem()));
             }
 
             @Override
@@ -451,7 +459,7 @@ public class MainActivity extends BaseActivity {
                 //滑动外部Viewpager
                 detailPager.scrollTo((int) (width * position + width * positionOffset), 0);
                 updateDots(position);
-                checkAdd(calendarListModel.getCalendarModels().get(coverPager.getCurrentItem()));
+                checkAdd(recommandModel.getRecommandModels().get(coverPager.getCurrentItem()));
             }
 
             @Override
@@ -470,6 +478,8 @@ public class MainActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.main_left:
+                // flurry log
+                FlurryEvent.logACClickLeftNavi(mContext);
                 startActivity(new Intent(MainActivity.this, LeftActivity.class));
                 break;
             case R.id.main_right:
@@ -479,11 +489,13 @@ public class MainActivity extends BaseActivity {
                 if (userModel == null) {
                     startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 } else {
-                    if (calendarListModel != null) {
-                        CalendarModel c = calendarListModel.getCalendarModels().get(detailPager.getCurrentItem());
+                    if (recommandModel != null) {
+                        CalendarModel c = recommandModel.getRecommandModels().get(detailPager.getCurrentItem());
                         if (view.getTag().toString().equals("delete")) {
                             doDelete(c);
                         } else {
+                            // flurry log
+                            FlurryEvent.logACClickHomeAddCalendar(mContext);
                             doAdd(c);
                         }
                     }
@@ -495,7 +507,6 @@ public class MainActivity extends BaseActivity {
                 break;
             case R.id.my_vip_level:
                 startActivity(new Intent(MainActivity.this, MyVipActivity.class));
-
                 break;
             case R.id.main_godown://
                 verticalViewPager.setCurrentItem(1);
@@ -545,14 +556,14 @@ public class MainActivity extends BaseActivity {
     /**
      * 设置dot
      */
-    public void initDots(List<CalendarListModel.CalendarModel> itemList) {
+    public void initDots(int maxSize) {
         dotLayout.removeAllViews();
         dots.clear();
         ImageView iv;
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(12, 12);
 
         lp.leftMargin = 5;
-        for (int i = 0; i < itemList.size(); i++) {
+        for (int i = 0; i < maxSize; i++) {
             iv = new ImageView(this);
             if (i == 0) {
                 iv.setImageResource(R.drawable.dot_active);
@@ -637,7 +648,7 @@ public class MainActivity extends BaseActivity {
         if (CommonApplication.CHANNEL.equals("googleplay")) {
             return;
         }
-        if (DataHelper.getRefuseNoticeVersion(this)){
+        if (DataHelper.getRefuseNoticeVersion(this)) {
             return;
         }
 

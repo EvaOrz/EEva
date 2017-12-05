@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -71,8 +70,7 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
 
         markerIcon = BitmapDescriptorFactory.fromResource(R.mipmap.location);
 
-        if (getIntent().getSerializableExtra("map_calendar") != null &&getIntent()
-                .getSerializableExtra("map_calendar") instanceof CalendarModel ) {
+        if (getIntent().getSerializableExtra("map_calendar") != null && getIntent().getSerializableExtra("map_calendar") instanceof CalendarModel) {
             calendarModel = (CalendarModel) getIntent().getSerializableExtra("map_calendar");
         }
         if (!TextUtils.isEmpty(getIntent().getStringExtra("latitude")))
@@ -161,9 +159,10 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
             @Override
             public void onMapStatusChangeFinish(MapStatus mapStatus) {
                 ifMapReady = true;//map 加载完成
+                initClick();
             }
         });
-        initClick();
+
 
         mLocationClient = new LocationClient(getApplicationContext()); // 声明LocationClient类
         mLocationClient.registerLocationListener(new BDLocationListener() {
@@ -201,7 +200,6 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
      * @param ifCenter
      */
     private void addOne(CalendarModel c, Double la, Double lo, boolean ifCenter) {
-        Log.e("add one ", la + "_____" + lo);
         LatLng cenpt = new LatLng(la, lo);
 
         if (ifCenter) {
@@ -265,7 +263,6 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
                 case 3:
 
                     Marker m = (Marker) msg.obj;
-
                     initPop(m, calendarModel.getAddress());
                     break;
             }
@@ -298,8 +295,8 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
      * 设置marker点击事件
      */
     private void initClick() {
-
-        BaiduMap.OnMarkerClickListener mMarkerlis = new OnMarkerClickListener() {
+        if (mBaiduMap == null) return;
+        mBaiduMap.setOnMarkerClickListener(new OnMarkerClickListener() {
 
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -319,13 +316,13 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
                 return true;
             }
 
-        };
-        mBaiduMap.setOnMarkerClickListener(mMarkerlis);
+        });
+
     }
 
 
     private void initPop(Marker marker, String cc) {
-//        if (!ifMapReady) return;
+        //        if (!ifMapReady) return;
         // 创建InfoWindow展示的view
         View popup = View.inflate(this, R.layout.view_marker_pop, null);
         TextView title = (TextView) popup.findViewById(R.id.marker_pop);
@@ -333,6 +330,7 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
 
         //将marker所在的经纬度的信息转化成屏幕上的坐标
         final LatLng ll = marker.getPosition();
+        if (mBaiduMap.getProjection() == null) return;
         Point p = mBaiduMap.getProjection().toScreenLocation(ll);
         p.y -= 70;
         LatLng llInfo = mBaiduMap.getProjection().fromScreenLocation(p);

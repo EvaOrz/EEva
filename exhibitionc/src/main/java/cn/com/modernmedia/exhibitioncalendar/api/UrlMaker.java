@@ -26,15 +26,15 @@ public class UrlMaker {
     private static String calendarHomePage = "https://artcalendar.bbwc.cn/html/artCalendar/html/index.html";
     private static String calendarDetailPage = "https://artcalendar.bbwc.cn/html/artCalendar/detail.html";
     public static String calendarAboutPage = "https://artcalendar.bbwc.cn/html/artCalendar/about.html";
-    private static String calendarTagPage = "https://artcalendar.bbwc.cn/html/artCalendar/html/topic.html?topic_id=";
+    private static String calendarTagPage = "https://artcalendar.bbwc.cn/html/artCalendar/index.html";
     private static String calendarDetailActivePage = "https://artcalendar.bbwc.cn/html/artCalendar/html/activity.html?active_id=";
     private static String calendarHomeMuseumPage = "http://artcalendar.bbwc.cn/html/artCalendar/html/museum_list.html";
-    private static String calendarDetailMuseumPage = "http://artcalendar.bbwc" + ".cn/html/artCalendar/html/museum_detail.html?itemid=";
+    private static String calendarDetailMuseumPage = "http://artcalendar.bbwc.cn/html/artCalendar/html/museum_detail.html?itemid=";
 
     // 测试环境
     private static String calendarHomePageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/html/index.html";
     private static String calendarDetailPageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/detail.html";
-    private static String calendarTagPageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/html/topic.html?topic_id=";
+    private static String calendarTagPageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/index.html";
     private static String calendarDetailActivePageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/html/activity.html?active_id=";
     private static String calendarHomeMuseumPageDev = "http://artcalendar-test.bbwc.cn/html/artCalendar/html/museum_list.html";
     private static String calendarDetailMuseumPageDev = "http://artcalendar-test.bbwc.cn/html/artCalendar/html/museum_detail.html?itemid=";
@@ -112,11 +112,20 @@ public class UrlMaker {
 
     public static String getTagPage(String tagId) {
         if (MyApplication.DEBUG == 0) {
-            return calendarTagPage + tagId;
+            return calendarTagPage + "?topic_id=" + tagId;
         } else if (MyApplication.DEBUG == 1) {
-            return calendarTagPageDev + tagId;
+            return calendarTagPageDev + "?topic_id=" + tagId;
         }
         return calendarTagPage;
+    }
+
+    public static String getActivePage(int acId) {
+        if (MyApplication.DEBUG == 0) {
+            return calendarDetailActivePage + acId;
+        } else if (MyApplication.DEBUG == 1) {
+            return calendarDetailActivePageDev + acId;
+        }
+        return calendarDetailActivePage;
     }
 
     /**
@@ -242,7 +251,7 @@ public class UrlMaker {
      * @return
      */
     public static String getRecommendedList() {
-        return API_URL + "recommendedlist?datatype=" + ConstData.DATA_TYPE;
+        return API_URL + "recommendedlistnew?datatype=" + ConstData.DATA_TYPE;
     }
 
     /**

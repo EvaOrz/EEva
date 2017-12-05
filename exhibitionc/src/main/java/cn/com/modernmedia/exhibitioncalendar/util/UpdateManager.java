@@ -1,20 +1,19 @@
 package cn.com.modernmedia.exhibitioncalendar.util;
 
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,7 +51,9 @@ public class UpdateManager {
     private boolean interceptFlag = false;
     private String apkName = "";
     private VersionModel version;
-    private Dialog dialog;
+    private Window window;
+    private Dialog mDialog;
+    private TextView lodTxt, zanbuTxt, downTxt, cancleTxt;
 
     private Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
@@ -135,72 +136,70 @@ public class UpdateManager {
      * 显示更新dialog
      */
     private void showNoticeDialog() {
-        Builder builder = new Builder(mContext);
-        builder.setTitle(R.string.update);
-        builder.setMessage(mContext.getString(R.string.app_name) + " " + version.getChangelog());
-        builder.setPositiveButton(R.string.download, new OnClickListener() {
+        mDialog = new Dialog(mContext, R.style.CustomDialog);
+        mDialog.show();
+        mDialog.setCancelable(true);
+        mDialog.setCanceledOnTouchOutside(true);
+        window = mDialog.getWindow();
+        window.setContentView(R.layout.dialog_update);
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                downNow();
-            }
-        });
-        builder.setNegativeButton(R.string.download_later, new OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                DataHelper.setRefuseNoticeVersion(mContext, true);
-                listener.checkEnd();
-            }
-        });
-        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        mDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        lodTxt = (TextView) window.findViewById(R.id.update_log);
+        zanbuTxt = (TextView) window.findViewById(R.id.update_zanbu);
+        downTxt = (TextView) window.findViewById(R.id.update_download);
+        cancleTxt = (TextView) window.findViewById(R.id.update_cancle);
+        lodTxt.setText(version.getChangelog());
+        lodTxt.setVisibility(View.VISIBLE);
+        mProgress = (ProgressBar) window.findViewById(R.id.update_process);
+        mProgress.setVisibility(View.GONE);
+        mDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 listener.checkEnd();
             }
         });
-        try {
-            builder.create().show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        cancleTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                interceptFlag = true;
+                DataHelper.setRefuseNoticeVersion(mContext, true);
+                listener.checkEnd();
+                mDialog.dismiss();
+            }
+        });
+        zanbuTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DataHelper.setRefuseNoticeVersion(mContext, true);
+                listener.checkEnd();
+                mDialog.dismiss();
+            }
+        });
+        window.findViewById(R.id.update_download).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lodTxt.setVisibility(View.GONE);
+                mProgress.setVisibility(View.VISIBLE);
+                zanbuTxt.setVisibility(View.GONE);
+                downTxt.setVisibility(View.GONE);
+                cancleTxt.setVisibility(View.VISIBLE);
+                downLoadApk();
+            }
+        });
     }
 
     private void dissDialog() {
-        if (dialog != null && dialog.isShowing()) {
+        if (mDialog != null && mDialog.isShowing()) {
             try {
-                dialog.cancel();
-                dialog.dismiss();
-                dialog = null;
+                mDialog.cancel();
+                mDialog.dismiss();
+                mDialog = null;
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void downNow() {
-        AlertDialog.Builder builder = new Builder(mContext);
-        builder.setTitle(R.string.update);
-        final LayoutInflater inflater = LayoutInflater.from(mContext);
-        View v = inflater.inflate(R.layout.update_progress, null);
-        mProgress = (ProgressBar) v.findViewById(R.id.update_process);
-        builder.setView(v);
-        builder.setNegativeButton(R.string.cancel, new OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                interceptFlag = true;
-                DataHelper.setRefuseNoticeVersion(mContext, true);
-                listener.checkEnd();
-            }
-        });
-        try {
-            dialog = builder.create();
-            dialog.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        downLoadApk();
-    }
 
     /**
      * 下载apk

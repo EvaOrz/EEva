@@ -19,6 +19,7 @@ import cn.com.modernmedia.exhibitioncalendar.activity.CalendarListActivity;
 import cn.com.modernmedia.exhibitioncalendar.activity.CityPickActivity;
 import cn.com.modernmedia.exhibitioncalendar.api.UrlMaker;
 import cn.com.modernmedia.exhibitioncalendar.model.TagListModel.TagInfo;
+import cn.com.modernmedia.exhibitioncalendar.util.FlurryEvent;
 
 /**
  * top_menu view
@@ -64,6 +65,8 @@ public class MainCityListScrollView extends LinearLayout {
             viewHolder.getConvertView().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    // flurry log
+                    FlurryEvent.logACClickHomeCity(mContext);
                     Intent i = new Intent(mContext, CalendarListActivity.class);
                     i.putExtra("list_tagid", tagInfo.getTagId());
                     i.putExtra("list_tagname", tagInfo.getTagName());

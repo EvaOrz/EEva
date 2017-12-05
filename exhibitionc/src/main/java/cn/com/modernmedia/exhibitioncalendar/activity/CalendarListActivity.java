@@ -3,6 +3,7 @@ package cn.com.modernmedia.exhibitioncalendar.activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -57,7 +58,9 @@ public class CalendarListActivity extends BaseActivity {
                     url = url + "tagname=" + URLEncoder.encode(URLEncoder.encode(tagName, "UTF-8"), "UTF-8");
                 }
             }
+
         } catch (UnsupportedEncodingException e) {
+            Log.e("UnsupportedEncodExce", e.toString());
 
         }
         wbWebView.loadUrl(url);

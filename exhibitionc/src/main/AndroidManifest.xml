@@ -201,7 +201,12 @@
             android:name=".activity.PayActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-           />
+            />
+        <activity
+            android:name=".activity.ActiveActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
         <activity
             android:name=".activity.PostUserOrderInfoActivity"
             android:screenOrientation="portrait"
@@ -257,6 +262,26 @@
         <meta-data
             android:name="JPUSH_APPKEY"
             android:value="b682346e1e6b28dba3a47079"/>
+        <!--qq login-->
+        <activity
+            android:name="com.tencent.tauth.AuthActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data android:scheme="tencent1104758116"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.tencent.connect.common.AssistActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            />
         <!-- Required SDK核心功能-->
         <activity
             android:name="cn.jpush.android.ui.PushActivity"

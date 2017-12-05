@@ -24,21 +24,22 @@
                 android:id="@+id/open_login_weibo"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:layout_marginRight="12dp"
                 android:src="@mipmap/openlogin_weibo"/>
 
             <ImageView
                 android:id="@+id/open_login_weixin"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp"
+                android:layout_marginLeft="12dp"
                 android:src="@mipmap/openlogin_weixin"/>
 
             <ImageView
                 android:id="@+id/open_login_qq"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@mipmap/openlogin_qq"/>
+                android:src="@mipmap/openlogin_qq"
+                android:visibility="gone"/>
 
 
         </LinearLayout>

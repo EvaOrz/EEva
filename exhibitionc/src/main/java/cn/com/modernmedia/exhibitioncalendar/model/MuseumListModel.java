@@ -9,7 +9,6 @@ import java.util.List;
 import cn.com.modernmedia.corelib.model.Entry;
 
 /**
- *
  * 展馆model
  * Created by Eva. on 2017/10/20.
  */
@@ -39,9 +38,7 @@ public class MuseumListModel extends Entry {
     }
 
 
-
-    public static MuseumListModel parseMuseumListModel(MuseumListModel museumListModel, JSONObject
-            jsonObject) {
+    public static MuseumListModel parseMuseumListModel(MuseumListModel museumListModel, JSONObject jsonObject) {
         List<MuseumModel> museumListModels = new ArrayList<>();
 
         JSONArray jsonArray = jsonObject.optJSONArray("museum");
@@ -235,8 +232,8 @@ public class MuseumListModel extends Entry {
             this.latitude = latitude;
         }
 
-        public static MuseumModel parseMuseumModel(MuseumModel model, JSONObject
-                jsonObject) {
+        public static MuseumModel parseMuseumModel(MuseumModel model, JSONObject jsonObject) {
+            if (jsonObject == null) return model;
             model.setAppid(jsonObject.optInt("appid"));
             model.setMuseumId(jsonObject.optString("museum_id"));
             model.setTitle(jsonObject.optString("title"));

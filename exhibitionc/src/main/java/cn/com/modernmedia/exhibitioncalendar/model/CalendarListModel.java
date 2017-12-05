@@ -9,7 +9,7 @@ import java.util.List;
 import cn.com.modernmedia.corelib.model.Entry;
 
 import static cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel.Coordinate.parseCoordinate;
-import static cn.com.modernmedia.exhibitioncalendar.model.TagListModel.*;
+import static cn.com.modernmedia.exhibitioncalendar.model.TagListModel.TagInfo;
 
 /**
  * 展览model
@@ -82,6 +82,7 @@ public class CalendarListModel extends Entry {
         private int type;//   0图文样式,1展览链接样式,2外部链接样式,3专题样式,4直播链接样式
         private String weburl = "";
         private int category;
+        private MuseumListModel.MuseumModel museumModel;
 
         public CalendarModel() {
         }
@@ -111,7 +112,16 @@ public class CalendarListModel extends Entry {
             calendarModel.setHouselist(parseHouseOrCityList(jsonObject.optJSONArray("houselist")));
             calendarModel.setCitylist(parseHouseOrCityList(jsonObject.optJSONArray("cityOneList")));
             calendarModel.setHotlist(parseHouseOrCityList(jsonObject.optJSONArray("hotlist")));
+            calendarModel.setMuseumModel(MuseumListModel.MuseumModel.parseMuseumModel(new MuseumListModel.MuseumModel(), jsonObject.optJSONObject("museum")));
             return calendarModel;
+        }
+
+        public MuseumListModel.MuseumModel getMuseumModel() {
+            return museumModel;
+        }
+
+        public void setMuseumModel(MuseumListModel.MuseumModel museumModel) {
+            this.museumModel = museumModel;
         }
 
         public String getEventId() {
@@ -339,7 +349,7 @@ public class CalendarListModel extends Entry {
 
             public static Coordinate parseCoordinate(JSONObject jsonObject) {
                 Coordinate coordinate = new Coordinate();
-                if (jsonObject == null)return coordinate;
+                if (jsonObject == null) return coordinate;
                 coordinate.setCoId(jsonObject.optString("item_id"));
                 coordinate.setLongitude(jsonObject.optString("longitude"));
                 coordinate.setLatitude(jsonObject.optString("latitude"));

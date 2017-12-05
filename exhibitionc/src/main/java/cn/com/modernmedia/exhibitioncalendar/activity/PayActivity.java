@@ -446,7 +446,7 @@ public class PayActivity extends BaseActivity implements CompoundButton.OnChecke
             return;
         }
         weixinReq.appId = CommonApplication.WEIXIN_APP_ID;
-        weixinReq.partnerId = CommonApplication.WEIXIN_SECRET;
+        weixinReq.partnerId = CommonApplication.WEIXIN_PARTNER_ID;
         weixinReq.prepayId = prepareId;
         weixinReq.packageValue = "Sign=WXPay";
         weixinReq.nonceStr = genNonceStr();
@@ -508,6 +508,9 @@ public class PayActivity extends BaseActivity implements CompoundButton.OnChecke
 
 
     private void payintent(Context c, ProductModel p, int style, String time, int payStatus, String outNo) {
+        if (payStatus == 0){
+            MyApplication.loginStatusChange = 4;
+        }
         final PayStatusPopView payStatusPopView = new PayStatusPopView(c, p, style, time, payStatus, outNo);
         getWindow().getDecorView().post(new Runnable() {
             @Override

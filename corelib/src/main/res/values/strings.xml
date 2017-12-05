@@ -173,10 +173,10 @@
     <string name="my_ing">正在进行</string>
     <string name="my_ed">已经完成</string>
     <string name="no_login">未登录</string>
+    <string name="no_login1">添加展览，请先登录</string>
 
     <string name="list_hint">暂无规划中的展览行程\n 点击添加</string>
     <string name="click_add"></string>
-    <string name="look_detail">查看详情</string>
     <string name="look_detail1">查看展览详情</string>
     <string name="notification">提醒</string>
     <string name="notification_desc">提前一个小时</string>
@@ -275,6 +275,6 @@
     <string name="update">软件版本更新</string>
     <string name="download">下载</string>
     <string name="update1">检测更新</string>
-    <string name="download_later">以后再说</string>
+    <string name="download_later">暂不</string>
     <string name="download_error">下载遇到了错误，已停止</string>
 </resources>

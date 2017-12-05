@@ -22,6 +22,7 @@ import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
 import cn.com.modernmedia.exhibitioncalendar.api.UrlMaker;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
 import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
+import cn.com.modernmedia.exhibitioncalendar.util.FlurryEvent;
 import cn.com.modernmedia.exhibitioncalendar.util.UriParse;
 import cn.com.modernmedia.exhibitioncalendar.view.CommonWebView;
 import cn.com.modernmedia.exhibitioncalendar.view.ShareDialog;
@@ -67,7 +68,7 @@ public class CalendarDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar_detail);
         id = getIntent().getStringExtra(UriParse.DETAILCALENDAR);
-
+        mContext = this;
         apiController = ApiController.getInstance(this);
         initView();
         if (getIntent().getSerializableExtra("calendar_detail") != null) {
@@ -111,11 +112,12 @@ public class CalendarDetailActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.detail_add:
-
                 if (DataHelper.getUserLoginInfo(CalendarDetailActivity.this) == null) {
                     startActivity(new Intent(CalendarDetailActivity.this, LoginActivity.class));
 
                 } else {
+                    // flurry log
+                    FlurryEvent.logACClickDetailAdd(mContext);
                     Intent i = new Intent(CalendarDetailActivity.this, AddActivity.class);
                     i.putExtra("add_type", 0);
                     i.putExtra("add_detail", calendarModel);
@@ -123,6 +125,8 @@ public class CalendarDetailActivity extends BaseActivity {
                 }
                 break;
             case R.id.detail_share:
+                // flurry log
+                FlurryEvent.logACShareSingleCalendar(mContext);
                 if (calendarModel != null) {
                     calendarModel.setWeburl(UrlMaker.getDetailPage() + "?itemid=" + id);
                     new ShareDialog(CalendarDetailActivity.this, calendarModel);

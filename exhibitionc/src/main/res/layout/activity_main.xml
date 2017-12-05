@@ -13,6 +13,12 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"/>
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/main_bg_shang"/>
+
     <RelativeLayout
         android:id="@+id/main_headview"
         android:layout_width="match_parent"
@@ -38,6 +44,14 @@
             android:layout_height="35dp"
             android:layout_alignParentRight="true"
             android:src="@mipmap/touxiang"/>
+
+        <ImageView
+            android:id="@+id/my_vip_level"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@id/main_right"
+            android:src="@mipmap/main_vip"/>
     </RelativeLayout>
 
     <cn.com.modernmedia.exhibitioncalendar.view.VerticalViewPager
