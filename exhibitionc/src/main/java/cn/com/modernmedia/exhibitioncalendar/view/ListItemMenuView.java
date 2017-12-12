@@ -15,9 +15,9 @@ import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.activity.AddActivity;
 import cn.com.modernmedia.exhibitioncalendar.activity.MainActivity;
-import cn.com.modernmedia.exhibitioncalendar.activity.MyListActivity;
+import cn.com.modernmedia.exhibitioncalendar.activity.UserCenterActivity;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
-import cn.com.modernmedia.exhibitioncalendar.api.user.HandleFavApi;
+import cn.com.modernmedia.exhibitioncalendar.api.HandleEventApi;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
 
 /**
@@ -70,7 +70,7 @@ public class ListItemMenuView {
             public void onClick(View view) {
 
 
-                ApiController.getInstance(mContext).handleFav(mContext, HandleFavApi.HANDLE_DELETE, calendarModel.getEventId(), calendarModel.getCoverImg(), calendarModel.getStartTime(), new FetchEntryListener() {
+                ApiController.getInstance(mContext).handleFav(mContext, HandleEventApi.HANDLE_DELETE, calendarModel.getEventId(), calendarModel.getCoverImg(), calendarModel.getStartTime(), new FetchEntryListener() {
                     @Override
                     public void setData(Entry entry) {
 
@@ -81,8 +81,8 @@ public class ListItemMenuView {
                         } else {
                             if (mContext instanceof MainActivity) {
                                 ((MainActivity) mContext).handler.sendEmptyMessage(3);
-                            } else if (mContext instanceof MyListActivity) {
-                                ((MyListActivity) mContext).handler.sendEmptyMessage(1);
+                            } else if (mContext instanceof UserCenterActivity) {
+                                ((UserCenterActivity) mContext).handler.sendEmptyMessage(1);
                             }
                         }
                         window.dismiss();

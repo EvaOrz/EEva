@@ -40,21 +40,12 @@ public class WBWebridgeImplement implements WBWebridgeListener {
      * <p>
      * shareChannel: ShareTypeWeibo,        ShareTypeWeixin,        ShareTypeWeixinFriendCircle
      */
-    public void share(JSONObject json, AsynExecuteCommandListener listener) {
+    public void shareWithMeta(JSONObject json, AsynExecuteCommandListener listener) {
         if (listener != null) {
-            try {
-
-
-                Intent i = new Intent();
-                i.putExtra("share_json", json.toString());
-                i.setAction("show_share_dialog");
-                mContext.sendBroadcast(i);
-
-
-                json.put("shareResult", true);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            Intent i = new Intent();
+            i.putExtra("share_json", json.toString());
+            i.setAction("show_share_dialog");
+            mContext.sendBroadcast(i);
             listener.onCallBack(json.toString());
         }
     }

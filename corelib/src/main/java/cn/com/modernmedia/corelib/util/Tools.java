@@ -57,6 +57,7 @@ import static android.widget.ImageView.ScaleType.FIT_CENTER;
 import static android.widget.ImageView.ScaleType.FIT_END;
 import static android.widget.ImageView.ScaleType.FIT_START;
 import static android.widget.ImageView.ScaleType.MATRIX;
+import static java.lang.System.currentTimeMillis;
 
 /**
  * 工具类
@@ -143,7 +144,7 @@ public class Tools {
 
     public static String getChinaDate() {
         String s = "";
-        long time = System.currentTimeMillis();
+        long time = currentTimeMillis();
         Date date = new Date(time);
         SimpleDateFormat month = new SimpleDateFormat("MM");
         SimpleDateFormat riqi = new SimpleDateFormat("dd");
@@ -154,7 +155,7 @@ public class Tools {
     }
 
     public static String getEnDate() {
-        long time = System.currentTimeMillis();
+        long time = currentTimeMillis();
         Date date = new Date(time);
         SimpleDateFormat month = new SimpleDateFormat("MM");
 
@@ -454,17 +455,17 @@ public class Tools {
      */
     public static void setScaleType(ImageView iv, String scale_type) {
         if (!TextUtils.isEmpty(scale_type)) {
-            if (scale_type.equals(CENTER_CROP)) {
+            if (scale_type.equals("CENTER_CROP")) {
                 iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            } else if (scale_type.equals(FIT_CENTER)) {
+            } else if (scale_type.equals("FIT_CENTER")) {
                 iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            } else if (scale_type.equals(CENTER_INSIDE)) {
+            } else if (scale_type.equals("CENTER_INSIDE")) {
                 iv.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            } else if (scale_type.equals(FIT_END)) {
+            } else if (scale_type.equals("FIT_END")) {
                 iv.setScaleType(ImageView.ScaleType.FIT_END);
-            } else if (scale_type.equals(FIT_START)) {
+            } else if (scale_type.equals("FIT_START")) {
                 iv.setScaleType(ImageView.ScaleType.FIT_START);
-            } else if (scale_type.equals(MATRIX)) {
+            } else if (scale_type.equals("MATRIX")) {
                 iv.setScaleType(ImageView.ScaleType.MATRIX);
             } else {
                 iv.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -656,11 +657,12 @@ public class Tools {
         }
         return result;
     }
+
     /**
      * 根据图片名称获取图片资源id
      *
      * @param pic
-     * @return 0,错误；1.颜色；else 资源id
+     * @return 0, 错误；1.颜色；else 资源id
      */
     public static int getId(String pic) {
         if (CommonApplication.drawCls == null) {
@@ -693,8 +695,7 @@ public class Tools {
     @SuppressLint("NewApi")
     public static void setImage(View view, String pic) {
         int id = getId(pic);
-        if (id == ID_ERROR)
-            return;
+        if (id == ID_ERROR) return;
         if (id == ID_COLOR) {
             view.setBackgroundColor(Color.parseColor(pic));
             return;
@@ -703,10 +704,8 @@ public class Tools {
             CommonApplication.finalBitmap.display(view, pic);
             return;
         }
-        if (view instanceof ImageView)
-            ((ImageView) view).setImageResource(id);
-        else
-            view.setBackgroundResource(id);
+        if (view instanceof ImageView) ((ImageView) view).setImageResource(id);
+        else view.setBackgroundResource(id);
     }
 
     /**
@@ -810,6 +809,24 @@ public class Tools {
             } else return Integer.valueOf(info.versionName.replace(".", ""));
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        return 0;
+    }
+
+    /**
+     * 获取当前展览的状态
+     * 1：即将 2：正在 3：闭展
+     *
+     * @return
+     */
+    public static int getCalendarStatus(String startTime, String endTime) {
+        long ss = System.currentTimeMillis() / 1000;
+        if (ss < Long.valueOf(startTime)) {
+            return 1;
+        } else if (ss > Long.valueOf(startTime) && ss < Long.valueOf(endTime)) {
+            return 2;
+        } else if (ss > Long.valueOf(endTime)) {
+            return 3;
         }
         return 0;
     }

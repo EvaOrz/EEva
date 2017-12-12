@@ -20,13 +20,12 @@ import android.widget.ImageView;
 import cn.com.modernmedia.corelib.R;
 
 /**
- * 圆角矩形
+ * 圆形imageview
  * Created by Eva. on 17/4/5.
  */
 
 public class RoundImageView extends ImageView {
 
-    private static final ScaleType SCALE_TYPE = ScaleType.CENTER_CROP;
 
     private static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
     private static final int COLORDRAWABLE_DIMENSION = 1;
@@ -65,7 +64,6 @@ public class RoundImageView extends ImageView {
 
     public RoundImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        super.setScaleType(SCALE_TYPE);
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CircleImageView, defStyle, 0);
 
@@ -82,17 +80,6 @@ public class RoundImageView extends ImageView {
         }
     }
 
-    @Override
-    public ScaleType getScaleType() {
-        return SCALE_TYPE;
-    }
-
-    @Override
-    public void setScaleType(ScaleType scaleType) {
-        if (scaleType != SCALE_TYPE) {
-            throw new IllegalArgumentException(String.format("ScaleType %s not supported.", scaleType));
-        }
-    }
 
     @Override
     protected void onDraw(Canvas canvas) {

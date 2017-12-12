@@ -105,7 +105,7 @@
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
-            android:name=".activity.UserCenterActivity"
+            android:name=".activity.UserInfoActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
@@ -144,7 +144,7 @@
 
         <!--我的展览页面-->
         <activity
-            android:name=".activity.MyListActivity"
+            android:name=".activity.UserCenterActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
         <!--展览详情页面-->

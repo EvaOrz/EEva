@@ -24,7 +24,7 @@ public class UrlMaker {
 
     // 正式环境
     private static String calendarHomePage = "https://artcalendar.bbwc.cn/html/artCalendar/html/index.html";
-    private static String calendarDetailPage = "https://artcalendar.bbwc.cn/html/artCalendar/detail.html";
+    private static String calendarDetailPage = "https://artcalendar.bbwc.cn/html/artCalendar/html/detail.html";
     public static String calendarAboutPage = "https://artcalendar.bbwc.cn/html/artCalendar/about.html";
     private static String calendarTagPage = "https://artcalendar.bbwc.cn/html/artCalendar/index.html";
     private static String calendarDetailActivePage = "https://artcalendar.bbwc.cn/html/artCalendar/html/activity.html?active_id=";
@@ -33,7 +33,7 @@ public class UrlMaker {
 
     // 测试环境
     private static String calendarHomePageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/html/index.html";
-    private static String calendarDetailPageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/detail.html";
+    private static String calendarDetailPageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/html/detail.html";
     private static String calendarTagPageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/index.html";
     private static String calendarDetailActivePageDev = "https://artcalendar-test.bbwc.cn/html/artCalendar/html/activity.html?active_id=";
     private static String calendarHomeMuseumPageDev = "http://artcalendar-test.bbwc.cn/html/artCalendar/html/museum_list.html";
@@ -191,7 +191,7 @@ public class UrlMaker {
     }
 
     /**
-     * 添加收藏
+     * 添加行程
      *
      * @return
      */
@@ -200,7 +200,7 @@ public class UrlMaker {
     }
 
     /**
-     * 删除收藏
+     * 删除行程
      *
      * @return
      */
@@ -209,7 +209,7 @@ public class UrlMaker {
     }
 
     /**
-     * 修改收藏
+     * 修改行程
      *
      * @return
      */
@@ -217,32 +217,25 @@ public class UrlMaker {
         return API_URL + "eventedit?datatype=" + ConstData.DATA_TYPE;
     }
 
-
     /**
-     * 用户收藏的展览列表
+     * 获取收藏列表
      *
      * @return
      */
-    public static String getUserFavList() {
-        return API_URL + "futurelist?datatype=" + ConstData.DATA_TYPE;
+    public static String getLikeList() {
+        return API_URL + "likelist?datatype=" + ConstData.DATA_TYPE;
+    }
+
+    public static String getActiveList() {
+        return API_URL + "activelist?datatype=" + ConstData.DATA_TYPE;
     }
 
     /**
-     * 用户收藏的过期展览列表
-     *
+     * 获取行程（展览）列表
      * @return
      */
-    public static String getUserFavExpiredList() {
-        return API_URL + "expiredlist?datatype=" + ConstData.DATA_TYPE;
-    }
-
-    /**
-     * 获取热门列表
-     *
-     * @return
-     */
-    public static String getHotList() {
-        return API_URL + "hotlist?datatype=" + ConstData.DATA_TYPE;
+    public static String getEventList(){
+        return API_URL + "myartcalendar?datatype=" + ConstData.DATA_TYPE;
     }
 
     /**
@@ -455,6 +448,21 @@ public class UrlMaker {
      */
     public static String getVipProducts() {
         return API_URL + "viphome?datatype=" + ConstData.DATA_TYPE;
+    }
+
+    /**
+     * 添加收藏
+     * @return
+     */
+    public static String addLike(){
+        return API_URL+"likeadd?datatype=" + ConstData.DATA_TYPE;
+    }
+    /**
+     * 删除收藏
+     * @return
+     */
+    public static String delLike(){
+        return API_URL+"likedel?datatype=" + ConstData.DATA_TYPE;
     }
 
 

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/black"
+              android:background="@color/body_bg"
               android:fitsSystemWindows="true"
               android:orientation="vertical"
     >
@@ -25,66 +25,38 @@
         <RelativeLayout
             android:id="@+id/my_nav"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/nav_bar_height"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/my_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="10dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="15dp"
-                android:paddingTop="10dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="15dp"
                 android:src="@mipmap/back_white"/>
 
             <TextView
+                android:id="@+id/my_vip_level"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="@string/my_zhanlan"
+                android:background="@drawable/vip_10radius_corner_bg"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+
+                android:text="@string/my_vip_level"
                 android:textColor="@color/white"
-                android:textSize="@dimen/text_size_16"
-                android:textStyle="bold"/>
+                android:textSize="@dimen/text_size_12"/>
 
-
-            <ImageView
-                android:id="@+id/my_share"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:paddingBottom="10dp"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:paddingTop="10dp"
-                android:src="@mipmap/my_share"
-
-                />
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/my_vip_level"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/my_nav"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/vip_10radius_corner_bg"
-            android:paddingBottom="5dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_centerHorizontal="true"
-            android:text="@string/my_vip_level"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_size_12"/>
 
         <cn.com.modernmedia.corelib.widget.RoundImageView
             android:id="@+id/my_avatar"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:layout_below="@id/my_vip_level"
+            android:layout_below="@id/my_nav"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="5dp"
@@ -106,66 +78,97 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/my_nav_rg"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/gray_line"
-        android:orientation="horizontal"
-        android:padding="10dp">
+        android:layout_height="40dp"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-
-        <TextView
-            android:id="@+id/list_ing"
-            android:layout_width="wrap_content"
+        <RadioButton
+            android:id="@+id/my_xingcheng"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="5dp"
             android:layout_weight="1"
-            android:background="@drawable/red_3radius_corner_bg"
+            android:button="@null"
+            android:checked="true"
             android:gravity="center"
-            android:padding="5dp"
-            android:text="@string/my_ing"
-            android:textColor="@color/white"/>
+            android:padding="4dp"
+            android:text="@string/my_xingcheng"
+            android:textColor="@drawable/usercenter_selector"
+            android:textSize="@dimen/text_size_12"
+            android:textStyle="bold"/>
 
-        <TextView
-            android:id="@+id/list_ed"
-            android:layout_width="wrap_content"
+        <View
+            android:layout_width="0.4dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="7dp"
+            android:layout_marginTop="7dp"
+            android:background="@color/gray_dark"/>
+
+        <RadioButton
+            android:id="@+id/my_active"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="10dp"
             android:layout_weight="1"
-            android:background="@drawable/gray_3radius_corner_bg"
+            android:button="@null"
+            android:checked="false"
             android:gravity="center"
-            android:padding="5dp"
-            android:text="@string/my_ed"
-            android:textColor="@color/white"/>
+            android:padding="4dp"
+            android:text="@string/my_active"
+            android:textColor="@drawable/usercenter_selector"
+            android:textSize="@dimen/text_size_12"
+            android:textStyle="bold"/>
+
+        <View
+            android:layout_width="0.4dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="7dp"
+            android:layout_marginTop="7dp"
+            android:background="@color/gray_dark"/>
+
+        <RadioButton
+            android:id="@+id/my_fav"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:checked="false"
+            android:gravity="center"
+            android:padding="4dp"
+            android:text="@string/my_fav"
+            android:textColor="@drawable/usercenter_selector"
+            android:textSize="@dimen/text_size_12"
+            android:textStyle="bold"/>
+
+        <View
+            android:layout_width="0.4dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="7dp"
+            android:layout_marginTop="7dp"
+            android:background="@color/gray_dark"/>
+
+        <RadioButton
+            android:id="@+id/my_citys"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:checked="false"
+            android:gravity="center"
+            android:padding="4dp"
+            android:text="@string/order_city"
+            android:textColor="@drawable/usercenter_selector"
+            android:textSize="@dimen/text_size_12"
+            android:textStyle="bold"/>
     </LinearLayout>
 
-    <View
+
+    <LinearLayout
+        android:id="@+id/usercenter_contain"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/line_height"
-        android:background="@color/gray_dark"/>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ListView
-            android:id="@+id/my_listview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/body_bg"
-            android:divider="@null"
-            />
-
-        <TextView
-            android:id="@+id/l_click_add"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/list_hint"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_14"/>
-    </RelativeLayout>
+        android:layout_height="match_parent"
+        android:orientation="vertical"/>
 
 
 </LinearLayout>

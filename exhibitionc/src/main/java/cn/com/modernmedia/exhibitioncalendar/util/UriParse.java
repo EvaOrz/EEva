@@ -16,6 +16,7 @@ import cn.com.modernmedia.corelib.model.Entry;
 import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.activity.AboutActivity;
+import cn.com.modernmedia.exhibitioncalendar.activity.AddActivity;
 import cn.com.modernmedia.exhibitioncalendar.activity.CalendarDetailActivity;
 import cn.com.modernmedia.exhibitioncalendar.activity.CalendarListActivity;
 import cn.com.modernmedia.exhibitioncalendar.activity.MapActivity;
@@ -55,6 +56,7 @@ import cn.com.modernmedia.exhibitioncalendar.activity.MuseumDetailActivity;
 
 public class UriParse {
     public static String DETAILCALENDAR = "detailCalendar";
+    public static String ADDCALENDAR = "addCalendar";
     public static String CATEGORY = "category";
     public static String SEARCH = "search";
     public static String SPECIALSEARCH = "specialSearch";
@@ -155,9 +157,14 @@ public class UriParse {
             } else if (key.equals(SAFARI)) {
 
                 doLinkHttp(context, safari(link));
-            }else  if (key.equals(DETAILMUSEUM)){
+            } else if (key.equals(DETAILMUSEUM)) {
                 Intent i = new Intent(context, MuseumDetailActivity.class);
                 i.putExtra(DETAILMUSEUM, detailMuseum(link));
+                context.startActivity(i);
+            } else if (key.equals(ADDCALENDAR)) {
+                Intent i = new Intent(context, AddActivity.class);
+                i.putExtra("add_type", 0);
+                i.putExtra("add_detail", entries[0]);
                 context.startActivity(i);
             }
         } else if (link.startsWith("tel://")) {
@@ -167,6 +174,18 @@ public class UriParse {
 
     }
 
+    /**
+     * 挑战到添加日历功能
+     * @param uri
+     * @return
+     */
+    private String addCalendar(String uri){
+        String[] array = uri.split("ADDCALENDAR/");
+        if (array.length == 2) {
+            return array[1];
+        }
+        return "";
+    }
 
 
     /**
@@ -209,6 +228,7 @@ public class UriParse {
         }
         return "";
     }
+
     // slate://safari/http://www.minshengart.com
     private static String safari(String uri) {
         String[] array = uri.split("safari/");
@@ -261,7 +281,7 @@ public class UriParse {
 
         Intent intent = new Intent(context, AboutActivity.class);
         intent.putExtra("inapp_webview_url", link);
-        intent.putExtra("browser_type",1);
+        intent.putExtra("browser_type", 1);
         context.startActivity(intent);
         if (context instanceof Activity)
             ((Activity) context).overridePendingTransition(R.anim.down_in, R.anim.hold);

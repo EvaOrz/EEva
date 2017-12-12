@@ -8,7 +8,9 @@ import android.widget.TextView;
 
 import cn.com.modernmedia.corelib.BaseActivity;
 import cn.com.modernmedia.corelib.util.ParseUtil;
+import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.exhibitioncalendar.R;
+import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel;
 import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
 
 /**
@@ -53,15 +55,17 @@ public class LeftActivity extends BaseActivity {
         allNum1.setText("共" + AppValue.museumList.getCount() + "个展馆");
         String s = "共";
         int ing = 0;
+        int will = 0;
         if (AppValue.myList != null && ParseUtil.listNotNull(AppValue.myList.getCalendarModels())) {
             ing = AppValue.myList.getCalendarModels().size();
             s = s + ing + "个展览";
-
+            for (CalendarListModel.CalendarModel c : AppValue.myList.getCalendarModels()) {
+                if (Tools.getCalendarStatus(c.getStartTime(), c.getEndTime()) == 1) {
+                    will++;
+                }
+            }
         }
-        if (AppValue.edList != null && ParseUtil.listNotNull(AppValue.edList.getCalendarModels())) {
-            ing = AppValue.myList.getCalendarModels().size() - AppValue.edList.getCalendarModels().size();
-        }
-        s = s + " 其中 " + ing + " 个展览即将开展";
+        s = s + " 其中 " + will + " 个展览即将开展";
         myNum.setText(s);
 
     }
@@ -88,7 +92,7 @@ public class LeftActivity extends BaseActivity {
                 startActivity(i);
                 break;
             case R.id.my_zhanlan:
-                startActivity(new Intent(LeftActivity.this, MyListActivity.class));
+                startActivity(new Intent(LeftActivity.this, UserCenterActivity.class));
                 break;
             case R.id.about_us:
                 startActivity(new Intent(LeftActivity.this, AboutActivity.class));

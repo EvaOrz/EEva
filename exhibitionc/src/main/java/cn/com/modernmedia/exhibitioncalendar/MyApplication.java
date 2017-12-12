@@ -15,6 +15,7 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import afinal.FinalBitmap;
 import cn.com.modernmedia.corelib.CommonApplication;
 import cn.com.modernmedia.corelib.util.ConstData;
+import cn.com.modernmedia.exhibitioncalendar.activity.CalendarDetailActivity;
 import cn.com.modernmedia.exhibitioncalendar.activity.MuseumDetailActivity;
 import cn.com.modernmedia.exhibitioncalendar.api.UrlMaker;
 import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
@@ -30,6 +31,7 @@ public class MyApplication extends CommonApplication {
     public static LocationClient mLocationClient;//定位SDK的核心类
 
     public static MuseumDetailActivity museumDetailActivity;
+    public static CalendarDetailActivity calendarDetailActivity;
     public static int weixinPayStatus = 100;
 
     /**

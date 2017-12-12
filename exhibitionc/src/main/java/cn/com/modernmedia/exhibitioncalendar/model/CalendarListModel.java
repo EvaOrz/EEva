@@ -1,5 +1,8 @@
 package cn.com.modernmedia.exhibitioncalendar.model;
 
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -54,7 +57,7 @@ public class CalendarListModel extends Entry {
         this.calendarModels = calendarModels;
     }
 
-    public static class CalendarModel extends Entry {
+    public static class CalendarModel extends Entry implements Comparable<CalendarModel> {
 
 
         private int appid;
@@ -424,7 +427,20 @@ public class CalendarListModel extends Entry {
             public void setShape(String shape) {
                 this.shape = shape;
             }
+
         }
 
+        @Override
+        public int compareTo(@NonNull CalendarModel o) {
+            int a = 0, b = 0;
+            if (!TextUtils.isEmpty(this.getEventId())) a = Integer.valueOf(this.getEventId());
+            if (!TextUtils.isEmpty(o.getEventId())) b = Integer.valueOf(o.getEventId());
+
+            int i = b - a;//先按照年龄排序
+            if (i == 0) {
+                //                return this.score - o.getScore();//如果年龄相等了再用分数进行排序
+            }
+            return i;
+        }
     }
 }

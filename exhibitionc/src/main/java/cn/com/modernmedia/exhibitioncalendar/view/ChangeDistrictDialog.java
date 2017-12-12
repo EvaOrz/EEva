@@ -24,9 +24,6 @@ import cn.com.modernmedia.corelib.widget.views.WheelView;
 import cn.com.modernmedia.exhibitioncalendar.R;
 
 
-/**
- * VIP 地区对话框
- */
 public class ChangeDistrictDialog extends Dialog implements View.OnClickListener {
 
     private WheelView wvProvince;
@@ -222,6 +219,7 @@ public class ChangeDistrictDialog extends Dialog implements View.OnClickListener
      * 回调接口
      *
      * @author Administrator
+     *
      */
     public interface OnAddressCListener {
         public void onClick(String province, String city);
@@ -332,7 +330,8 @@ public class ChangeDistrictDialog extends Dialog implements View.OnClickListener
                 arrCitys.add(city[i]);
             }
         }
-        if (arrCitys != null && arrCitys.size() > 0 && !arrCitys.contains(strCity)) {
+        if (arrCitys != null && arrCitys.size() > 0
+                && !arrCitys.contains(strCity)) {
             strCity = arrCitys.get(0);
         }
     }

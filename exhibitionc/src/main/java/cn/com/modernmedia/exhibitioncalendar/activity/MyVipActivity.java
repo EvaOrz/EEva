@@ -300,7 +300,7 @@ public class MyVipActivity extends BaseActivity {
                 break;
             case R.id.avatar:
                 if (isLogin()) {
-                    startActivity(new Intent(MyVipActivity.this, UserCenterActivity.class));
+                    startActivity(new Intent(MyVipActivity.this, UserInfoActivity.class));
                 }
                 break;
             case R.id.vip_xieyi:// 服务协议

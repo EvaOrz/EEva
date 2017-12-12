@@ -1,5 +1,7 @@
 package cn.com.modernmedia.exhibitioncalendar.model;
 
+import android.support.annotation.NonNull;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -54,7 +56,7 @@ public class MuseumListModel extends Entry {
     }
 
 
-    public static class MuseumModel extends Entry {
+    public static class MuseumModel extends Entry implements Comparable<MuseumModel>{
 
 
         private int appid;
@@ -76,6 +78,7 @@ public class MuseumListModel extends Entry {
         private String weburl = "";
         private String longitude;
         private String latitude;
+        private int evntId;
 
         public MuseumModel() {
         }
@@ -232,6 +235,14 @@ public class MuseumListModel extends Entry {
             this.latitude = latitude;
         }
 
+        public int getEvntId() {
+            return evntId;
+        }
+
+        public void setEvntId(int evntId) {
+            this.evntId = evntId;
+        }
+
         public static MuseumModel parseMuseumModel(MuseumModel model, JSONObject jsonObject) {
             if (jsonObject == null) return model;
             model.setAppid(jsonObject.optInt("appid"));
@@ -254,6 +265,16 @@ public class MuseumListModel extends Entry {
             model.setLongitude(jsonObject.optString("longitude"));
             model.setLatitude(jsonObject.optString("latitude"));
             return model;
+        }
+
+        @Override
+        public int compareTo(@NonNull MuseumModel o) {
+
+            int i = o.getEvntId() - this.getEvntId();//先按照年龄排序
+            if (i == 0) {
+                //                return this.score - o.getScore();//如果年龄相等了再用分数进行排序
+            }
+            return i;
         }
 
     }

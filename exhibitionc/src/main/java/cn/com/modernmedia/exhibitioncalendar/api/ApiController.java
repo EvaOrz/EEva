@@ -24,7 +24,6 @@ import cn.com.modernmedia.exhibitioncalendar.api.user.BandAccountApi;
 import cn.com.modernmedia.exhibitioncalendar.api.user.CheckVersionApi;
 import cn.com.modernmedia.exhibitioncalendar.api.user.FindPasswordApi;
 import cn.com.modernmedia.exhibitioncalendar.api.user.GetBandStatusApi;
-import cn.com.modernmedia.exhibitioncalendar.api.user.HandleFavApi;
 import cn.com.modernmedia.exhibitioncalendar.api.user.LoginApi;
 import cn.com.modernmedia.exhibitioncalendar.api.user.ModifyUserInfoApi;
 import cn.com.modernmedia.exhibitioncalendar.api.user.ModifyUserPasswordApi;
@@ -277,8 +276,8 @@ public class ApiController {
      * @param c
      * @param page
      */
-    public void getMyList(Context c, String page, int type, FetchEntryListener listener) {
-        GetMyListApi getMyListApi = new GetMyListApi(c, page, type);
+    public void getEventList(Context c, String page, FetchEntryListener listener) {
+        GetEventListApi getMyListApi = new GetEventListApi(c, page);
         doPostRequest(getMyListApi, getMyListApi.getData(), USE_HTTP_ONLY, listener);
     }
 
@@ -305,9 +304,19 @@ public class ApiController {
     /**
      * @param c
      */
-    public void getCitys(Context c, FetchEntryListener listener) {
-        GetCityListApi getUserCitysApi = new GetCityListApi(c);
+    public void getCitys(Context c, int type, FetchEntryListener listener) {
+        GetCityListApi getUserCitysApi = new GetCityListApi(c, type);
         doPostRequest(getUserCitysApi, getUserCitysApi.getData(), USE_HTTP_ONLY, listener);
+    }
+
+    /**
+     * 个人中心获取活动列表
+     * @param c
+     * @param listener
+     */
+    public void getActives(Context c,  FetchEntryListener listener){
+        GetActiveApi getActiveApi = new GetActiveApi(c);
+        doPostRequest(getActiveApi, getActiveApi.getData(), USE_HTTP_ONLY, listener);
     }
 
     /**
@@ -319,6 +328,12 @@ public class ApiController {
     public void getRecommondList(Context c, FetchEntryListener listener) {
         GetRecommandApi getRecommendedListApi = new GetRecommandApi(c);
         doPostRequest(getRecommendedListApi, getRecommendedListApi.getRecommandModel(), USE_CACHE_FIRST, listener);
+    }
+
+    public void getLikeList(Context c, FetchEntryListener listener) {
+        GetLikeListApi getLikeListApi = new GetLikeListApi(c);
+        doPostRequest(getLikeListApi, getLikeListApi.getRecommandModel(), USE_HTTP_ONLY, listener);
+
     }
 
     /**
@@ -536,8 +551,8 @@ public class ApiController {
      * @param listener
      */
     public void handleFav(Context c, int type, String id, String img, String time, FetchEntryListener listener) {
-        HandleFavApi handleFavApi = new HandleFavApi(c, type, id, img, time);
-        doPostRequest(handleFavApi, handleFavApi.getData(), USE_HTTP_ONLY, listener);
+        HandleEventApi handleEventApi = new HandleEventApi(c, type, id, img, time);
+        doPostRequest(handleEventApi, handleEventApi.getData(), USE_HTTP_ONLY, listener);
     }
 
 

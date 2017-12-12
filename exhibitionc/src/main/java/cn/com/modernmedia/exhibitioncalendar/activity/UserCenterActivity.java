@@ -1,322 +1,416 @@
 package cn.com.modernmedia.exhibitioncalendar.activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import cn.com.modernmedia.corelib.BaseActivity;
 import cn.com.modernmedia.corelib.CommonApplication;
 import cn.com.modernmedia.corelib.db.DataHelper;
 import cn.com.modernmedia.corelib.listener.FetchEntryListener;
 import cn.com.modernmedia.corelib.model.Entry;
-import cn.com.modernmedia.corelib.model.ErrorMsg;
 import cn.com.modernmedia.corelib.model.UserModel;
-import cn.com.modernmedia.corelib.util.FetchPhotoManager;
-import cn.com.modernmedia.corelib.util.ImgFileManager;
+import cn.com.modernmedia.corelib.model.VipInfoModel;
 import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.corelib.widget.RoundImageView;
+import cn.com.modernmedia.exhibitioncalendar.MyApplication;
 import cn.com.modernmedia.exhibitioncalendar.R;
+import cn.com.modernmedia.exhibitioncalendar.adapter.ActiveAdapter;
+import cn.com.modernmedia.exhibitioncalendar.adapter.ExhibitionAdapter;
+import cn.com.modernmedia.exhibitioncalendar.adapter.FavMuseumAdapter;
+import cn.com.modernmedia.exhibitioncalendar.adapter.MyCityAdapter;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
+import cn.com.modernmedia.exhibitioncalendar.model.ActiveListModel;
+import cn.com.modernmedia.exhibitioncalendar.model.ActiveListModel.ActiveModel;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel;
-import cn.com.modernmedia.exhibitioncalendar.model.UploadAvatarResult;
+import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
+import cn.com.modernmedia.exhibitioncalendar.model.MuseumListModel;
+import cn.com.modernmedia.exhibitioncalendar.model.RecommandModel;
+import cn.com.modernmedia.exhibitioncalendar.model.TagListModel;
+import cn.com.modernmedia.exhibitioncalendar.model.TagListModel.TagInfo;
 import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
-import cn.com.modernmedia.exhibitioncalendar.view.AddPopView;
-import cn.com.modernmedia.exhibitioncalendar.view.SignDialog;
+import cn.com.modernmedia.exhibitioncalendar.view.NoScrollListView;
 
 /**
- * Created by Eva. on 17/4/1.
+ * Created by Eva. on 17/4/4.
+ * <p>
+ * 我的展览 页面
  */
 
 public class UserCenterActivity extends BaseActivity {
-
-    private static final String KEY_IMAGE = "data";
-    private static final String AVATAR_PIC = "avatar.jpg";
-
     private RoundImageView avatar;
-    private TextView nickname, realname, telephone, address, birthday, email, sign;
-    private String picturePath;// 头像
-    private UserModel mUser;
-    private ApiController mController;
+    private TextView nickname, goVip, fav1Num, fav2Num;
+    private UserModel userModel;
+    private LinearLayout containView;
+    private ImageView cover, favCover11, favCover22;
+    private ApiController apiController;
 
+    // 底部导航
+    private RadioButton radioButton_xing;// 行程
+    private RadioButton radioButton_acti;// 活动
+    private RadioButton radioButton_fav;// 收藏
+    private RadioButton radioButton_city;// 城市
 
-    private Handler handler = new Handler() {
+    private ListView xingListView;
+    private ExhibitionAdapter exhibitionAdapter;
+    private ListView actiListView;
+    private ActiveAdapter activeAdapter;
+
+    private View favView;
+    private RelativeLayout favCover1, favCover2;
+    private NoScrollListView favList1, favList2;
+    private ExhibitionAdapter fav1Adapter;
+    private ListView cityView;
+    private MyCityAdapter myCityAdapter;
+    private FavMuseumAdapter fav2Adapter;
+
+    private List<CalendarModel> xingData = new ArrayList<>();
+    private List<CalendarModel> fav1Data = new ArrayList<>();
+    private List<MuseumListModel.MuseumModel> fav2Data = new ArrayList<>();
+    private List<ActiveModel> activeData = new ArrayList<>();
+    private List<TagListModel.TagInfo> cityData = new ArrayList<>();
+
+    public Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            if (msg.what == 0) {// 绑定信息变更
-                //                if (mUser == null )return;
-                //                if (mUser.isBandQQ()) qq.setImageResource(R.drawable.login_qq);
-                //                if (mUser.isBandWeibo()) sina.setImageResource(R.drawable.login_sina);
-                //                if (mUser.isBandWeixin()) weixin.setImageResource(R.drawable.login_weixin);
-                //                if (mUser.isBandPhone())
-                //                    phoneText.setText(mUser.getPhone().replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2"));
-                //                else phoneText.setText(R.string.band_yet);// 未绑定
+            switch (msg.what) {
+                case 1:// 更新行程状态
+                    exhibitionAdapter.notifyDataSetChanged();
+                    break;
+                case 2:// 更新活动状态
+                    activeAdapter.notifyDataSetChanged();
+                    break;
+                case 3:// 更新收藏状态
+                    fav1Num.setText("已收藏 " + fav1Data.size());
+                    fav2Num.setText("已收藏 " + fav2Data.size());
+                    fav1Adapter.notifyDataSetChanged();
+                    fav2Adapter.notifyDataSetChanged();
+                    break;
+                case 5:// 更新城市状态
+                    myCityAdapter.notifyDataSetChanged();
+                    break;
+                case 4:// 更新用户状态
+                    if (userModel == null) {
+                        avatar.setImageResource(R.mipmap.avatar_bg);
+                        nickname.setText(R.string.no_login);
+                    } else {
+                        Tools.setAvatar(mContext, DataHelper.getAvatarUrl(mContext, userModel.getUserName()), avatar);
+                        nickname.setText(userModel.getNickName());
+
+                        VipInfoModel vipInfoModel = DataHelper.getVipInfo(UserCenterActivity.this);
+                        if (vipInfoModel == null || vipInfoModel.getLevel() == 0) {
+                            goVip.setText(R.string.my_vip_nolevel);
+                        } else {
+                            goVip.setText(R.string.my_vip_level);
+                        }
+                    }
 
 
-            } else if (msg.what == 1) {// 昵称、头像、签名变更
-                if (mUser != null) {
-                    Tools.setAvatar(UserCenterActivity.this, mUser.getUserName(), avatar);
-                    nickname.setText(mUser.getNickName());
-                    realname.setText(mUser.getRealname());
-                    sign.setText(mUser.getDesc());
-                    telephone.setText(mUser.getPhone());
-                    address.setText(mUser.getAddress());
-                    birthday.setText(mUser.getBirth());
-                    email.setText(mUser.getEmail());
-                }
+                    break;
+
             }
-
         }
     };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user);
-        picturePath = Environment.getExternalStorageDirectory().getPath() + "/" + AVATAR_PIC;
-        mUser = DataHelper.getUserLoginInfo(this);
-        mController = ApiController.getInstance(this);
+        setContentView(R.layout.activity_my_list);
+        mContext = this;
+        apiController = ApiController.getInstance(this);
+        userModel = DataHelper.getUserLoginInfo(mContext);
         initView();
-    }
-
-    private void initView() {
-
-        findViewById(R.id.user_back).setOnClickListener(this);
-        findViewById(R.id.edit_pwd).setOnClickListener(this);
-        findViewById(R.id.logout).setOnClickListener(this);
-        findViewById(R.id.user_ok).setOnClickListener(this);
-        avatar = (RoundImageView) findViewById(R.id.avatar);
-        nickname = (TextView) findViewById(R.id.nickname);
-        realname = (TextView) findViewById(R.id.real_name);
-        telephone = (TextView) findViewById(R.id.telephone);
-        address = (TextView) findViewById(R.id.address);
-        birthday = (TextView) findViewById(R.id.birthday);
-        email = (TextView) findViewById(R.id.email_ch);
-        sign = (TextView) findViewById(R.id.sign);
-
-        avatar.setOnClickListener(this);
-        nickname.setOnClickListener(this);
-        realname.setOnClickListener(this);
-        telephone.setOnClickListener(this);
-        address.setOnClickListener(this);
-        birthday.setOnClickListener(this);
-        email.setOnClickListener(this);
-        sign.setOnClickListener(this);
-
-        handler.sendEmptyMessage(1);
+        initData(false);
+        getFavData();
+        getActiveData();
     }
 
     @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.user_back:
-                finish();
-                break;
-            case R.id.edit_pwd:
-                startActivity(new Intent(UserCenterActivity.this, ModifyPwdActivity.class));
-                break;
-            case R.id.logout:
-                logout();
-                break;
-            case R.id.avatar:
+    protected void onResume() {
+        super.onResume();
+        userModel = DataHelper.getUserLoginInfo(mContext);
+        handler.sendEmptyMessage(4);
+        // 登录状态改变
+        if (CommonApplication.loginStatusChange == 2) {
+            initData(true);
 
-                FetchPhotoManager fetchPhotoManager = new FetchPhotoManager(this, picturePath);
-                fetchPhotoManager.doFecthPicture();
-                break;
-            case R.id.nickname:
-                new SignDialog(UserCenterActivity.this, 1, new SignDialog.SignChangeListener() {
-                    @Override
-                    public void setText(String text) {
-                        mUser.setNickName(text);
-                        handler.sendEmptyMessage(1);
-                    }
-                });
-                break;
-            case R.id.real_name:
-                new SignDialog(UserCenterActivity.this, 2, new SignDialog.SignChangeListener() {
-                    @Override
-                    public void setText(String text) {
-                        mUser.setRealname(text);
-                        handler.sendEmptyMessage(1);
-                    }
-                });
-                break;
-            case R.id.telephone:
-                new SignDialog(UserCenterActivity.this, 4, new SignDialog.SignChangeListener() {
-                    @Override
-                    public void setText(String text) {
-                        mUser.setPhone(text);
-                        handler.sendEmptyMessage(1);
-                    }
-                });
-                break;
-            case R.id.address:
-                new SignDialog(UserCenterActivity.this, 3, new SignDialog.SignChangeListener() {
-                    @Override
-                    public void setText(String text) {
-                        mUser.setAddress(text);
-                        handler.sendEmptyMessage(1);
-                    }
-                });
-                break;
-
-            case R.id.email_ch:
-                new SignDialog(UserCenterActivity.this, 6, new SignDialog.SignChangeListener() {
-                    @Override
-                    public void setText(String text) {
-                        mUser.setEmail(text);
-                        handler.sendEmptyMessage(1);
-                    }
-                });
-                break;
-            case R.id.sign:
-                new SignDialog(UserCenterActivity.this, 5, new SignDialog.SignChangeListener() {
-                    @Override
-                    public void setText(String text) {
-                        mUser.setDesc(text);
-                        handler.sendEmptyMessage(1);
-                    }
-                });
-                break;
-            case R.id.birthday:
-                new AddPopView(UserCenterActivity.this, 3, mUser.getBirth());
-                break;
-
-            case R.id.user_ok:
-                showLoadingDialog(true);
-                modifyUserInfo();
-                break;
         }
     }
 
-    /**
-     * 更新用户信息
-     */
-    public void modifyUserInfo() {
-        showLoadingDialog(true);
-        // 只更新头像、昵称信息
-        mController.modifyUserInfo(this, mUser.getUid(), mUser.getToken(), mUser.getRealname(), mUser.getUserName(), mUser.getNickName(), mUser.getAvatar(), null, mUser.getDesc(), false, new FetchEntryListener() {
+    private void initView() {
+        findViewById(R.id.my_back).setOnClickListener(this);
+        avatar = (RoundImageView) findViewById(R.id.my_avatar);
+        avatar.setOnClickListener(this);
+        goVip = (TextView) findViewById(R.id.my_vip_level);
+        goVip.setOnClickListener(this);
+        nickname = (TextView) findViewById(R.id.my_nickname);
+        containView = (LinearLayout) findViewById(R.id.usercenter_contain);
+        View headerView = findViewById(R.id.mylist_headview);
+        int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        int h = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        headerView.measure(w, h);
+        cover = (ImageView) findViewById(R.id.l_cover);
+        cover.setLayoutParams(new RelativeLayout.LayoutParams(MyApplication.width, headerView.getMeasuredHeight()));
+        cover.setImageResource(R.mipmap.my_bg);
 
+        xingListView = new ListView(this);
+        xingListView.setDivider(null);
+        exhibitionAdapter = new ExhibitionAdapter(mContext, xingData);
+        xingListView.setAdapter(exhibitionAdapter);
+        actiListView = new ListView(this);
+        actiListView.setDivider(null);
+        activeAdapter = new ActiveAdapter(mContext, activeData);
+        actiListView.setAdapter(activeAdapter);
+        cityView = new ListView(this);
+        cityView.setDivider(null);
+        myCityAdapter = new MyCityAdapter(this, cityData);
+        cityView.setAdapter(myCityAdapter);
+        cityView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void setData(final Entry entry) {
-                showLoadingDialog(false);
-                if (entry instanceof UserModel) {
-                    UserModel resUser = (UserModel) entry;
-                    ErrorMsg error = resUser.getError();
-                    if (error.getNo() == 0) {
-                        DataHelper.saveUserLoginInfo(UserCenterActivity.this, resUser);
-                        showToast("修改成功");
-                    }// 修改失败
-                    else {
-                        showToast(error.getDesc());
-                    }
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TagInfo tagInfo = cityData.get(position);
+                Intent i = new Intent(mContext, CalendarListActivity.class);
+                i.putExtra("list_tagid", tagInfo.getTagId());
+                i.putExtra("list_tagname", tagInfo.getTagName());
+                startActivity(i);
+            }
+        });
+        favView = LayoutInflater.from(this).inflate(R.layout.view_my_fav, null);
+        fav1Num = (TextView) favView.findViewById(R.id.fav_1_num);
+        fav2Num = (TextView) favView.findViewById(R.id.fav_2_num);
+        favCover11 = (ImageView) favView.findViewById(R.id.zhanlan_cover1);
+        favCover22 = (ImageView) favView.findViewById(R.id.zhanguan_cover1);
+        favCover11.setOnClickListener(this);
+        favCover22.setOnClickListener(this);
+        favCover1 = (RelativeLayout) favView.findViewById(R.id.zhanlan_cover);
+        favCover1.setOnClickListener(this);
+        favCover2 = (RelativeLayout) favView.findViewById(R.id.zhanguan_cover);
+        favCover2.setOnClickListener(this);
+        int width = MyApplication.width;
+        int height = (width - 40) * 9 / 16 + 40;
+        int height1 = (width - 40) * 112 / 718;
+        favCover1.setLayoutParams(new LinearLayout.LayoutParams(width, height));
+        favCover2.setLayoutParams(new LinearLayout.LayoutParams(width, height));
+        LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(width - 40, height1);
+        ll.setMargins(20, 0, 20, 0);
+        favCover11.setLayoutParams(ll);
+        favCover22.setLayoutParams(ll);
+        favList1 = (NoScrollListView) favView.findViewById(R.id.zhanlan_list);
+        favList2 = (NoScrollListView) favView.findViewById(R.id.zhanguan_list);
+        fav1Adapter = new ExhibitionAdapter(this, fav1Data);
+        favList1.setAdapter(fav1Adapter);
+        fav2Adapter = new FavMuseumAdapter(this, fav2Data);
+        favList2.setAdapter(fav2Adapter);
+        radioButton_xing = (RadioButton) findViewById(R.id.my_xingcheng);
+        radioButton_acti = (RadioButton) findViewById(R.id.my_active);
+        radioButton_fav = (RadioButton) findViewById(R.id.my_fav);
+        radioButton_city = (RadioButton) findViewById(R.id.my_citys);
+        radioButton_xing.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    changeTab(0);
+                }
+            }
+        });
+        radioButton_acti.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    changeTab(1);
+                }
+            }
+        });
+        radioButton_fav.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    changeTab(2);
+                }
+            }
+        });
+        radioButton_city.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    changeTab(3);
                 }
 
             }
         });
+        changeTab(0);
     }
-
-    public void setBirth(int year, int month, int day) {
-        mUser.setBirth(year + "-" + month + "-" + day);
-        handler.sendEmptyMessage(1);
-    }
-
-    private void logout() {
-        DataHelper.clearLoginInfo(this);
-        AppValue.myList = new CalendarListModel();
-        AppValue.edList = new CalendarListModel();
-        CommonApplication.loginStatusChange = 2;
-        finish();
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            if (requestCode == FetchPhotoManager.REQUEST_CAMERA) {
-                Tools.startPhotoZoom(this, Uri.fromFile(new File(picturePath)), picturePath);
-            } else if (requestCode == FetchPhotoManager.REQUEST_GALLERY) {
-                if (data != null) {
-                    Tools.startPhotoZoom(this, data.getData(), picturePath);
-                }
-            } else if (requestCode == Tools.REQUEST_ZOOM) {
-                if (data != null && data.getExtras() != null) {
-                    Bitmap bitmap = data.getExtras().getParcelable(KEY_IMAGE);
-                    ImgFileManager.saveImage(bitmap, picturePath);
-                    if (bitmap != null) {
-                        uploadAvatar(picturePath);
-                        bitmap.recycle();
-                        bitmap = null;
-                    }
-                } else {
-                    showToast(R.string.upload_failed);
-                }
-            }
-            //            else if (requestCode == BandDetailActivity.BAND_SUCCESS) {
-            //                mUser.setEmail(DataHelper.getUserLoginInfo(this).getEmail());
-            ////                mUser.setPhone(DataHelper.getUserPhone(this));
-            //                handler.sendEmptyMessage(0);
-            //            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void finish() {
-        setResult(RESULT_OK);
-        super.finish();
-    }
-
 
     /**
-     * 上传用户头像
+     * 初始化，没登录
+     * <p>
+     * 初始化，登录了
+     * <p>
+     * 登录状态变化，清空
+     * 登录状态变化，取线上数据
      *
-     * @param imagePath 头像存储在本地的路径
+     * @param isLoginStatusChange
      */
-    protected void uploadAvatar(String imagePath) {
-        if (mUser == null || TextUtils.isEmpty(imagePath)) return;
-
-        if (!new File(imagePath).exists()) {
-            showLoadingDialog(false);
-            showToast(R.string.msg_avatar_get_failed);// 头像获取失败
-            return;
+    private void initData(boolean isLoginStatusChange) {
+        xingData.clear();
+        activeData.clear();
+        cityData.clear();
+        fav1Data.clear();
+        fav2Data.clear();
+        if (isLoginStatusChange) {
+            getXingchengData();
+            getFavData();
+            getActiveData();
+        } else {
+            xingData.addAll(AppValue.myList.getCalendarModels());
+            cityData.addAll(AppValue.allCitys.getUsers());
+            handler.sendEmptyMessage(1);
+            handler.sendEmptyMessage(5);
         }
+    }
 
-        showLoadingDialog(true);
-        mController.uploadUserAvatar(imagePath, new FetchEntryListener() {
-
-                    @Override
-                    public void setData(final Entry entry) {
-                        showLoadingDialog(false);
-                        String toast = "";
-                        if (entry instanceof UploadAvatarResult) {
-                            UploadAvatarResult result = (UploadAvatarResult) entry;
-                            //                    String status = result.getStatus();
-                            //                    if (status.equals("success")) { // 头像上传成功
-                            if (!TextUtils.isEmpty(result.getAvatarPath())) {
-                                mUser.setAvatar(result.getAvatarPath());
-                                handler.sendEmptyMessage(1);
-                                modifyUserInfo();
-                                return;
-                                //                    }
-                            } else {
-                                toast = result.getMsg();
-                            }
-                        }
-                        showToast(TextUtils.isEmpty(toast) ? getString(R.string.msg_avatar_upload_failed) : toast);
-                    }
+    private void getFavData() {
+        if (userModel == null) return;
+        apiController.getLikeList(this, new FetchEntryListener() {
+            @Override
+            public void setData(Entry entry) {
+                if (entry != null && entry instanceof RecommandModel) {
+                    RecommandModel r = (RecommandModel) entry;
+                    fav1Data.addAll(r.getCalendarModels());
+                    Collections.sort(fav1Data);
+                    fav2Data.addAll(r.getMuseumModels());
+                    Collections.sort(fav2Data);
+                    handler.sendEmptyMessage(3);
                 }
-        );
+            }
+        });
     }
 
 
+    private void getActiveData() {
+        if (userModel == null) return;
+        apiController.getActives(this, new FetchEntryListener() {
+            @Override
+            public void setData(Entry entry) {
+                if (entry != null && entry instanceof ActiveListModel) {
+                    ActiveListModel a = (ActiveListModel) entry;
+                    activeData.addAll(a.getActiveModels());
+                    handler.sendEmptyMessage(2);
+                }
+            }
+        });
+    }
+
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.my_back:
+                finish();
+                break;
+
+            case R.id.my_avatar:
+                if (userModel == null) {
+                    startActivity(new Intent(UserCenterActivity.this, LoginActivity.class));
+                } else startActivity(new Intent(UserCenterActivity.this, UserInfoActivity.class));
+                break;
+
+            case R.id.my_vip_level:
+                if (userModel == null) {
+                    startActivity(new Intent(UserCenterActivity.this, LoginActivity.class));
+                } else startActivity(new Intent(UserCenterActivity.this, MyVipActivity.class));
+                break;
+            case R.id.zhanlan_cover:
+                if (fav1Data.size() > 0) {
+                    favList1.setVisibility(View.VISIBLE);
+                    favCover11.setVisibility(View.VISIBLE);
+                    favCover1.setVisibility(View.GONE);
+                }
+                break;
+            case R.id.zhanguan_cover:
+                if (fav2Data.size() > 0) {
+                    favList2.setVisibility(View.VISIBLE);
+                    favCover22.setVisibility(View.VISIBLE);
+                    favCover2.setVisibility(View.GONE);
+                }
+                break;
+            case R.id.zhanlan_cover1:
+                favCover1.setVisibility(View.VISIBLE);
+                favList1.setVisibility(View.GONE);
+                favCover11.setVisibility(View.GONE);
+
+                break;
+            case R.id.zhanguan_cover1:
+                favCover2.setVisibility(View.VISIBLE);
+                favList2.setVisibility(View.GONE);
+                favCover22.setVisibility(View.GONE);
+                break;
+        }
+    }
+
+    private void getXingchengData() {
+        if (userModel == null) {
+            apiController.getEventList(this, "1", new FetchEntryListener() {
+                @Override
+                public void setData(Entry entry) {
+                    if (entry != null && entry instanceof CalendarListModel) {
+
+                        handler.sendEmptyMessage(1);
+                    }
+                }
+            });
+        }
+
+    }
+
+    public void changeTab(int position) {
+        containView.removeAllViews();
+        switch (position) {
+            case 0:
+                containView.addView(xingListView);
+                radioButton_xing.setChecked(true);
+                radioButton_acti.setChecked(false);
+                radioButton_fav.setChecked(false);
+                radioButton_city.setChecked(false);
+                break;
+            case 1:
+                containView.addView(actiListView);
+                radioButton_xing.setChecked(false);
+                radioButton_acti.setChecked(true);
+                radioButton_fav.setChecked(false);
+                radioButton_city.setChecked(false);
+                break;
+            case 2:
+                containView.addView(favView);
+                radioButton_xing.setChecked(false);
+                radioButton_acti.setChecked(false);
+                radioButton_fav.setChecked(true);
+                radioButton_city.setChecked(false);
+                break;
+            case 3:
+                containView.addView(cityView);
+                radioButton_xing.setChecked(false);
+                radioButton_acti.setChecked(false);
+                radioButton_fav.setChecked(false);
+                radioButton_city.setChecked(true);
+                break;
+
+        }
+    }
 }

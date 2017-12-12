@@ -1,60 +1,47 @@
-package cn.com.modernmedia.exhibitioncalendar.api.user;
+package cn.com.modernmedia.exhibitioncalendar.api;
 
 import android.content.Context;
 import android.util.Log;
 
 import org.json.JSONObject;
 
-import cn.com.modernmedia.corelib.CommonApplication;
 import cn.com.modernmedia.corelib.db.DataHelper;
 import cn.com.modernmedia.corelib.http.BaseApi;
 import cn.com.modernmedia.corelib.model.ErrorMsg;
-import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.exhibitioncalendar.MyApplication;
-import cn.com.modernmedia.exhibitioncalendar.api.UrlMaker;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel;
-import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
 
+import static cn.com.modernmedia.exhibitioncalendar.api.HandleEventApi.HANDLE_ADD;
+import static cn.com.modernmedia.exhibitioncalendar.api.HandleEventApi.HANDLE_DELETE;
 
 /**
- * Created by Eva. on 17/3/28.
+ * Created by Eva. on 2017/12/8.
  */
 
 public class HandleFavApi extends BaseApi {
-    public static int HANDLE_ADD = 0;
-    public static int HANDLE_EDIT = 1;
-    public static int HANDLE_DELETE = 2;
     private int type = 1;
     private String post;
     private ErrorMsg errorMsg;
 
     /**
      * 'appid':'61',
-     * 'version':'1',
      * 'uid':'123',
-     * 'token':'xxxxx',
-     * 'item_id':'1',
-     * 'img':'http://xxxx',
-     * 'time':'2016-12-01 09:00:00'
+     * 'token':'xxxxx'·,
+     * 'like_id':'13', #喜欢ID （展览、活动）
+     * 'type':'',   # 类型  1展览 2展馆 3活
      *
      * @param c
      * @param type
      */
-    public HandleFavApi(Context c, int type, String id, String img, String time) {
+    public HandleFavApi(Context c, int type, String id) {
         this.type = type;
         JSONObject postObject = new JSONObject();
         try {
             addPostParams(postObject, "appid", MyApplication.APPID + "");
-            addPostParams(postObject, "version", Tools.getAppVersion(c));
             addPostParams(postObject, "uid", DataHelper.getUid(c));
             addPostParams(postObject, "token", DataHelper.getToken(c));
-
-            if (type == HANDLE_ADD) addPostParams(postObject, "item_id", id);
-            else addPostParams(postObject, "event_id", id);
-            if (type != HANDLE_DELETE) {
-                addPostParams(postObject, "img", img);
-                addPostParams(postObject, "time", time);
-            }
+            addPostParams(postObject, "like_id", id);
+            addPostParams(postObject, "type", type + "");
             post = postObject.toString();
             setPostParams(post);
         } catch (Exception e) {
@@ -85,12 +72,6 @@ public class HandleFavApi extends BaseApi {
             CalendarListModel.parseCalendarListModel(calendarListModel, jsonObject);
             if (calendarListModel == null) return;
 
-            /**
-             * 保存本地数据
-             */
-            AppValue.myList.getCalendarModels().clear();
-            AppValue.myList.getCalendarModels().addAll(calendarListModel.getCalendarModels());
-            CommonApplication.loginStatusChange = 1;
         }
     }
 
@@ -105,9 +86,8 @@ public class HandleFavApi extends BaseApi {
 
     @Override
     protected String getUrl() {
-        if (type == HANDLE_ADD) return UrlMaker.addUserFav();
-        else if (type == HANDLE_EDIT) return UrlMaker.changeUserFav();
-        else if (type == HANDLE_DELETE) return UrlMaker.deleteUserFav();
+        if (type == HANDLE_ADD) return UrlMaker.addLike();
+        else if (type == HANDLE_DELETE) return UrlMaker.delLike();
         return "";
     }
 }

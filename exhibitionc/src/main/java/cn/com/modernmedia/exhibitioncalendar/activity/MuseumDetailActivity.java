@@ -38,7 +38,7 @@ public class MuseumDetailActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_museum_detail);
+        setContentView(R.layout.activity_detail);
         id = getIntent().getStringExtra(UriParse.DETAILMUSEUM);
         apiController = ApiController.getInstance(this);
         initView();
@@ -46,6 +46,11 @@ public class MuseumDetailActivity extends BaseActivity {
         MyApplication.museumDetailActivity = this;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MyApplication.museumDetailActivity = null;
+    }
 
     private void initView() {
         findViewById(R.id.detail_back).setOnClickListener(this);

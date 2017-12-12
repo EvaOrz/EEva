@@ -90,7 +90,7 @@ public class CityPickActivity extends BaseActivity {
             public void setData(Entry entry) {
                 showLoadingDialog(false);
                 if (entry != null && entry instanceof ErrorMsg) {
-                    if( ((ErrorMsg)entry).getNo() == 200){// 成功
+                    if (((ErrorMsg) entry).getNo() == 200) {// 成功
                         for (int i = 0; i < users.size(); i++) {
                             users.get(i).setCheck(false);
                         }
@@ -101,8 +101,8 @@ public class CityPickActivity extends BaseActivity {
                         handler.sendEmptyMessage(0);
                         handler.sendEmptyMessage(1);
                         AppValue.allCitys.setUsers(users);
-                    }else {
-                        showToast(((ErrorMsg)entry).getDesc());
+                    } else {
+                        showToast(((ErrorMsg) entry).getDesc());
                     }
 
 
@@ -226,7 +226,7 @@ public class CityPickActivity extends BaseActivity {
 
 
     private void initData() {
-        ApiController.getInstance(this).getCitys(this, new FetchEntryListener() {
+        ApiController.getInstance(this).getCitys(this, -1, new FetchEntryListener() {
             @Override
             public void setData(Entry entry) {
                 if (entry != null && entry instanceof TagListModel) {

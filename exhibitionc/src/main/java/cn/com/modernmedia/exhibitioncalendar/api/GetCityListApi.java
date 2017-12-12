@@ -20,7 +20,7 @@ public class GetCityListApi extends BaseApi {
     private String post;
     private TagListModel tagListModel = new TagListModel();
 
-    public GetCityListApi(Context c) {
+    public GetCityListApi(Context c, int type) {
         try {
             JSONObject postObject = new JSONObject();
             addPostParams(postObject, "appid", MyApplication.APPID + "");
@@ -29,7 +29,7 @@ public class GetCityListApi extends BaseApi {
             addPostParams(postObject, "token", DataHelper.getToken(c));
             // 1 地域列表 2 城市列表 3 用户收藏城市列表 （uid, token 必传)
             //不传 1，2，3 全部返回
-//            addPostParams(postObject, "type", "1");
+            if (type > 0) addPostParams(postObject, "type", type +"");
             post = postObject.toString();
 
             setPostParams(post);

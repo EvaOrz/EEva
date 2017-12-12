@@ -32,10 +32,15 @@ public class SlateUriReceiver extends BroadcastReceiver {
 
                 Message ms = new Message();
                 ms.what = 0;
-                Bundle b = new Bundle();
-                b.putString("share_json", intent.getExtras().getString("share_json"));
-                ms.setData(b);
-                MyApplication.museumDetailActivity.handler.sendMessage(ms);
+                if (!TextUtils.isEmpty(intent.getExtras().getString("share_json"))) {
+                    Bundle b = new Bundle();
+                    b.putString("share_json", intent.getExtras().getString("share_json"));
+                    ms.setData(b);
+                }
+                if (MyApplication.museumDetailActivity != null && MyApplication.museumDetailActivity.handler != null)
+                    MyApplication.museumDetailActivity.handler.sendMessage(ms);
+                if (MyApplication.calendarDetailActivity != null && MyApplication.calendarDetailActivity.handler != null)
+                    MyApplication.calendarDetailActivity.handler.sendMessage(ms);
             }
         } else if (intent.getAction().equals("open_map_activity")) {
             String ss = intent.getStringExtra("open_map");

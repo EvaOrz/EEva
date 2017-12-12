@@ -277,4 +277,17 @@
     <string name="update1">检测更新</string>
     <string name="download_later">暂不</string>
     <string name="download_error">下载遇到了错误，已停止</string>
+    <string name="my_active">活动</string>
+    <string name="my_fav">收藏</string>
+    <string name="my_xingcheng">行程</string>
+
+    <string name="active_1">我要参加</string>
+    <string name="active_2">正在审核</string>
+    <string name="active_3">报名成功</string>
+
+    <string name="calen_1">即将</string>
+    <string name="calen_2">在展</string>
+    <string name="calen_3">闭展</string>
+
+
 </resources>

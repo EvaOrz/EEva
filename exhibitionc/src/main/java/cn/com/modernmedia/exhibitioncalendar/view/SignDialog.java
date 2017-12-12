@@ -19,7 +19,7 @@ import java.util.TimerTask;
 import cn.com.modernmedia.corelib.db.DataHelper;
 import cn.com.modernmedia.corelib.model.UserModel;
 import cn.com.modernmedia.exhibitioncalendar.R;
-import cn.com.modernmedia.exhibitioncalendar.activity.UserCenterActivity;
+import cn.com.modernmedia.exhibitioncalendar.activity.UserInfoActivity;
 
 
 /**
@@ -114,7 +114,7 @@ public class SignDialog implements OnClickListener {
     public void onClick(View v) {
         String desc = edit.getEditableText().toString();
         if (v.getId() == R.id.motify_sign_sure) {
-            if (!TextUtils.isEmpty(desc) && mContext instanceof UserCenterActivity) {
+            if (!TextUtils.isEmpty(desc) && mContext instanceof UserInfoActivity) {
                 if (type == 1) {//
                     if (desc.getBytes().length > 24)
                         Toast.makeText(mContext, R.string.nick_name_length_error, Toast.LENGTH_SHORT).show();

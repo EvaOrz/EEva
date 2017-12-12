@@ -130,7 +130,7 @@ public class HttpRequestController {
             }
             // time collect
             TimeCollectUtil.getInstance().saveRequestTime(url, true, 0, false);
-            Log.d("http", url);
+            Log.e("http", url);
             if (isPost) {
                 doPost();
             } else {
@@ -196,7 +196,6 @@ public class HttpRequestController {
                  * 提交图片文件
                  */
                 if (!TextUtils.isEmpty(imagePath)) {
-                    Log.e("上传图片：", imagePath);
                     // 上传图片处理
                     MultipartBuilder builder = new MultipartBuilder().type(MultipartBuilder.FORM);
                     MediaType mediaType = MediaType.parse("image/jpg;charset=utf-8");

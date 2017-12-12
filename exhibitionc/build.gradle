@@ -13,8 +13,8 @@ android {
         applicationId "cn.com.modernmedia.exhibitioncalendar"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 8
-        versionName "2.4.3"
+        versionCode 9
+        versionName "2.5.0"
     }
     buildTypes {
         release {

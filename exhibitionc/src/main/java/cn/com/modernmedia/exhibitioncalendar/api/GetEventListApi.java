@@ -1,7 +1,6 @@
 package cn.com.modernmedia.exhibitioncalendar.api;
 
 import android.content.Context;
-import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -17,13 +16,11 @@ import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
  * Created by Eva. on 17/3/28.
  */
 
-public class GetMyListApi extends BaseApi {
+public class GetEventListApi extends BaseApi {
     private String post;
     private CalendarListModel calendarListModel = new CalendarListModel();
-    private int type;// 1：正在进行，2：已经过期
 
-    public GetMyListApi(Context c, String page, int type) {
-        this.type = type;
+    public GetEventListApi(Context c, String page) {
         JSONObject object = new JSONObject();
         try {
             object.put("appid", MyApplication.APPID + "");
@@ -67,13 +64,8 @@ public class GetMyListApi extends BaseApi {
             /**
              * 保存本地数据
              */
-            if (type == 1) {
-                AppValue.myList.getCalendarModels().clear();
-                AppValue.myList.getCalendarModels().addAll(calendarListModel.getCalendarModels());
-            } else if (type == 2) {
-                AppValue.edList.getCalendarModels().clear();
-                AppValue.edList.getCalendarModels().addAll(calendarListModel.getCalendarModels());
-            }
+            AppValue.myList.getCalendarModels().clear();
+            AppValue.myList.getCalendarModels().addAll(calendarListModel.getCalendarModels());
         }
     }
 
@@ -83,10 +75,7 @@ public class GetMyListApi extends BaseApi {
 
     @Override
     protected String getUrl() {
-        if (type == 1) return UrlMaker.getUserFavList();
-        else if (type == 2) {
-            UrlMaker.getUserFavExpiredList();
-        }
-        return null;
+
+        return UrlMaker.getEventList();
     }
 }

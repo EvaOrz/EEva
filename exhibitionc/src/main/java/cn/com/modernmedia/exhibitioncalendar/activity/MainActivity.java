@@ -37,13 +37,14 @@ import cn.com.modernmedia.corelib.model.VipInfoModel;
 import cn.com.modernmedia.corelib.model.WeatherModel;
 import cn.com.modernmedia.corelib.util.ParseUtil;
 import cn.com.modernmedia.corelib.util.Tools;
+import cn.com.modernmedia.corelib.widget.RoundAngleImageView;
 import cn.com.modernmedia.exhibitioncalendar.MyApplication;
 import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.adapter.CoverVPAdapter;
 import cn.com.modernmedia.exhibitioncalendar.adapter.DetailVPAdapter;
 import cn.com.modernmedia.exhibitioncalendar.adapter.VerticleVPAdapter;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
-import cn.com.modernmedia.exhibitioncalendar.api.user.HandleFavApi;
+import cn.com.modernmedia.exhibitioncalendar.api.HandleEventApi;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
 import cn.com.modernmedia.exhibitioncalendar.model.RecommandModel;
@@ -54,7 +55,6 @@ import cn.com.modernmedia.exhibitioncalendar.util.FlurryEvent;
 import cn.com.modernmedia.exhibitioncalendar.util.UpdateManager;
 import cn.com.modernmedia.exhibitioncalendar.util.UriParse;
 import cn.com.modernmedia.exhibitioncalendar.view.ChildHeightViewpager;
-import cn.com.modernmedia.exhibitioncalendar.view.ListItemMenuView;
 import cn.com.modernmedia.exhibitioncalendar.view.MainCityListScrollView;
 import cn.com.modernmedia.exhibitioncalendar.view.MainToumingView;
 import cn.com.modernmedia.exhibitioncalendar.view.VerticalViewPager;
@@ -181,31 +181,29 @@ public class MainActivity extends BaseActivity {
     private View getMylistItemView(final CalendarModel item) {
         ViewHolder viewHolder = ViewHolder.get(MainActivity.this, null, R.layout.item_list);
         TextView title = viewHolder.getView(R.id.l_title);
-        TextView city = viewHolder.getView(R.id.l_city);
         TextView date = viewHolder.getView(R.id.l_date);
-        ImageView img = viewHolder.getView(R.id.l_img);
-
+        RoundAngleImageView img = viewHolder.getView(R.id.l_img);
+        img.setTag(R.id.scale_type , "CENTER_CROP");
+        TextView status = viewHolder.getView(R.id.l_status);
         int width = MyApplication.width - 20;
-        int height = width * 9 / 16;
+        int height = width * 5 / 12;
         img.setLayoutParams(new RelativeLayout.LayoutParams(width, height));
         title.setText(item.getTitle());
-        // 显示用户自己设置的时间
-        if (!TextUtils.isEmpty(item.getTime())) {
-            date.setText(Tools.getStringToDate(item.getTime()));
-        } else
-            date.setText(Tools.getStringToDate(item.getStartTime()) + "-" + Tools.getStringToDate(item.getEndTime()));
+        switch (Tools.getCalendarStatus(item.getStartTime(), item.getEndTime())) {
+            case 1:
+                status.setText(R.string.calen_1);
+                break;
+            case 2:
+                status.setText(R.string.calen_2);
+                break;
+            case 3:
+                status.setText(R.string.calen_3);
+                break;
 
-        if (ParseUtil.listNotNull(item.getCitylist())) {
-            city.setText(item.getCitylist().get(0).getTagName());
         }
+
+        date.setText(Tools.getStringToDate(item.getStartTime()) + "-" + Tools.getStringToDate(item.getEndTime()));
         MyApplication.finalBitmap.display(img, item.getCoverImg());
-        final ImageView sandian = viewHolder.getView(R.id.sandian);
-        sandian.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new ListItemMenuView(MainActivity.this, item, sandian);
-            }
-        });
         viewHolder.getConvertView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -272,7 +270,7 @@ public class MainActivity extends BaseActivity {
 
         if (userModel != null) {
             // 正在进行
-            apiController.getMyList(this, "1", 1, new FetchEntryListener() {
+            apiController.getEventList(this, "1", new FetchEntryListener() {
                 @Override
                 public void setData(Entry entry) {
                     if (entry != null && entry instanceof CalendarListModel) {
@@ -281,14 +279,7 @@ public class MainActivity extends BaseActivity {
                     }
                 }
             });
-            // 已经过期
-            apiController.getMyList(this, "1", 2, new FetchEntryListener() {
-                @Override
-                public void setData(Entry entry) {
-                    if (entry != null && entry instanceof CalendarListModel) {
-                    }
-                }
-            });
+
         } else {
             handler.sendEmptyMessage(3);
         }
@@ -306,7 +297,8 @@ public class MainActivity extends BaseActivity {
                 }
             }
         });
-        apiController.getCitys(this, new FetchEntryListener() {
+        // 首页获取全部城市数据
+        apiController.getCitys(this, -1, new FetchEntryListener() {
             @Override
             public void setData(Entry entry) {
                 if (entry != null && entry instanceof TagListModel) {
@@ -483,7 +475,7 @@ public class MainActivity extends BaseActivity {
                 startActivity(new Intent(MainActivity.this, LeftActivity.class));
                 break;
             case R.id.main_right:
-                startActivity(new Intent(MainActivity.this, MyListActivity.class));
+                startActivity(new Intent(MainActivity.this, UserCenterActivity.class));
                 break;
             case R.id.main_action:// 添加|取消
                 if (userModel == null) {
@@ -533,7 +525,7 @@ public class MainActivity extends BaseActivity {
     private void doDelete(CalendarModel c) {
         for (CalendarModel s : myList.getCalendarModels()) {
             if (c.getItemId().equals(s.getItemId())) {
-                apiController.handleFav(MainActivity.this, HandleFavApi.HANDLE_DELETE, s.getEventId(), s.getCoverImg(), s.getStartTime(), new FetchEntryListener() {
+                apiController.handleFav(MainActivity.this, HandleEventApi.HANDLE_DELETE, s.getEventId(), s.getCoverImg(), s.getStartTime(), new FetchEntryListener() {
                     @Override
                     public void setData(Entry entry) {
                         if (entry != null && entry instanceof ErrorMsg) {
@@ -620,29 +612,34 @@ public class MainActivity extends BaseActivity {
      */
     private void checkAdd(CalendarModel model) {
         List<CalendarModel> ll = myList.getCalendarModels();
-        if (model.getType() == 3) {// gone
-            handler.sendEmptyMessage(7);
-        } else if (ParseUtil.listNotNull(ll)) {
+        if (model.getType() == 1) {// 是展览
+            if (ParseUtil.listNotNull(ll)) {
 
-            boolean ifShow = true;
-            for (int i = 0; i < ll.size(); i++) {
-                if (ll.get(i).getItemId().equals(model.getItemId())) {
-                    ifShow = false;
+                boolean ifShow = true;
+                for (int i = 0; i < ll.size(); i++) {
+                    if (ll.get(i).getItemId().equals(model.getItemId())) {
+                        ifShow = false;
+                    }
                 }
-            }
-            if (ifShow) {// visible
-                handler.sendEmptyMessage(6);
+                if (ifShow) {// visible
+                    handler.sendEmptyMessage(6);// 显示添加
+                } else {
+                    handler.sendEmptyMessage(5);// 显示取消
+                }
             } else {
-                handler.sendEmptyMessage(5);
-            }
-        } else// invisible
 
-            handler.sendEmptyMessage(6);
+                handler.sendEmptyMessage(6);
+            }
+        } else {
+
+            handler.sendEmptyMessage(7);
+        }
     }
 
     /**
      * 更新版本
      */
+
     private void checkBbwc() {
         //googleplay 市场禁止检测版本更新
         if (CommonApplication.CHANNEL.equals("googleplay")) {

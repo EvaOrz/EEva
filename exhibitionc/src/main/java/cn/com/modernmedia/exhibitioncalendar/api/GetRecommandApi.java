@@ -15,6 +15,7 @@ import cn.com.modernmedia.exhibitioncalendar.model.ActiveListModel.ActiveModel;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
 import cn.com.modernmedia.exhibitioncalendar.model.MuseumListModel.MuseumModel;
 import cn.com.modernmedia.exhibitioncalendar.model.RecommandModel;
+import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
 
 /**
  * 获取展览列表接口
@@ -102,6 +103,8 @@ public class GetRecommandApi extends BaseApi {
         recommandModel.setMuseumModels(museums);
         recommandModel.setActiveModels(actives);
         recommandModel.setRecommandModels(recos);
+        AppValue.activeModelList.clear();
+        AppValue.activeModelList.addAll(actives);
     }
 
 

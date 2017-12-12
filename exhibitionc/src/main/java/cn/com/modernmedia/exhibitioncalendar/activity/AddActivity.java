@@ -36,7 +36,7 @@ import cn.com.modernmedia.corelib.widget.EvaSwitchBar;
 import cn.com.modernmedia.exhibitioncalendar.MyApplication;
 import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
-import cn.com.modernmedia.exhibitioncalendar.api.user.HandleFavApi;
+import cn.com.modernmedia.exhibitioncalendar.api.HandleEventApi;
 import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
 import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
 import cn.com.modernmedia.exhibitioncalendar.util.FlurryEvent;
@@ -176,7 +176,7 @@ public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeLi
                 String tt = date.getText() + " " + time.getText();
                 if (type == 1) {
 
-                    apiController.handleFav(AddActivity.this, HandleFavApi.HANDLE_EDIT, calendarModel.getEventId(), img, tt, new FetchEntryListener() {
+                    apiController.handleFav(AddActivity.this, HandleEventApi.HANDLE_EDIT, calendarModel.getEventId(), img, tt, new FetchEntryListener() {
                         @Override
                         public void setData(Entry entry) {
                             showLoadingDialog(false);
@@ -192,7 +192,7 @@ public class AddActivity extends BaseActivity implements EvaSwitchBar.OnChangeLi
                         }
                     });
                 } else {
-                    apiController.handleFav(AddActivity.this, HandleFavApi.HANDLE_ADD, calendarModel.getItemId(), img, tt, new FetchEntryListener() {
+                    apiController.handleFav(AddActivity.this, HandleEventApi.HANDLE_ADD, calendarModel.getItemId(), img, tt, new FetchEntryListener() {
                         @Override
                         public void setData(Entry entry) {
                             showLoadingDialog(false);

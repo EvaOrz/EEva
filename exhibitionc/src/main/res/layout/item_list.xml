@@ -3,78 +3,81 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="vertical"
-              android:padding="10dp">
+              android:paddingRight="10dp"
+              android:paddingTop="8dp"
+              android:paddingBottom="8dp"
+              android:paddingLeft="10dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/white_10radius_corner_bg">
+        >
 
-        <ImageView
+        <cn.com.modernmedia.corelib.widget.RoundAngleImageView
             android:id="@+id/l_img"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
             android:src="@mipmap/holder_bg"/>
 
-        <ImageView
-            android:id="@+id/sandian"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentRight="true"
-            android:paddingRight="10dp"
-            android:paddingTop="10dp"
-            android:src="@mipmap/sandian"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/l_img"
-            android:padding="10dp"
-            android:text="@string/ing"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_size_20"
-            android:textStyle="bold"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/l_img"
-            android:background="@color/white"
-            android:orientation="vertical"
-            android:padding="10dp"
+            android:layout_alignBottom="@id/l_img"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="15dp"
             >
 
             <TextView
-                android:id="@+id/l_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:lines="1"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_size_16"
+                android:id="@+id/l_status"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:background="@drawable/dot_active"
+                android:gravity="center"
+                android:textColor="@color/gray_dark"
+                android:textSize="@dimen/text_size_14"
                 android:textStyle="bold"/>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
+                android:layout_marginLeft="15dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/l_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:lines="1"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_14"
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:id="@+id/l_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:lines="1"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_14"/>
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_14"
+                    />
+            </LinearLayout>
 
-                <TextView
-                    android:id="@+id/l_city"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:textColor="@color/gray_dark"
-                    android:textSize="@dimen/text_size_12"/>
-            </RelativeLayout>
-
+            <TextView
+                android:id="@+id/l_active"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:background="@drawable/white_xiankuang"
+                android:gravity="center"
+                android:text="@string/active_1"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_size_12"
+                android:visibility="gone"/>
 
         </LinearLayout>
     </RelativeLayout>

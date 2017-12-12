@@ -15,6 +15,13 @@ import cn.com.modernmedia.corelib.model.Entry;
 public class ActiveListModel extends Entry {
     private List<ActiveModel> activeModels = new ArrayList<>();
 
+    public List<ActiveModel> getActiveModels() {
+        return activeModels;
+    }
+
+    public void setActiveModels(List<ActiveModel> activeModels) {
+        this.activeModels = activeModels;
+    }
 
     public static class ActiveModel extends Entry {
         private int appid;
@@ -36,6 +43,7 @@ public class ActiveListModel extends Entry {
         private int type;
         private String weburl = "";
         private String backgroundImg_x = "";
+        private String state_desc = "";
 
         public ActiveModel() {
         }
@@ -60,6 +68,7 @@ public class ActiveListModel extends Entry {
             activeModel.setDesc(jsonObject.optString("desc"));
             activeModel.setBackgroundImg_x(jsonObject.optString("address"));
             activeModel.setAddress(jsonObject.optString("address"));
+            activeModel.setState_desc(jsonObject.optString("state_desc"));
             return activeModel;
         }
 
@@ -213,6 +222,14 @@ public class ActiveListModel extends Entry {
 
         public void setBackgroundImg_x(String backgroundImg_x) {
             this.backgroundImg_x = backgroundImg_x;
+        }
+
+        public String getState_desc() {
+            return state_desc;
+        }
+
+        public void setState_desc(String state_desc) {
+            this.state_desc = state_desc;
         }
     }
 }

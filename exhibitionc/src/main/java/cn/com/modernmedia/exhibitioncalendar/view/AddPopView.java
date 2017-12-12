@@ -16,7 +16,7 @@ import android.widget.TimePicker;
 import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.activity.AddActivity;
-import cn.com.modernmedia.exhibitioncalendar.activity.UserCenterActivity;
+import cn.com.modernmedia.exhibitioncalendar.activity.UserInfoActivity;
 
 /**
  * Created by Eva. on 17/4/11.
@@ -93,8 +93,8 @@ public class AddPopView {
 
                 if (mContext instanceof AddActivity && (type == 1 || type == 2))
                     ((AddActivity) mContext).changePop(type, aa, bb, cc, dd, ee);
-                else if (mContext instanceof UserCenterActivity && type == 3)
-                    ((UserCenterActivity) mContext).setBirth(aa, bb, cc);
+                else if (mContext instanceof UserInfoActivity && type == 3)
+                    ((UserInfoActivity) mContext).setBirth(aa, bb, cc);
                 window.dismiss();
             }
         });
