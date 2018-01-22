@@ -1,5 +1,6 @@
 package cn.com.modernmedia.exhibitioncalendar.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -25,7 +26,7 @@ public class CalendarListActivity extends BaseActivity {
 
     private CommonWebView wbWebView;
     private String tagId, tagName, titleTxt;
-    private ImageView back;
+    private ImageView  ditu, zhanguan;
     private TextView tilte;
 
     @Override
@@ -39,16 +40,20 @@ public class CalendarListActivity extends BaseActivity {
     }
 
     private void initView() {
-        back = (ImageView) findViewById(R.id.calendar_list_back);
-        back.setOnClickListener(this);
+        findViewById(R.id.calendar_list_back).setOnClickListener(this);
         tilte = (TextView) findViewById(R.id.calendar_list_title);
         wbWebView = (CommonWebView) findViewById(R.id.list_webview);
+        ditu = (ImageView) findViewById(R.id.calendar_list_ditu);
+        zhanguan = (ImageView) findViewById(R.id.calendar_list_zhanlan);
+        ditu.setOnClickListener(this);
+        zhanguan.setOnClickListener(this);
         String url = "";
         try {
             // 专题样式
             if (!TextUtils.isEmpty(titleTxt)) {
                 tilte.setText(titleTxt);
-                back.setImageResource(R.mipmap.left_back);
+                ditu.setVisibility(View.GONE);
+                zhanguan.setVisibility(View.GONE);
                 url = UrlMaker.getTagPage(tagId);
             } else {
                 url = UrlMaker.getHomePage();
@@ -73,6 +78,14 @@ public class CalendarListActivity extends BaseActivity {
         switch (view.getId()) {
             case R.id.calendar_list_back:
                 finish();
+                break;
+            case R.id.calendar_list_ditu:
+                startActivity(new Intent(this, CityPickActivity.class));
+                break;
+            case R.id.calendar_list_zhanlan:
+                Intent i = new Intent(this, AboutActivity.class);
+                i.putExtra("browser_type", 2);
+                startActivity(i);
                 break;
         }
     }

@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@mipmap/column_activity_bg"
-              android:fitsSystemWindows="true"
+              android:background="@color/white"
               android:orientation="vertical">
 
     <LinearLayout
@@ -12,11 +11,26 @@
         android:orientation="vertical"
         android:padding="15dp">
 
-        <ImageView
+        <LinearLayout
             android:id="@+id/left_sousuo"
+            android:padding="8dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/left_sousuo"/>
+            android:gravity="center_vertical"
+            android:background="@drawable/graylight_10radius_corner_bg"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="20dp"
+                android:src="@drawable/search_tag"
+                android:layout_height="20dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="@string/search"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="@color/gray_dark"
+                android:layout_marginLeft="8dp"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
 
         <LinearLayout
             android:id="@+id/all_zhanlan"
@@ -25,16 +39,30 @@
 
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="15dp"
-                android:text="@string/all_zhanlan"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_16"/>
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@mipmap/quanqiuzhanlan"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/all_zhanlan"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_16"/>
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/all_num"
@@ -42,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:textColor="@color/gray_line"
+                android:textColor="@color/gray_dark"
                 android:textSize="@dimen/text_size_12"/>
 
             <View
@@ -60,17 +88,30 @@
 
             android:orientation="vertical">
 
-            <TextView
-
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="15dp"
-                android:text="@string/all_zhanguan"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_16"/>
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@mipmap/quanqiuzhanguan"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/all_zhanguan"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_16"/>
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/all_num1"
@@ -78,7 +119,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:textColor="@color/gray_line"
+                android:textColor="@color/gray_dark"
                 android:textSize="@dimen/text_size_12"/>
 
             <View
@@ -96,16 +137,30 @@
 
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="15dp"
-                android:text="@string/choose_city"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_16"/>
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@mipmap/xuanzechengshi"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/choose_city"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_16"/>
+            </LinearLayout>
+
 
             <TextView
 
@@ -114,7 +169,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:text="@string/hot_hint"
-                android:textColor="@color/gray_line"
+                android:textColor="@color/gray_dark"
                 android:textSize="@dimen/text_size_12"/>
 
             <View
@@ -125,40 +180,6 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/my_zhanlan"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="15dp"
-                android:text="@string/my_zhanlan"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_16"/>
-
-            <TextView
-                android:id="@+id/my_num"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:textColor="@color/gray_line"
-                android:textSize="@dimen/text_size_12"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/line_height"
-                android:layout_marginTop="15dp"
-                android:background="@color/gray_line"/>
-
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/about_us"
@@ -167,16 +188,30 @@
 
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="15dp"
-                android:text="@string/about_us"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_16"/>
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@mipmap/about_us"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/about_us"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_16"/>
+            </LinearLayout>
+
 
             <TextView
                 android:layout_width="match_parent"
@@ -184,7 +219,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:text="@string/about_us"
-                android:textColor="@color/gray_line"
+                android:textColor="@color/gray_dark"
                 android:textSize="@dimen/text_size_12"
                 android:visibility="invisible"/>
 

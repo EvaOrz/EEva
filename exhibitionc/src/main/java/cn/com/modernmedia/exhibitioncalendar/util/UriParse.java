@@ -21,6 +21,7 @@ import cn.com.modernmedia.exhibitioncalendar.activity.CalendarDetailActivity;
 import cn.com.modernmedia.exhibitioncalendar.activity.CalendarListActivity;
 import cn.com.modernmedia.exhibitioncalendar.activity.MapActivity;
 import cn.com.modernmedia.exhibitioncalendar.activity.MuseumDetailActivity;
+import cn.com.modernmedia.exhibitioncalendar.activity.MyVipActivity;
 
 /**
  * 自定义协议解析类
@@ -64,6 +65,7 @@ public class UriParse {
     public static String SAFARI = "safari";
     public static String DETAILMUSEUM = "detailMuseum";
     public static String DETAILACTIVE = "detailActive";
+    public static String VIP_OPEN = "vip_open";
 
     /**
      * 普通列表点击
@@ -131,7 +133,8 @@ public class UriParse {
         return list;
     }
 
-    public static void clickSlate(Context context, String link, Entry[] entries, View view, Class<?>... cls) {
+    public static boolean clickSlate(Context context, String link, Entry[] entries, View view,
+                               Class<?>... cls) {
         if (TextUtils.isEmpty(link)) {
             //            doLinkNull(context, entries, cls);
         } else if (link.contains("map.html")) {
@@ -166,20 +169,25 @@ public class UriParse {
                 i.putExtra("add_type", 0);
                 i.putExtra("add_detail", entries[0]);
                 context.startActivity(i);
+            } else if (key.equals(VIP_OPEN)) {
+                context.startActivity(new Intent(context, MyVipActivity.class));
             }
         } else if (link.startsWith("tel://")) {
             String arr[] = link.split("tel://");
             if (arr.length == 2) doCall(context, arr[1]);
         }
 
+        return true;
+
     }
 
     /**
      * 挑战到添加日历功能
+     *
      * @param uri
      * @return
      */
-    private String addCalendar(String uri){
+    private String addCalendar(String uri) {
         String[] array = uri.split("ADDCALENDAR/");
         if (array.length == 2) {
             return array[1];
@@ -195,7 +203,6 @@ public class UriParse {
      * @param link    https://artcalendar-test.bbwc.cn/html/artCalendar/map.html?address=%25E7%25BA%25BD%25E7%25BA%25A6%25E5%25A4%25A7%25E9%2583%25BD%25E4%25BC%259A%25E8%2589%25BA%25E6%259C%25AF%25E5%258D%259A%25E7%2589%25A9%25E9%25A6%2586%25EF%25BC%258C1000%2520Fifth%2520Avenue%2520New%2520York,%2520NY%252010028&latitude=40.7793090&longitude=-73.9630000
      */
     private static void goMapActivity(Context context, String link, Entry entry) {
-        //        try {
         Log.e("跳转mapActivity", link);
 
         Intent i = new Intent(context, MapActivity.class);
@@ -203,10 +210,10 @@ public class UriParse {
         i.putExtra("latitude", Tools.getValueByName(link, "latitude"));
         i.putExtra("longitude", Tools.getValueByName(link, "longitude"));
         i.putExtra("map_address", URLEncoder.encode(URLEncoder.encode(Tools.getValueByName(link, "address"))));
+        //        i.putExtra("map_title", title);
+        //        i.putExtra("map_img", img);
         context.startActivity(i);
-        //        } catch (UnsupportedEncodingException e) {
 
-        //        }
 
     }
 

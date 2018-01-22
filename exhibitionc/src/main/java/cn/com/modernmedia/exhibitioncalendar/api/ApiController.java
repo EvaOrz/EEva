@@ -311,10 +311,11 @@ public class ApiController {
 
     /**
      * 个人中心获取活动列表
+     *
      * @param c
      * @param listener
      */
-    public void getActives(Context c,  FetchEntryListener listener){
+    public void getActives(Context c, FetchEntryListener listener) {
         GetActiveApi getActiveApi = new GetActiveApi(c);
         doPostRequest(getActiveApi, getActiveApi.getData(), USE_HTTP_ONLY, listener);
     }
@@ -553,6 +554,18 @@ public class ApiController {
     public void handleFav(Context c, int type, String id, String img, String time, FetchEntryListener listener) {
         HandleEventApi handleEventApi = new HandleEventApi(c, type, id, img, time);
         doPostRequest(handleEventApi, handleEventApi.getData(), USE_HTTP_ONLY, listener);
+    }
+
+    /**
+     * 获取地图上的推荐列表
+     *
+     * @param lat
+     * @param lon
+     * @param listener
+     */
+    public void getMapTuijian(String lat, String lon, FetchEntryListener listener) {
+        GetMapTuijianApi getMapTuijianApi = new GetMapTuijianApi(lon, lat);
+        doPostRequest(getMapTuijianApi, getMapTuijianApi.getData(), USE_HTTP_ONLY, listener);
     }
 
 

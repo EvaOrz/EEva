@@ -41,7 +41,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:layout_weight="1">
 
             <com.baidu.mapapi.map.MapView
@@ -70,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:paddingTop="10dp">
+            android:paddingTop="5dp">
 
             <ImageView
                 android:id="@+id/map_back"

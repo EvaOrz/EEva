@@ -8,9 +8,7 @@ import android.widget.TextView;
 
 import cn.com.modernmedia.corelib.BaseActivity;
 import cn.com.modernmedia.corelib.util.ParseUtil;
-import cn.com.modernmedia.corelib.util.Tools;
 import cn.com.modernmedia.exhibitioncalendar.R;
-import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel;
 import cn.com.modernmedia.exhibitioncalendar.util.AppValue;
 
 /**
@@ -23,8 +21,10 @@ public class LeftActivity extends BaseActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        needFull = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_left);
+
         initView();
     }
 
@@ -35,12 +35,10 @@ public class LeftActivity extends BaseActivity {
         findViewById(R.id.all_zhanlan).setOnClickListener(this);
         findViewById(R.id.all_zhanguan).setOnClickListener(this);
         findViewById(R.id.choose_city).setOnClickListener(this);
-        findViewById(R.id.my_zhanlan).setOnClickListener(this);
         findViewById(R.id.about_us).setOnClickListener(this);
 
         allNum = (TextView) findViewById(R.id.all_num);
         allNum1 = (TextView) findViewById(R.id.all_num1);
-        myNum = (TextView) findViewById(R.id.my_num);
 
 
     }
@@ -56,17 +54,17 @@ public class LeftActivity extends BaseActivity {
         String s = "共";
         int ing = 0;
         int will = 0;
-        if (AppValue.myList != null && ParseUtil.listNotNull(AppValue.myList.getCalendarModels())) {
-            ing = AppValue.myList.getCalendarModels().size();
-            s = s + ing + "个展览";
-            for (CalendarListModel.CalendarModel c : AppValue.myList.getCalendarModels()) {
-                if (Tools.getCalendarStatus(c.getStartTime(), c.getEndTime()) == 1) {
-                    will++;
-                }
-            }
-        }
-        s = s + " 其中 " + will + " 个展览即将开展";
-        myNum.setText(s);
+//        if (AppValue.myList != null && ParseUtil.listNotNull(AppValue.myList.getCalendarModels())) {
+//            ing = AppValue.myList.getCalendarModels().size();
+//            s = s + ing + "个展览";
+//            for (CalendarListModel.CalendarModel c : AppValue.myList.getCalendarModels()) {
+//                if (Tools.getCalendarStatus(c.getStartTime(), c.getEndTime()) == 1) {
+//                    will++;
+//                }
+//            }
+//        }
+//        s = s + " 其中 " + will + " 个展览即将开展";
+//        myNum.setText(s);
 
     }
 
@@ -91,9 +89,9 @@ public class LeftActivity extends BaseActivity {
                 i.putExtra("browser_type", 2);
                 startActivity(i);
                 break;
-            case R.id.my_zhanlan:
-                startActivity(new Intent(LeftActivity.this, UserCenterActivity.class));
-                break;
+//            case R.id.my_zhanlan:
+//                startActivity(new Intent(LeftActivity.this, UserCenterActivity.class));
+//                break;
             case R.id.about_us:
                 startActivity(new Intent(LeftActivity.this, AboutActivity.class));
                 break;

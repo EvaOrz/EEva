@@ -90,7 +90,6 @@
     <string name="dial_error">您的手机缺少所需的功能模块，无法继续操作。</string>
 
     <string name="all_zhanlan">全部展览</string>
-    <string name="all_zhanlan_list">分类浏览新展</string>
     <string name="all_zhanguan">全部展馆</string>
     <string name="choose_city">选择城市</string>
     <string name="hot_hint">选择城市查看展览</string>
@@ -177,7 +176,7 @@
 
     <string name="list_hint">暂无规划中的展览行程\n 点击添加</string>
     <string name="click_add"></string>
-    <string name="look_detail1">查看展览详情</string>
+    <string name="look_detail1">查看详情</string>
     <string name="notification">提醒</string>
     <string name="notification_desc">提前一个小时</string>
     <string name="tongbu">同步</string>

@@ -13,7 +13,6 @@ import org.json.JSONObject;
 import cn.com.modernmedia.exhibitioncalendar.MyApplication;
 import cn.com.modernmedia.exhibitioncalendar.activity.LoginActivity;
 import cn.com.modernmedia.exhibitioncalendar.activity.MapActivity;
-import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel;
 
 /**
  * Created by Eva. on 17/3/28.
@@ -57,17 +56,14 @@ public class SlateUriReceiver extends BroadcastReceiver {
                     String img = json.optString("image");
 
 
-                    CalendarListModel.CalendarModel calendarModel = new CalendarListModel.CalendarModel();
-                    calendarModel.setAddress(add);
-                    calendarModel.setTitle(title);
-                    calendarModel.setBackgroundImg(img);
-
                     Intent i = new Intent(context, MapActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    i.putExtra("map_calendar", calendarModel);
                     i.putExtra("latitude", latitude);
                     i.putExtra("longitude", longitude);
                     i.putExtra("map_address", add);
+                    i.putExtra("map_title", title);
+                    i.putExtra("map_img", img);
+
                     context.startActivity(i);
                 } catch (JSONException e) {
 

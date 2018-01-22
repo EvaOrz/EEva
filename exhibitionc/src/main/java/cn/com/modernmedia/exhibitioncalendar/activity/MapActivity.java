@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -36,8 +37,9 @@ import cn.com.modernmedia.corelib.util.ParseUtil;
 import cn.com.modernmedia.exhibitioncalendar.MyApplication;
 import cn.com.modernmedia.exhibitioncalendar.R;
 import cn.com.modernmedia.exhibitioncalendar.api.ApiController;
-import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel;
-import cn.com.modernmedia.exhibitioncalendar.model.CalendarListModel.CalendarModel;
+import cn.com.modernmedia.exhibitioncalendar.model.MapTuijianListModel;
+import cn.com.modernmedia.exhibitioncalendar.model.MapTuijianListModel.MapTuijianModel;
+import cn.com.modernmedia.exhibitioncalendar.util.UriParse;
 import cn.com.modernmedia.exhibitioncalendar.view.ChooseMapPopView;
 
 /**
@@ -47,39 +49,37 @@ import cn.com.modernmedia.exhibitioncalendar.view.ChooseMapPopView;
 
 public class MapActivity extends BaseActivity implements OnMapReadyCallback {
 
-    private double latitude, longitude;
     private View mapBg;
     private TextView title, look;
-    private CalendarModel calendarModel;// 初始展览model
-    private CalendarModel currentCalendarModel;// 当前选中model
+    private MapTuijianModel initModel;// 初始展览model
+    private MapTuijianModel currentModel;// 当前选中model
+    private String bacImg = "";//当前地图页面的背景图
+
     private MapView baiduMapView;
     private LocationMode mCurrentMode;
-    private BitmapDescriptor mCurrentMarker;
     private LocationClient mLocationClient;
     private BaiduMap mBaiduMap;
 
     private boolean ifMapReady = false;
+    private boolean ifAllMakerReady = false;// 是否加载完周边
 
-    private CalendarListModel nearListModel;// 周边展览列表
-    private BitmapDescriptor markerIcon;
+    private MapTuijianListModel nearListModel;// 周边展览列表
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        markerIcon = BitmapDescriptorFactory.fromResource(R.mipmap.location);
 
-        if (getIntent().getSerializableExtra("map_calendar") != null && getIntent().getSerializableExtra("map_calendar") instanceof CalendarModel) {
-            calendarModel = (CalendarModel) getIntent().getSerializableExtra("map_calendar");
-        }
-        if (!TextUtils.isEmpty(getIntent().getStringExtra("latitude")))
-            latitude = Double.valueOf(getIntent().getStringExtra("latitude"));
-        if (!TextUtils.isEmpty(getIntent().getStringExtra("longitude")))
-            longitude = Double.valueOf(getIntent().getStringExtra("longitude"));
+        initModel = new MapTuijianModel();
+        initModel.setBd_lon(getIntent().getStringExtra("longitude"));
+        initModel.setBd_lat(getIntent().getStringExtra("latitude"));
+        initModel.setTitle(getIntent().getStringExtra("map_title"));
+        initModel.setAddress(getIntent().getStringExtra("map_address"));
+        bacImg = getIntent().getStringExtra("map_img");
+        currentModel = initModel;
 
-        //        if (!TextUtils.isEmpty(getIntent().getStringExtra("map_address")))
-        //            address = getIntent().getStringExtra("map_address");
         initView();
         initAllMarker();
 
@@ -89,11 +89,11 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
      * 获取周边展览信息
      */
     private void initAllMarker() {
-        ApiController.getInstance(this).getNearList(this, latitude + "", longitude + "", new FetchEntryListener() {
+        ApiController.getInstance(this).getMapTuijian(initModel.getBd_lat(), initModel.getBd_lon(), new FetchEntryListener() {
             @Override
             public void setData(Entry entry) {
-                if (entry != null && entry instanceof CalendarListModel) {
-                    nearListModel = (CalendarListModel) entry;
+                if (entry != null && entry instanceof MapTuijianListModel) {
+                    nearListModel = (MapTuijianListModel) entry;
                     handler.sendEmptyMessage(0);
                 }
             }
@@ -125,11 +125,10 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
         mapBg = findViewById(R.id.map_bg);
         title = (TextView) findViewById(R.id.map_title);
         // 图片太大了
-        if (calendarModel != null && !TextUtils.isEmpty(calendarModel.getBackgroundImg())) {
-            MyApplication.finalBitmap.display(mapBg, calendarModel.getBackgroundImg());
-
-            title.setText(calendarModel.getTitle());
+        if (!TextUtils.isEmpty(bacImg)) {
+            MyApplication.finalBitmap.display(mapBg, bacImg);
         }
+        title.setText(initModel.getTitle());
         findViewById(R.id.map_back).setOnClickListener(this);
         findViewById(R.id.map_daohang).setOnClickListener(this);
         look = (TextView) findViewById(R.id.look_detail);
@@ -168,7 +167,8 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
         mLocationClient.registerLocationListener(new BDLocationListener() {
             @Override
             public void onReceiveLocation(BDLocation location) {
-                addOne(calendarModel, latitude, longitude, true);
+                addOne(initModel, true);
+                handler.sendEmptyMessage(0);
                 mLocationClient.stop();
             }
 
@@ -181,17 +181,23 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
         mLocationClient.start();
     }
 
+
     /**
-     * 添加单个marker
-     *
-     * @param calendarModel
-     * @param ifCenter
+     * @param type 0:展览 1:展馆 2:餐厅 3:旅店
+     * @return
      */
-    private void addOne(CalendarModel calendarModel, boolean ifCenter) {
-        if (calendarModel == null) return;
-        CalendarModel.Coordinate cc = calendarModel.getCoordinates();
-        if (cc != null && !TextUtils.isEmpty(cc.getLatitude()) && !TextUtils.isEmpty(cc.getLongitude()))
-            addOne(calendarModel, Double.valueOf(cc.getLatitude()), Double.valueOf(cc.getLongitude()), ifCenter);
+    private BitmapDescriptor getMakerIcon(int type) {
+        if (type == 0) {
+            return BitmapDescriptorFactory.fromResource(R.mipmap.location_tuijian);
+
+        } else if (type == 1) {
+            return BitmapDescriptorFactory.fromResource(R.mipmap.location_zhanguan);
+        } else if (type == 2) {
+            return BitmapDescriptorFactory.fromResource(R.mipmap.location_canting);
+        } else if (type == 3) {
+            return BitmapDescriptorFactory.fromResource(R.mipmap.location_jiudian);
+        }
+        return BitmapDescriptorFactory.fromResource(R.mipmap.location_tuijian);
     }
 
     /**
@@ -199,9 +205,11 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
      *
      * @param ifCenter
      */
-    private void addOne(CalendarModel c, Double la, Double lo, boolean ifCenter) {
+    private void addOne(MapTuijianModel c, boolean ifCenter) {
+        Double la = Double.valueOf(c.getBd_lat());
+        Double lo = Double.valueOf(c.getBd_lon());
         LatLng cenpt = new LatLng(la, lo);
-
+        Log.e("ssssssssss", la + "____" + lo);
         if (ifCenter) {
 
             // 定义地图状态zoom表示缩放级别3-18
@@ -217,10 +225,10 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
         // 构建Marker图标
 
         // 构建MarkerOption，用于在地图上添加Marker
-        OverlayOptions option = new MarkerOptions().icon(markerIcon).position(cenpt);
+        OverlayOptions option = new MarkerOptions().icon(getMakerIcon(c.getType())).position(cenpt);
         // 在地图上添加Marker，并显示
         Bundle bundle = new Bundle();
-        bundle.putSerializable("calendarmodel", c);
+        bundle.putSerializable("MapTuijianModel", c);
         mBaiduMap.addOverlay(option).setExtraInfo(bundle);
         if (ifCenter) {
             Message m = new Message();
@@ -243,13 +251,13 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:// 添加周边
-                    for (CalendarModel c : nearListModel.getCalendarModels()) {
-                        if (c != null && ParseUtil.listNotNull(nearListModel.getCalendarModels())) {
+                    if (nearListModel != null && ParseUtil.listNotNull(nearListModel.getMapTuijianModels()) && !ifAllMakerReady) {
+                        for (MapTuijianModel c : nearListModel.getMapTuijianModels()) {
 
                             addOne(c, false);
                         }
+                        ifAllMakerReady = true;
                     }
-
                     break;
                 case 1:// 不显示
                     look.setVisibility(View.GONE);
@@ -263,7 +271,7 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
                 case 3:
 
                     Marker m = (Marker) msg.obj;
-                    initPop(m, calendarModel.getAddress());
+                    initPop(m, currentModel.getTitle(), currentModel.getAddress());
                     break;
             }
         }
@@ -278,14 +286,23 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
                 finish();
                 break;
             case R.id.map_daohang:
-                new ChooseMapPopView(MapActivity.this, latitude + "", longitude + "", calendarModel.getAddress());
+                new ChooseMapPopView(MapActivity.this, currentModel.getBd_lat(), currentModel.getBd_lon(), currentModel.getAddress());
                 break;
 
             case R.id.look_detail:
-                if (currentCalendarModel != null) {
-                    Intent i = new Intent(MapActivity.this, CalendarDetailActivity.class);
-                    i.putExtra("calendar_detail", currentCalendarModel);
-                    startActivity(i);
+                // 去展馆和展览详情页面
+                // 0:展览 1:展馆 2:餐厅 3:旅店
+                if (currentModel != null) {
+                    if (currentModel.getType() == 0) {
+                        Intent i = new Intent(MapActivity.this, CalendarDetailActivity.class);
+                        i.putExtra(UriParse.DETAILCALENDAR, currentModel.getId());
+                        startActivity(i);
+                    } else if (currentModel.getType() == 1) {
+                        Intent i = new Intent(MapActivity.this, MuseumDetailActivity.class);
+                        i.putExtra(UriParse.DETAILMUSEUM, currentModel.getId());
+                        mContext.startActivity(i);
+                    }
+
                 }
                 break;
         }
@@ -300,18 +317,19 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
 
             @Override
             public boolean onMarkerClick(Marker marker) {
-                CalendarModel info = (CalendarModel) marker.getExtraInfo().get("calendarmodel");
-                if (info != null) {
+
+                if (marker != null && marker.getExtraInfo().get("MapTuijianModel") != null) {
+                    MapTuijianModel info = (MapTuijianModel) marker.getExtraInfo().get("MapTuijianModel");
                     /**
                      * 当前展览不显示查看详情
                      */
-                    if (calendarModel.getItemId().equals(info.getItemId())) {
+                    if (info.getId() == initModel.getId()) {
                         handler.sendEmptyMessage(1);
                     } else {
-                        currentCalendarModel = info;
+                        currentModel = info;
                         handler.sendEmptyMessage(2);
                     }
-                    initPop(marker, info.getAddress());
+                    initPop(marker, info.getTitle(), info.getAddress());
                 }
                 return true;
             }
@@ -321,13 +339,14 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
     }
 
 
-    private void initPop(Marker marker, String cc) {
+    private void initPop(Marker marker, String tt, String aa) {
         //        if (!ifMapReady) return;
         // 创建InfoWindow展示的view
         View popup = View.inflate(this, R.layout.view_marker_pop, null);
-        TextView title = (TextView) popup.findViewById(R.id.marker_pop);
-        title.setText(cc);
-
+        TextView title = (TextView) popup.findViewById(R.id.marker_pop_title);
+        TextView add = (TextView) popup.findViewById(R.id.marker_pop_add);
+        title.setText(tt);
+        add.setText(aa);
         //将marker所在的经纬度的信息转化成屏幕上的坐标
         final LatLng ll = marker.getPosition();
         if (mBaiduMap.getProjection() == null) return;

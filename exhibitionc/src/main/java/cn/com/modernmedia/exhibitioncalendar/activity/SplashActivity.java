@@ -3,11 +3,13 @@ package cn.com.modernmedia.exhibitioncalendar.activity;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.baidu.location.LocationClientOption;
 
@@ -30,6 +32,7 @@ import cn.com.modernmedia.exhibitioncalendar.model.AdvListModel;
 import cn.com.modernmedia.exhibitioncalendar.model.AdvListModel.AdvItem;
 import cn.com.modernmedia.exhibitioncalendar.model.AdvListModel.AdvItem.AdvSource;
 import cn.com.modernmedia.exhibitioncalendar.util.AdvTools;
+import cn.com.modernmedia.exhibitioncalendar.util.UriParse;
 
 import static cn.com.modernmedia.exhibitioncalendar.MyApplication.locationListener;
 import static cn.com.modernmedia.exhibitioncalendar.MyApplication.mLocationClient;
@@ -42,7 +45,10 @@ import static cn.com.modernmedia.exhibitioncalendar.MyApplication.mLocationClien
 
 public class SplashActivity extends BaseActivity {
     protected AdvListModel advList;
+    private Uri fromHtmlArticleUri;// 网页跳转文章页面url参数
     //    private boolean ifWaitPermission = true;
+
+    private boolean isNomalStart = true;//用于链接点击返回跳出splash画面flag
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,16 +67,29 @@ public class SplashActivity extends BaseActivity {
             InitLocation();
             gotoMainActivity();
         }
+        /**
+         * 网页跳转测试用
+         */
+        Intent i_getvalue = getIntent();
+        String action = i_getvalue.getAction();
+        if (Intent.ACTION_VIEW.equals(action)) {
+            Uri uri = i_getvalue.getData();
+            fromHtmlArticleUri = uri;
+            Log.e("fromHtmlArticleUri", fromHtmlArticleUri.toString());
+        }
         //展览日历暂时不检查广告
-        //        getAdvList(FetchApiType.USE_HTTP_ONLY);
+        getAdvList(FetchApiType.USE_HTTP_ONLY);
     }
 
 
     @Override
     protected void onResume() {
 
-
+        if (!isNomalStart) {
+            checkHasHtmlAdv();
+        }
         super.onResume();
+
     }
 
     public void gotoMainActivity() {
@@ -127,7 +146,16 @@ public class SplashActivity extends BaseActivity {
 
     protected void checkHasAdv(final ArrayList<String> picList, final AdvListModel.AdvItem item) {
 
-        if (ParseUtil.listNotNull(picList)) {
+        if (fromHtmlArticleUri != null) {
+            String i = fromHtmlArticleUri.toString().replace("slate61://", "slate://");
+            boolean flag = UriParse.clickSlate(SplashActivity.this, i, new Entry[]{new AdvItem()}, null, new Class<?>[0]);
+            if (flag) {
+                isNomalStart = false;
+                finish();
+            } else {
+                checkHasHtmlAdv();
+            }
+        } else if (ParseUtil.listNotNull(picList)) {
             gotoAdvActivity(picList, item);
         } else {
             // 没有图片广告，继续判断有没有html广告

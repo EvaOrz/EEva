@@ -505,4 +505,12 @@ public class UrlMaker {
     public static String addVipInfo() {
         return API_URL + "vipadd?datatype=" + ConstData.DATA_TYPE;
     }
+
+    /**
+     * 地图推荐列表（api2以上版本）
+     * @return
+     */
+    public static String  getMapTuijianList(){
+        return API_URL + "maplist?datatype=" + ConstData.DATA_TYPE;
+    }
 }
